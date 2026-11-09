@@ -28,18 +28,35 @@ class ModelComparison(BaseModel):
     hardware_requirements: str = NOT_DOCUMENTED
     licence: str = Field(default=NOT_DOCUMENTED, description="licence name exactly as stated")
     usage_restrictions: str = NOT_DOCUMENTED
-    source_ids: list[str] = Field(default_factory=list, description="IDs like S1 that support this row")
+    source_ids: list[str] = Field(default_factory=list, description="set by code: findings that mention the model")
     # filled in by code, not by the LLM:
     licence_category: LicenceCategory = "Unknown"
 
 
-class ComparisonLLMOutput(BaseModel):
-    """What we ask the LLM for."""
+# ------------------------------------------------------------------ LLM steps
+class ModelSelection(BaseModel):
+    """Step 1: which candidate names are actual AI models worth comparing."""
 
-    models: list[ModelComparison] = Field(default_factory=list)
-    key_differences: list[str] = Field(
-        default_factory=list, description="Sentences explaining differences, each citing [S#]"
-    )
+    models: list[str] = Field(default_factory=list, description="names copied exactly from the candidate list")
+
+
+class ComparisonRowLLM(BaseModel):
+    """Step 2 (one call per model): fill the row from that model's evidence only."""
+
+    developer: str = NOT_DOCUMENTED
+    modalities: list[str] = Field(default_factory=list)
+    parameter_sizes: str = NOT_DOCUMENTED
+    context_window: str = NOT_DOCUMENTED
+    deployment_methods: list[str] = Field(default_factory=list)
+    hardware_requirements: str = NOT_DOCUMENTED
+    licence: str = NOT_DOCUMENTED
+    usage_restrictions: str = NOT_DOCUMENTED
+
+
+class DifferencesLLM(BaseModel):
+    """Step 3: explain the most important differences, from the finished table."""
+
+    key_differences: list[str] = Field(default_factory=list, max_length=6)
 
 
 class ComparisonOutput(BaseModel):
@@ -48,5 +65,5 @@ class ComparisonOutput(BaseModel):
     models: list[ModelComparison] = Field(default_factory=list)
     key_differences: list[str] = Field(default_factory=list)
     dropped_models: list[str] = Field(
-        default_factory=list, description="Rows removed because no valid source supported them"
+        default_factory=list, description="Candidates removed: not in the research, or no supporting evidence"
     )

@@ -19,7 +19,7 @@ from collections import Counter
 from datetime import datetime
 
 from schemas.comparison import ComparisonOutput
-from schemas.evaluation import BENCHMARK_DISCLAIMER, EvaluationOutput
+from schemas.evaluation import BENCHMARK_DISCLAIMER, MEMORY_ESTIMATE_BASIS, EvaluationOutput
 from schemas.report import ReportNarrative, ReportOutput
 from schemas.research import ResearchOutput, Source
 from services.ollama_client import OllamaClient, OllamaConnectionError, OllamaError, OllamaModelNotFoundError
@@ -54,6 +54,8 @@ Verified benchmark scores (as reported by sources, NOT run by us):
 {benchmarks}
 On-prem assessments:
 {assessments}
+Estimated weight memory (computed by code from parameter counts; label as Estimate):
+{memory}
 Trade-offs: {trade_offs}
 Missing evidence: {missing}
 Evaluation recommendations: {recommendations}
@@ -176,6 +178,17 @@ def deployment_table(evaluation: EvaluationOutput) -> str:
     )
 
 
+def memory_table(evaluation: EvaluationOutput) -> str:
+    if not evaluation.memory_estimates:
+        return ""
+    table = md_table(
+        ["Model", "Parameters", "FP16 (GB)", "8-bit (GB)", "4-bit (GB)", "Source of param count"],
+        [[m.model_name, m.parameters, m.fp16_gb, m.int8_gb, m.int4_gb, f"[{m.source_id}]"]
+         for m in evaluation.memory_estimates],
+    )
+    return f"**Estimated weight memory**\n\n{table}\n\n_{MEMORY_ESTIMATE_BASIS}_"
+
+
 def references_section(markdown_body: str, sources: list[Source]) -> str:
     cited = set(find_citations(markdown_body))
     cited_src = [s for s in sources if s.source_id in cited]
@@ -244,6 +257,8 @@ def assemble(
 ## 7. On-Premise Deployment Considerations
 {deployment_table(evaluation)}
 
+{memory_table(evaluation)}
+
 {_bullets(deploy)}
 
 ## 8. Limitations and Risks
@@ -260,27 +275,38 @@ _Recommendations are judgements based on the evidence above, not measured result
     return body
 
 
-def build_insufficient_evidence_report(topic: str, errors: list[str], model_name: str) -> ReportOutput:
-    """Used when retrieval returned nothing: be honest, make no claims, no LLM call."""
+def build_insufficient_evidence_report(
+    topic: str, errors: list[str], model_name: str, sources: list[Source] | None = None
+) -> ReportOutput:
+    """Used when retrieval found nothing usable: be honest, make no claims, no LLM call."""
+    sources = sources or []
+    if sources:
+        result = (f"**The research could not be completed: {len(sources)} source(s) were retrieved, but none "
+                  "was judged relevant to the topic.**")
+        consulted = "\n## Sources retrieved (judged not relevant)\n" + "\n".join(
+            format_reference(s) for s in sources) + "\n"
+    else:
+        result = "**The research could not be completed: no sources were retrieved.**"
+        consulted = ""
     md = f"""# Technical Research Report — Insufficient Evidence
 
 **Topic:** {topic}
 **Generated:** {datetime.now():%Y-%m-%d %H:%M} · **Local model:** `{model_name}`
 
 ## Result
-**The research could not be completed: no sources were retrieved.** No findings, comparisons,
-benchmarks or recommendations are reported, because none could be supported by evidence.
+{result} No findings, comparisons, benchmarks or recommendations are reported, because none
+could be supported by evidence.
 
 ## Retrieval issues
 {_bullets(errors)}
-
+{consulted}
 ## What to try
 - Check your internet connection.
 - Wait a minute if a rate limit was reported, then retry.
 - Rephrase the topic with more specific technical keywords.
 """
     return ReportOutput(markdown=md, narrative_generated=False, insufficient_evidence=True,
-                        citation_check={"cited": [], "unknown": [], "uncited": []})
+                        citation_check={"cited": [], "unknown": [], "uncited": [s.source_id for s in sources]})
 
 
 def run(
@@ -311,6 +337,10 @@ def run(
                 assessments="\n".join(
                     f"- {a.model_name}: {a.onprem_suitability} — {a.rationale} memory: {a.memory_and_inference}"
                     for a in evaluation.assessments
+                ) or "(none)",
+                memory="\n".join(
+                    f"- {m.model_name} ({m.parameters}): ~{m.int4_gb} GB at 4-bit, ~{m.fp16_gb} GB at FP16 [{m.source_id}]"
+                    for m in evaluation.memory_estimates
                 ) or "(none)",
                 trade_offs=" ".join(evaluation.trade_offs) or "(none)",
                 missing=" ".join(evaluation.missing_evidence) or "(none)",

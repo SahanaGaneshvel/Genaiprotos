@@ -83,3 +83,9 @@ def test_insufficient_evidence_report_makes_no_claims():
     out = rp.build_insufficient_evidence_report("topic", ["web: offline", "arXiv: offline"], "m")
     assert out.insufficient_evidence and "no sources were retrieved" in out.markdown
     assert "Recommendations" not in out.markdown and "[S" not in out.markdown
+
+
+def test_insufficient_report_lists_irrelevant_sources_honestly():
+    out = rp.build_insufficient_evidence_report("topic", [], "m", SOURCES)
+    assert "none was judged relevant" in out.markdown
+    assert all(s.url in out.markdown for s in SOURCES)

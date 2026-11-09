@@ -19,7 +19,7 @@ def test_grouped_citations_are_normalised():
 def test_unknown_citations_are_stripped():
     text, removed = strip_invalid_citations("Fact one [S1]. Invented fact [S99].", {"S1"})
     assert removed == ["S99"]
-    assert "[S99]" not in text and "[S1]" in text
+    assert text == "Fact one [S1]. Invented fact."
 
 
 def test_keep_valid_ids_dedupes_and_filters():
@@ -39,6 +39,7 @@ def test_consistency_check_flags_unknown_and_uncited():
         ("MIT", "Open source (OSI-approved licence)"),
         ("Apache-2.0 (Qwen2.5-VL-7B)", "Open source (OSI-approved licence)"),
         ("Qwen License", "Open weights (custom / restricted licence)"),
+        ("Modified MIT License", "Open weights (custom / restricted licence)"),
         ("Llama 3.2 Community License", "Open weights (custom / restricted licence)"),
         ("Gemma Terms of Use (custom)", "Open weights (custom / restricted licence)"),
         ("CC-BY-NC-4.0", "Open weights (custom / restricted licence)"),

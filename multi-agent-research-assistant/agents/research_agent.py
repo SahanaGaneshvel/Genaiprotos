@@ -3,8 +3,9 @@
 Responsibility: turn a topic into real, citable evidence.
 
 Pipeline (code does the tool calls; the LLM does the reading):
-  1. PLAN      LLM  -> SearchPlan (web / arXiv / GitHub queries)
-  2. RETRIEVE  code -> DuckDuckGo, Hugging Face model cards via web search, arXiv, GitHub
+  1. PLAN      LLM  -> SearchPlan (web / arXiv / GitHub queries + Hugging Face task)
+  2. RETRIEVE  code -> DuckDuckGo, Hugging Face Hub model cards, arXiv, GitHub
+                       (queries are cleaned and, if empty, relaxed once — bounded, no loops)
   3. ENRICH    code -> fetch full page text for web/documentation hits
   4. REGISTER  code -> de-duplicate URLs, assign IDs S1..Sn  (the citation registry)
   5. EXTRACT   LLM  -> one FindingExtraction per source, using ONLY that source's text
@@ -30,9 +31,10 @@ from services.arxiv_search import search_arxiv
 from services.document_fetcher import fetch_page
 from services.errors import RetrievalError
 from services.github_search import search_github
+from services.huggingface_search import search_models
 from services.ollama_client import OllamaClient, OllamaConnectionError, OllamaError, OllamaModelNotFoundError
 from services.web_search import search_web
-from utils.helpers import dedupe_keep_order, truncate
+from utils.helpers import dedupe_keep_order, select_relevant_text, truncate
 
 SYSTEM_PROMPT = """You are the RESEARCH AGENT in a team of AI research agents.
 Your responsibility: find and extract technical evidence about a research topic.
@@ -49,11 +51,12 @@ Rules you must follow:
 PLAN_PROMPT = """Research topic from the user:
 \"\"\"{topic}\"\"\"
 
-Create a search plan:
-- web_queries: {n_web} short web search queries (5-10 words) that find official docs, model cards,
-  comparison articles and benchmark pages for this topic.
-- arxiv_query: 3-6 keywords for finding relevant academic papers on arXiv.
-- github_query: 2-5 keywords for finding relevant open-source GitHub repositories.
+Create a search plan. Use plain keywords: no brackets, quotes or AND/OR.
+- web_queries: 2 different web search queries (5-10 words) that find comparison articles,
+  official documentation and benchmark pages for this topic.
+- arxiv_query: 3-5 technical keywords for academic papers (e.g. "vision language model open").
+- github_query: 2-3 keywords naming the technology (e.g. "vision language model").
+- hub_task: the Hugging Face task category of the models this topic is about.
 - focus_points: the aspects the user wants compared or evaluated (e.g. licensing, hardware).
 Return JSON only."""
 
@@ -90,14 +93,43 @@ _STOPWORDS = set(
 )
 
 
+# Words that describe *what the user wants to know* rather than the technology.
+# They make keyword search engines (GitHub, arXiv) return nothing or off-topic hits
+# (e.g. "on-premise" matched a paper about "premise-induced hallucination").
+GENERIC_TERMS = {
+    "on-premise", "on-prem", "onprem", "premise", "premises", "deployment", "deploy", "local",
+    "license", "licence", "licensing", "benchmark", "benchmarks", "comparison", "compare",
+    "latest", "best", "hardware", "requirements", "limitations", "capabilities", "suitable",
+}
+
+
+MULTIMODAL_TOPIC = re.compile(r"multimodal|multi-modal|vision|image|visual|vlm", re.I)
+
+
+def guard_hub_task(topic: str, plan: SearchPlan) -> SearchPlan:
+    """Deterministic guard on one LLM decision: a live run picked 'text-generation' for a
+    multimodal topic and retrieved GPT-2. If the topic clearly names vision/multimodal, code wins."""
+    if MULTIMODAL_TOPIC.search(topic) and plan.hub_task in ("any", "text-generation"):
+        plan.hub_task = "image-text-to-text"
+    return plan
+
+
+def keyword_variants(query: str) -> list[str]:
+    """Strict-to-loose keyword queries for GitHub/arXiv: at most 2 attempts."""
+    words = [w for w in query.split() if w.lower() not in GENERIC_TERMS]
+    return dedupe_keep_order([" ".join(words[:4]), " ".join(words[:2])]) or [query]
+
+
 def fallback_plan(topic: str, n_web: int) -> SearchPlan:
     """Keyword plan used if the LLM cannot produce a valid plan (keeps the run alive)."""
     words = [w for w in re.findall(r"[A-Za-z0-9\-]+", topic) if w.lower() not in _STOPWORDS]
     core = " ".join(words[:6]) or topic[:60]
+    multimodal = re.search(r"multimodal|vision|image|vlm", topic, re.I)
     return SearchPlan(
-        web_queries=[topic[:100], f"{core} comparison benchmark"][:n_web],
+        web_queries=[topic[:100], f"{core} comparison benchmark"][: max(n_web, 2)],
         arxiv_query=" ".join(words[:4]) or core,
         github_query=" ".join(words[:3]) or core,
+        hub_task="image-text-to-text" if multimodal else "any",
         focus_points=[],
     )
 
@@ -120,43 +152,57 @@ def register_sources(sources: list[Source]) -> list[Source]:
     return unique
 
 
-def _source_text(src: Source, max_chars: int) -> tuple[str, str]:
+def _source_text(src: Source, max_chars: int, keywords: list[str] | None = None) -> tuple[str, str]:
     meta = []
     if src.published:
         meta.append(f"Date: {src.published}")
     if src.metadata.get("license_spdx"):
         meta.append(f"Licence (from GitHub API): {src.metadata['license_spdx']}")
+    if src.metadata.get("license_hf"):
+        meta.append(f"Licence (from Hugging Face model card metadata): {src.metadata['license_hf']}")
+    if src.metadata.get("parameters_hf"):
+        meta.append(f"Parameters (from Hugging Face weight files): {src.metadata['parameters_hf']}")
     if src.metadata.get("stars") is not None:
         meta.append(f"GitHub stars: {src.metadata['stars']}")
     if src.metadata.get("authors"):
         meta.append(f"Authors: {', '.join(src.metadata['authors'])}")
-    return "\n".join(meta), truncate(src.content or src.snippet, max_chars)
+    text = select_relevant_text(src.content or src.snippet, keywords or [], max_chars)
+    return "\n".join(meta), text
+
+
+def _search(label: str, tool, queries: list[str], limit: int, errors: list[str], progress: Progress):
+    """Try queries strict -> loose; stop at the first non-empty result.
+    A hard failure (offline, rate limit) stops this tool immediately — no hammering."""
+    for query in queries:
+        progress(f"Searching {label}: {query}")
+        try:
+            results = tool(query, limit)
+        except RetrievalError as exc:
+            errors.append(f"{label}: {exc}")
+            return []
+        if results:
+            return results
+    errors.append(f"{label}: no results for {' / '.join(queries)}")
+    return []
 
 
 def retrieve(plan: SearchPlan, cfg: dict, errors: list[str], progress: Progress) -> list[Source]:
     """Run every retrieval tool independently; one failure never stops the others."""
     n = cfg["per_category"]
-    docs_query = f"{plan.github_query} model card site:huggingface.co"
-    jobs = [(f"web search: {q}", search_web, q, n) for q in plan.web_queries[: cfg["web_queries"]]]
-    jobs += [
-        ("model cards (Hugging Face)", search_web, docs_query, n),
-        (f"arXiv: {plan.arxiv_query}", search_arxiv, plan.arxiv_query, n),
-        (f"GitHub: {plan.github_query}", search_github, plan.github_query, n),
-    ]
     collected: list[Source] = []
-    for label, tool, query, limit in jobs:
-        progress(f"Searching {label}")
-        try:
-            results = tool(query, limit)
-            if label.startswith("model cards"):
-                for r in results:
-                    if "huggingface.co" in r.url:
-                        r.source_type = "documentation"
-            collected.extend(results)
-            if not results:
-                errors.append(f"{label}: no results")
-        except RetrievalError as exc:
-            errors.append(f"{label}: {exc}")
+
+    # Web: use plan queries in order until `web_queries` of them returned something.
+    successful = 0
+    for query in plan.web_queries:
+        if successful >= cfg["web_queries"]:
+            break
+        results = _search("web", search_web, [query], n, errors, progress)
+        collected += results
+        successful += bool(results)
+
+    collected += _search("Hugging Face model cards", search_models, [plan.hub_task], n, errors, progress)
+    collected += _search("arXiv", search_arxiv, keyword_variants(plan.arxiv_query), n, errors, progress)
+    collected += _search("GitHub", search_github, keyword_variants(plan.github_query), n, errors, progress)
     return collected
 
 
@@ -175,8 +221,17 @@ def enrich(sources: list[Source], max_pages: int, progress: Progress) -> None:
         # on failure we keep the search snippet as the source text (noted in limitations)
 
 
-def extract_finding(llm: OllamaClient, topic: str, src: Source, max_chars: int) -> ResearchFinding | None:
-    metadata, text = _source_text(src, max_chars)
+def topic_keywords(topic: str, plan: SearchPlan | None = None) -> list[str]:
+    """Keywords used to pick the most relevant passages of each source."""
+    text = topic + " " + (" ".join(plan.web_queries + plan.focus_points) if plan else "")
+    words = re.findall(r"[A-Za-z][A-Za-z0-9\-]{2,}", text)
+    return dedupe_keep_order([w for w in words if w.lower() not in _STOPWORDS])
+
+
+def extract_finding(
+    llm: OllamaClient, topic: str, src: Source, max_chars: int, keywords: list[str] | None = None
+) -> ResearchFinding | None:
+    metadata, text = _source_text(src, max_chars, keywords)
     base = dict(
         source_id=src.source_id,
         title=src.title,
@@ -199,8 +254,8 @@ def extract_finding(llm: OllamaClient, topic: str, src: Source, max_chars: int) 
             summary=truncate(src.snippet or text, 300) or "No summary available.",
             limitations=["Automatic extraction failed; summary is the original search snippet."],
         )
-    if not ex.relevant:
-        return None
+    if not ex.relevant and not ex.key_findings:
+        return None  # drop only if the model found it irrelevant AND extracted nothing
     limitations = list(ex.limitations)
     if not src.content:
         limitations.append("Only the search snippet was available (full page could not be fetched).")
@@ -239,6 +294,7 @@ def run(
     except OllamaError as exc:
         errors.append(f"Search planning by LLM failed ({exc}); used keyword fallback plan.")
         plan = fallback_plan(topic, cfg["web_queries"])
+    plan = guard_hub_task(topic, plan)
 
     # 2-4. RETRIEVE, ENRICH, REGISTER
     sources = register_sources(retrieve(plan, cfg, errors, progress))
@@ -246,9 +302,10 @@ def run(
 
     # 5. EXTRACT (one bounded LLM call per source)
     findings: list[ResearchFinding] = []
+    keywords = topic_keywords(topic, plan)
     for i, src in enumerate(sources, start=1):
         progress(f"Reading source {i}/{len(sources)}: {src.title[:60]}")
-        finding = extract_finding(llm, topic, src, cfg["chars"])
+        finding = extract_finding(llm, topic, src, cfg["chars"], keywords)
         if finding:
             findings.append(finding)
 

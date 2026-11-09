@@ -38,7 +38,7 @@ def _raise_for_rate_limit(resp: requests.Response) -> None:
         )
 
 
-def fetch_readme(full_name: str, max_chars: int = 6000) -> str:
+def fetch_readme(full_name: str, max_chars: int = 12000) -> str:
     """Best-effort README download. Returns '' on any failure."""
     try:
         resp = requests.get(f"{API}/repos/{full_name}/readme", headers=_headers(raw=True), timeout=15)

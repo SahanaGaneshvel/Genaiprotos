@@ -42,6 +42,14 @@ class OllamaResponseError(OllamaError):
     """Server answered, but the output was unusable (malformed / failed validation)."""
 
 
+class OllamaOutOfMemoryError(OllamaConnectionError):
+    """The machine does not have enough free RAM to load the model.
+    Subclass of OllamaConnectionError: agents treat it as fatal infrastructure failure."""
+
+
+OOM_SIGNS = ("out-of-memory", "out of memory", "failed to allocate", "mem_buffer != null")
+
+
 def _inline_refs(schema: dict) -> dict:
     """Pydantic emits nested models as {"$ref": "#/$defs/X"}. Inline them so the
     schema is self-contained (safer for Ollama's grammar converter)."""
@@ -148,6 +156,11 @@ class OllamaClient:
         if resp.status_code == 404 and "not found" in resp.text.lower():
             raise OllamaModelNotFoundError(
                 f"Model '{self.model}' not found on the Ollama server. Run `ollama pull {self.model}`."
+            )
+        if resp.status_code >= 400 and any(s in resp.text.lower() for s in OOM_SIGNS):
+            raise OllamaOutOfMemoryError(
+                f"Not enough free memory to load '{self.model}'. Close other applications, or use a "
+                "smaller model (e.g. OLLAMA_MODEL=qwen3.5:2b in .env, then `ollama pull qwen3.5:2b`)."
             )
         if resp.status_code >= 400:
             raise OllamaResponseError(f"Ollama returned HTTP {resp.status_code}: {resp.text[:300]}")

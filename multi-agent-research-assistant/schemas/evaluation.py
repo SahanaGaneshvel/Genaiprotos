@@ -37,6 +37,24 @@ class ModelAssessment(BaseModel):
     assessment_type: Literal["qualitative"] = "qualitative"  # suitability is a judgement, not a measurement
 
 
+MEMORY_ESTIMATE_BASIS = (
+    "Estimate (computed, not measured): weight memory = parameters × bytes per parameter "
+    "(FP16/BF16 = 2 bytes, 8-bit = 1 byte, 4-bit ≈ 0.5 bytes) × 1.2 overhead. Excludes the KV cache, "
+    "which grows with context length, and any vision encoder loaded separately."
+)
+
+
+class MemoryEstimate(BaseModel):
+    """Computed by code from a parameter count reported by the Hugging Face API."""
+
+    model_name: str
+    parameters: str
+    source_id: str
+    fp16_gb: float
+    int8_gb: float
+    int4_gb: float
+
+
 class EvaluationLLMOutput(BaseModel):
     benchmarks: list[BenchmarkResult] = Field(default_factory=list)
     assessments: list[ModelAssessment] = Field(default_factory=list)
@@ -53,6 +71,7 @@ class EvaluationOutput(BaseModel):
         default_factory=list, description="scores the LLM reported that could not be found in the source"
     )
     assessments: list[ModelAssessment] = Field(default_factory=list)
+    memory_estimates: list[MemoryEstimate] = Field(default_factory=list)
     trade_offs: list[str] = Field(default_factory=list)
     missing_evidence: list[str] = Field(default_factory=list)
     recommendations: list[str] = Field(default_factory=list)

@@ -57,7 +57,7 @@ def allowed_by_robots(url: str) -> bool:
     return True if rp is None else rp.can_fetch(USER_AGENT, url)
 
 
-def extract_text(html: str, max_chars: int = 6000) -> tuple[str, str, str | None]:
+def extract_text(html: str, max_chars: int = 12000) -> tuple[str, str, str | None]:
     """HTML -> (title, main text, date). Drops scripts, nav, footers, etc."""
     soup = BeautifulSoup(html, "html.parser")
     title = (soup.title.string or "").strip() if soup.title and soup.title.string else ""
@@ -78,7 +78,7 @@ def extract_text(html: str, max_chars: int = 6000) -> tuple[str, str, str | None
     return title, text, published
 
 
-def fetch_page(url: str, max_chars: int = 6000) -> FetchedPage | None:
+def fetch_page(url: str, max_chars: int = 12000) -> FetchedPage | None:
     cached = cache.get("page", url)
     if cached is not None:
         return FetchedPage(**cached) if cached else None

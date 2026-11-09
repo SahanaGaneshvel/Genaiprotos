@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import html
+import time
+
 from ddgs import DDGS
 from ddgs.exceptions import DDGSException, RatelimitException, TimeoutException
 
@@ -29,12 +32,16 @@ def _source_type(url: str) -> str:
 # DuckDuckGo first. Its HTML endpoint sometimes returns nothing for automated
 # clients, so we fall back to ddgs' "auto" metasearch (other free engines) and
 # record which backend produced each result — transparent, never silent.
-BACKENDS = ("duckduckgo", "auto")
+# The metasearch is itself occasionally empty, so it gets one retry after a pause.
+BACKENDS = ("duckduckgo", "auto", "auto")
+RETRY_PAUSE_S = 2.0
 
 
 def _ddgs_text(query: str, max_results: int) -> tuple[list[dict], str]:
     last_error: Exception | None = None
-    for backend in BACKENDS:
+    for attempt, backend in enumerate(BACKENDS):
+        if attempt == len(BACKENDS) - 1:
+            time.sleep(RETRY_PAUSE_S)
         try:
             raw = DDGS(timeout=15).text(query, max_results=max_results, backend=backend)
             if raw:
@@ -63,7 +70,7 @@ def search_web(query: str, max_results: int = 4) -> list[Source]:
     raw, backend = _ddgs_text(query, max_results)
     sources = []
     for r in raw:
-        url, title = r.get("href", ""), (r.get("title") or "").strip()
+        url, title = r.get("href", ""), html.unescape(r.get("title") or "").strip()
         if not url or not title:
             continue
         try:
@@ -72,7 +79,7 @@ def search_web(query: str, max_results: int = 4) -> list[Source]:
                     title=title,
                     url=url,
                     source_type=_source_type(url),
-                    snippet=r.get("body", ""),
+                    snippet=html.unescape(r.get("body", "")),
                     metadata={"search_backend": backend},
                 )
             )

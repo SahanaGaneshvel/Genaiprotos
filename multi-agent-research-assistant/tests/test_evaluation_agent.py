@@ -65,6 +65,14 @@ def test_score_check_requires_benchmark_name_too():
     assert not ea.score_in_source(BenchmarkResult(model_name="A", benchmark="DocVQA", score="58.6", source_id="S1"), src)
 
 
+def test_memory_estimates_come_only_from_api_parameter_counts():
+    srcs = make_sources()
+    srcs[0].metadata.update({"model_id": "org/model-a", "parameters_total": 8_000_000_000, "parameters_hf": "8.00B"})
+    [est] = ea.memory_estimates(srcs)  # S2/S3 have no API parameter count -> no estimate
+    assert est.model_name == "org/model-a" and est.source_id == "S1"
+    assert (est.fp16_gb, est.int8_gb, est.int4_gb) == (19.2, 9.6, 4.8)  # params x bytes x 1.2
+
+
 def test_no_findings_means_no_llm_call_and_missing_evidence():
     llm = FakeLLM({})
     out = ea.run("topic", ResearchOutput(), [], llm=llm)

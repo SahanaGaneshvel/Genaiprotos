@@ -17,6 +17,7 @@ import streamlit as st
 from config import get_settings
 from orchestration.state import AGENTS
 from orchestration.workflow import run_workflow, save_run
+from schemas.evaluation import MEMORY_ESTIMATE_BASIS
 from services.ollama_client import OllamaClient
 
 EXAMPLE_TOPIC = (
@@ -246,6 +247,13 @@ with tab3:
                 "Memory / inference": a.memory_and_inference, "Quantisation": ", ".join(a.quantisation_options),
                 "Limitations": "; ".join(a.limitations), "Sources": ", ".join(a.source_ids)}
                 for a in evaluation.assessments]), hide_index=True, width="stretch")
+        if evaluation.memory_estimates:
+            st.markdown("##### Estimated weight memory (computed, not measured)")
+            st.dataframe(pd.DataFrame([{
+                "Model": m.model_name, "Parameters": m.parameters, "FP16 (GB)": m.fp16_gb,
+                "8-bit (GB)": m.int8_gb, "4-bit (GB)": m.int4_gb, "Source": m.source_id}
+                for m in evaluation.memory_estimates]), hide_index=True, width="stretch")
+            st.caption(MEMORY_ESTIMATE_BASIS)
         c1, c2 = st.columns(2)
         c1.markdown("##### Trade-offs\n" + ("\n".join(f"- {t}" for t in evaluation.trade_offs) or "_None._"))
         c2.markdown("##### Missing evidence\n" + ("\n".join(f"- {t}" for t in evaluation.missing_evidence) or "_None._"))

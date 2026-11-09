@@ -51,6 +51,7 @@ def strip_invalid_citations(text: str, valid: set[str]) -> tuple[str, list[str]]
         return ""
 
     clean = CITATION.sub(repl, normalise_grouped(text or ""))
+    clean = re.sub(r"[ \t]+([.,;:])", r"\1", clean) if removed else clean  # "fact [S99]." -> "fact."
     return re.sub(r"[ \t]{2,}", " ", clean), removed
 
 

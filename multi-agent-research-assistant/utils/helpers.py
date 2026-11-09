@@ -69,6 +69,52 @@ def md_table(headers: list[str], rows: list[list[str]]) -> str:
     return "\n".join(lines)
 
 
+# Words that signal concrete technical evidence in a passage.
+EVIDENCE_SIGNALS = re.compile(
+    r"\b(\d+(\.\d+)?\s?[bBmM]\b|parameters?|params|licen[cs]e|apache|mit\b|vram|gpu|memory|ram\b|"
+    r"quantiz|quantis|gguf|int4|int8|4-bit|8-bit|context|tokens|benchmark|mmmu|mmbench|docvqa|"
+    r"chartqa|mathvista|ocrbench|score|accuracy|ollama|vllm|llama\.cpp)",
+    re.I,
+)
+
+
+def select_relevant_text(text: str, keywords: list[str], max_chars: int, chunk_chars: int = 500) -> str:
+    """Pick the most informative passages of a long document instead of its first N characters.
+
+    A tiny, transparent retrieval step (keyword scoring, no embeddings): split into chunks,
+    score each by topic keywords + evidence signals (numbers, licences, VRAM, benchmarks),
+    keep the best chunks within the budget, and return them in their original order.
+    Why: live runs showed page starts are bylines, menus and intros — the model lists come later.
+    """
+    text = " ".join((text or "").split())
+    if len(text) <= max_chars:
+        return text
+    words = text.split(" ")
+    chunks, current = [], []
+    for w in words:
+        current.append(w)
+        if sum(len(x) + 1 for x in current) >= chunk_chars:
+            chunks.append(" ".join(current))
+            current = []
+    if current:
+        chunks.append(" ".join(current))
+
+    kws = [k.lower() for k in keywords if len(k) > 2]
+
+    def score(chunk: str) -> float:
+        low = chunk.lower()
+        return sum(low.count(k) for k in kws) + 2 * len(EVIDENCE_SIGNALS.findall(chunk))
+
+    ranked = sorted(range(len(chunks)), key=lambda i: score(chunks[i]), reverse=True)
+    keep, used = set(), 0
+    for i in ranked:
+        if used + len(chunks[i]) > max_chars:
+            continue
+        keep.add(i)
+        used += len(chunks[i]) + 3
+    return " … ".join(chunks[i] for i in sorted(keep))
+
+
 def truncate(text: str, max_chars: int) -> str:
     """Cut text to max_chars on a word boundary (keeps prompts small for CPU inference)."""
     text = " ".join((text or "").split())

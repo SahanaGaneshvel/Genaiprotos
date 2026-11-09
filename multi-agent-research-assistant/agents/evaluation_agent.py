@@ -8,17 +8,18 @@ LLM:    one structured call -> EvaluationLLMOutput
 Code:   BENCHMARK VERIFICATION — a score is only kept if that exact number appears in
         the cited source's retrieved text. Anything else is moved to `rejected_benchmarks`
         and flagged as missing evidence. The app never runs benchmarks itself and says so.
+        MEMORY ESTIMATES — arithmetic from API parameter counts, labelled as estimates.
 """
 
 from __future__ import annotations
 
 import re
 
-from agents.comparison_agent import format_findings
-from schemas.evaluation import BenchmarkResult, EvaluationLLMOutput, EvaluationOutput
+from schemas.evaluation import BenchmarkResult, EvaluationLLMOutput, EvaluationOutput, MemoryEstimate
 from schemas.research import ResearchOutput, Source
 from services.ollama_client import OllamaClient
 from utils.citations import keep_valid_ids, strip_invalid_citations
+from utils.evidence import model_evidence, rank_models
 
 SYSTEM_PROMPT = """You are the EVALUATION AGENT in a team of AI research agents.
 Your responsibility: critically evaluate the evidence about AI models found by the Research Agent:
@@ -42,10 +43,14 @@ USER_PROMPT = """Research topic: {topic}
 
 Models identified so far: {models}
 
-RESEARCH FINDINGS:
+EVIDENCE BY MODEL (lines start with their source ID):
+{by_model}
+
+OTHER FINDINGS (summaries):
 {findings}
 
-Evaluate the evidence for at most {max_models} of the most relevant models. Return JSON only."""
+Evaluate the evidence. Give one entry in "assessments" for each of the {max_models} most relevant
+models above (use "insufficient evidence" when the findings say little about it). Return JSON only."""
 
 _NUMBER = re.compile(r"\d+(?:\.\d+)?")
 
@@ -68,6 +73,26 @@ def score_in_source(result: BenchmarkResult, source: Source | None) -> bool:
     return all(n in text_numbers for n in numbers) and any(w in text for w in benchmark_words)
 
 
+BYTES_PER_PARAM = {"fp16_gb": 2.0, "int8_gb": 1.0, "int4_gb": 0.5}
+OVERHEAD = 1.2
+
+
+def memory_estimates(sources: list[Source]) -> list[MemoryEstimate]:
+    """Deterministic, labelled estimate of weight memory for models whose parameter count
+    came from the Hugging Face API (never from LLM text)."""
+    out = []
+    for s in sources:
+        total = s.metadata.get("parameters_total")
+        if not total:
+            continue
+        sizes = {k: round(total * b * OVERHEAD / 1e9, 1) for k, b in BYTES_PER_PARAM.items()}
+        out.append(MemoryEstimate(
+            model_name=s.metadata.get("model_id", s.title), parameters=s.metadata.get("parameters_hf", ""),
+            source_id=s.source_id, **sizes,
+        ))
+    return out
+
+
 def run(
     topic: str,
     research: ResearchOutput,
@@ -81,12 +106,19 @@ def run(
 
     by_id = {s.source_id: s for s in sources}
     valid = set(by_id)
+    top = rank_models(research)[: max_models + 2]
+    by_model = []
+    for name in top:
+        lines, _ = model_evidence(name, research, by_id)
+        if lines:
+            by_model.append(f"## {name}\n" + "\n".join(lines[:12]))
     raw = llm.chat_structured(
         SYSTEM_PROMPT,
         USER_PROMPT.format(
             topic=topic,
-            models=", ".join(research.models_identified) or "(none identified)",
-            findings=format_findings(research),
+            models=", ".join(top) or "(none identified)",
+            by_model="\n".join(by_model) or "(none)",
+            findings="\n".join(f"[{f.source_id}] {f.title}: {f.summary}" for f in research.findings),
             max_models=max_models,
         ),
         EvaluationLLMOutput,
@@ -124,10 +156,14 @@ def run(
             a.onprem_suitability = "insufficient evidence"  # no evidence -> no confident verdict
         assessments.append(a)
 
+    if not assessments:
+        missing.append("No model-level on-premise assessment could be derived from the findings.")
+
     return EvaluationOutput(
         benchmarks=verified,
         rejected_benchmarks=rejected,
         assessments=assessments,
+        memory_estimates=memory_estimates(sources),
         trade_offs=clean(raw.trade_offs),
         missing_evidence=missing,
         recommendations=clean(raw.recommendations),

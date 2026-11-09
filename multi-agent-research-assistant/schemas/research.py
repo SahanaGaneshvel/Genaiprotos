@@ -8,6 +8,7 @@ Two layers on purpose:
 
 from __future__ import annotations
 
+import re
 from typing import Literal
 from urllib.parse import urlparse
 
@@ -44,15 +45,47 @@ class Source(BaseModel):
 
 
 # ----------------------------------------------------------------- LLM outputs
+HubTask = Literal[
+    "image-text-to-text",  # multimodal / vision-language
+    "text-generation",
+    "automatic-speech-recognition",
+    "text-to-image",
+    "feature-extraction",  # embeddings
+    "any",
+]
+
+
+def clean_query(q: str) -> str:
+    """Small models sometimes format queries as '[a] [b]' or with quotes/AND. Normalise."""
+    q = re.sub(r"[\[\]{}()\"'`*]|\bAND\b|\bOR\b", " ", q or "")
+    return " ".join(q.replace(",", " ").split())
+
+
 class SearchPlan(BaseModel):
     """Research Agent step 1: the LLM turns the user topic into search queries."""
 
     web_queries: list[str] = Field(min_length=1, max_length=3)
     arxiv_query: str = Field(min_length=2, description="3-6 keywords for arXiv")
-    github_query: str = Field(min_length=2, description="2-5 keywords for GitHub repos")
+    github_query: str = Field(min_length=2, description="2-4 keywords for GitHub repos")
+    hub_task: HubTask = Field(
+        default="any", description="Hugging Face task category of the models the topic is about"
+    )
     focus_points: list[str] = Field(
         default_factory=list, description="What the user wants compared/evaluated"
     )
+
+    @field_validator("arxiv_query", "github_query")
+    @classmethod
+    def _clean(cls, v: str) -> str:
+        return clean_query(v) or v
+
+    @field_validator("web_queries")
+    @classmethod
+    def _clean_list(cls, v: list[str]) -> list[str]:
+        cleaned = [clean_query(q) for q in v if clean_query(q)]
+        if not cleaned:
+            raise ValueError("web_queries must contain at least one non-empty query")
+        return cleaned
 
 
 class FindingExtraction(BaseModel):

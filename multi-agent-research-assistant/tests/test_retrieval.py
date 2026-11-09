@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 import requests
 
-from services import arxiv_search, document_fetcher, github_search, web_search
+from services import arxiv_search, document_fetcher, github_search, huggingface_search, web_search
 from services.errors import RetrievalError
 
 ARXIV_XML = """<?xml version="1.0" encoding="UTF-8"?>
@@ -24,10 +24,11 @@ ARXIV_XML = """<?xml version="1.0" encoding="UTF-8"?>
 
 @pytest.fixture(autouse=True)
 def no_cache(monkeypatch):
-    """Tests must not read/write the real on-disk cache."""
-    for mod in (web_search, arxiv_search, github_search, document_fetcher):
+    """Tests must not read/write the real on-disk cache, nor wait for retries."""
+    for mod in (web_search, arxiv_search, github_search, document_fetcher, huggingface_search):
         monkeypatch.setattr(mod.cache, "get", lambda *a, **k: None)
         monkeypatch.setattr(mod.cache, "put", lambda *a, **k: None)
+    monkeypatch.setattr(web_search, "RETRY_PAUSE_S", 0)
 
 
 def _resp(status=200, text="", json_body=None, headers=None):
@@ -109,13 +110,14 @@ def test_github_token_sent_when_configured(monkeypatch):
 def test_web_search_skips_invalid_urls_and_tags_docs(monkeypatch):
     fake = MagicMock()
     fake.return_value.text.return_value = [
-        {"title": "Model card", "href": "https://huggingface.co/org/model", "body": "card"},
+        {"title": "Model card &amp; specs", "href": "https://huggingface.co/org/model", "body": "card"},
         {"title": "Broken", "href": "javascript:void(0)", "body": "x"},
         {"title": "Blog", "href": "https://example.com/post", "body": "post"},
     ]
     monkeypatch.setattr(web_search, "DDGS", fake)
     results = web_search.search_web("vlm")
     assert [s.source_type for s in results] == ["documentation", "web"]
+    assert results[0].title == "Model card & specs"  # HTML entities decoded
 
 
 def test_web_search_rate_limit(monkeypatch):
@@ -144,6 +146,46 @@ def test_web_search_empty_results(monkeypatch):
     fake.return_value.text.side_effect = web_search.DDGSException("No results found.")
     monkeypatch.setattr(web_search, "DDGS", fake)
     assert web_search.search_web("zzzz") == []
+
+
+def test_web_search_retries_metasearch_once_when_empty(monkeypatch):
+    calls = []
+
+    def text(query, max_results, backend):
+        calls.append(backend)
+        if len(calls) < 3:
+            raise web_search.DDGSException("No results found.")
+        return [{"title": "Blog", "href": "https://example.com/post", "body": "post"}]
+
+    fake = MagicMock()
+    fake.return_value.text.side_effect = text
+    monkeypatch.setattr(web_search, "DDGS", fake)
+    assert len(web_search.search_web("vlm")) == 1
+    assert calls == ["duckduckgo", "auto", "auto"]
+
+
+# ---------------------------------------------------------------- Hugging Face
+def test_hf_search_maps_card_metadata_and_skips_quantised_copies(monkeypatch):
+    def get(url, params=None, **k):
+        if url == huggingface_search.API:
+            return _list_resp([{"id": "org/Model-7B"}, {"id": "someone/Model-7B-GGUF"}])
+        if url.endswith("/raw/main/README.md"):
+            return _resp(text="---\nlicense: apache-2.0\n---\n# Model 7B\nA vision-language model.")
+        return _resp(json_body={"cardData": {"license": "apache-2.0"}, "safetensors": {"total": 8_292_166_656},
+                                "createdAt": "2025-01-26T09:26:37.000Z", "pipeline_tag": "image-text-to-text"})
+
+    monkeypatch.setattr(huggingface_search.requests, "get", get)
+    [src] = huggingface_search.search_models("image-text-to-text", 4)
+    assert src.url == "https://huggingface.co/org/Model-7B" and src.source_type == "documentation"
+    assert src.metadata["license_hf"] == "apache-2.0" and src.metadata["parameters_hf"] == "8.29B"
+    assert src.published == "2025-01-26"
+    assert src.content.startswith("# Model 7B")  # YAML front-matter stripped
+
+
+def _list_resp(items):
+    r = _resp()
+    r.json.return_value = items
+    return r
 
 
 # ---------------------------------------------------------------- page fetcher

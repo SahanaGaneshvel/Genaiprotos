@@ -17,9 +17,8 @@ RESPONSES = {
     "SearchPlan": {"web_queries": ["open vlm"], "arxiv_query": "open vlm", "github_query": "vlm"},
     "FindingExtraction": {"relevant": True, "summary": "Model A is a 7B VLM.",
                           "key_findings": ["7B", "MMMU 58.6"], "models_mentioned": ["Model A"]},
-    "ComparisonLLMOutput": {"models": [{"model_name": "Model A", "parameter_sizes": "7B",
-                                        "licence": "Apache-2.0", "source_ids": ["S1"]}],
-                            "key_differences": ["Only Model A was documented [S1]."]},
+    "ModelSelection": {"models": ["Model A"]},
+    "ComparisonRowLLM": {"parameter_sizes": "7B", "licence": "Apache-2.0"},
     "EvaluationLLMOutput": {"benchmarks": [{"model_name": "Model A", "benchmark": "MMMU",
                                             "score": "58.6", "source_id": "S1"}],
                             "assessments": [], "missing_evidence": ["No VRAM data."]},
@@ -32,7 +31,8 @@ RESPONSES = {
 def tools(monkeypatch):
     card = Source(title="Model A card", url="https://huggingface.co/org/a", source_type="documentation",
                   content="Model A 7B vision-language model. MMMU 58.6. Apache-2.0.")
-    monkeypatch.setattr(ra, "search_web", lambda q, n: [card.model_copy()] if "site:" not in q else [])
+    monkeypatch.setattr(ra, "search_web", lambda q, n: [card.model_copy()])
+    monkeypatch.setattr(ra, "search_models", lambda task, n: [])
     monkeypatch.setattr(ra, "search_arxiv", lambda q, n: [])
     monkeypatch.setattr(ra, "search_github", lambda q, n: [])
     monkeypatch.setattr(ra, "fetch_page", lambda url: None)
@@ -92,7 +92,7 @@ def test_no_sources_produces_honest_insufficient_report(monkeypatch):
     def offline(*a, **k):
         raise RetrievalError("no internet")
 
-    for name in ("search_web", "search_arxiv", "search_github"):
+    for name in ("search_web", "search_models", "search_arxiv", "search_github"):
         monkeypatch.setattr(ra, name, offline)
     llm = _use_llm(monkeypatch, FakeLLM(RESPONSES))
     state = wf.run_workflow(TOPIC)
@@ -101,11 +101,23 @@ def test_no_sources_produces_honest_insufficient_report(monkeypatch):
     assert state["agent_status"]["comparison"] == "skipped"
     assert state["report"].insufficient_evidence
     assert "no sources were retrieved" in state["report"].markdown
-    assert not any(name == "ComparisonLLMOutput" for name, _ in llm.calls)
+    assert not any(name == "ComparisonRowLLM" for name, _ in llm.calls)
+
+
+def test_sources_but_no_relevant_findings_also_gives_insufficient_report(tools, monkeypatch):
+    # real failure from the first live run: 2 off-topic papers, 0 findings, yet a "normal" report
+    responses = {**RESPONSES, "FindingExtraction": {**RESPONSES["FindingExtraction"],
+                                                    "relevant": False, "key_findings": []}}
+    llm = _use_llm(monkeypatch, FakeLLM(responses))
+    state = wf.run_workflow(TOPIC)
+    assert state["execution_order"] == ["orchestrator", "research", "report"]
+    assert state["report"].insufficient_evidence
+    assert "none was judged relevant" in state["report"].markdown
+    assert not any(name == "ReportNarrative" for name, _ in llm.calls)
 
 
 def test_one_failing_agent_does_not_stop_the_pipeline(tools, monkeypatch):
-    responses = {**RESPONSES, "ComparisonLLMOutput": OllamaResponseError("garbage")}
+    responses = {**RESPONSES, "ComparisonRowLLM": OllamaResponseError("garbage")}
     _use_llm(monkeypatch, FakeLLM(responses))
     state = wf.run_workflow(TOPIC)
     assert state["agent_status"]["comparison"] == "failed"

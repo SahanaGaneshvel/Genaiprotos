@@ -56,6 +56,13 @@ def test_missing_model_raises_model_not_found(monkeypatch):
         oc.OllamaClient().chat("sys", "user")
 
 
+def test_out_of_memory_gives_actionable_message(monkeypatch):
+    body = {"error": "llama-server reported out-of-memory during startup: failed to allocate buffer"}
+    monkeypatch.setattr(oc.requests, "post", lambda *a, **k: _resp(500, body))
+    with pytest.raises(oc.OllamaOutOfMemoryError, match="smaller model"):
+        oc.OllamaClient().chat("sys", "user")
+
+
 def test_connection_failure_raises_connection_error(monkeypatch):
     def boom(*a, **k):
         raise requests.ConnectionError("refused")

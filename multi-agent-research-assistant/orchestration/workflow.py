@@ -99,9 +99,8 @@ def research_node(state: ResearchState) -> dict:
 def comparison_node(state: ResearchState) -> dict:
     def work():
         _emit({"agent": "comparison", "message": "Comparing models from research findings"})
-        valid = {s.source_id for s in state["sources"]}
         out = comparison_agent.run(
-            state["topic"], state["research"], valid, _llm(), MAX_MODELS.get(state.get("depth"), 4)
+            state["topic"], state["research"], state["sources"], _llm(), MAX_MODELS.get(state.get("depth"), 4)
         )
         return {"comparison": out}
 
@@ -144,7 +143,7 @@ def insufficient_report_node(state: ResearchState) -> dict:
         errors = state["research"].retrieval_errors if state.get("research") else []
         return {"report": report_agent.build_insufficient_evidence_report(
             state["topic"], errors or ["No sources were returned by any retrieval tool."],
-            state.get("model_name", ""))}
+            state.get("model_name", ""), state.get("sources", []))}
 
     update = run_agent("report", state, work)
     update["agent_status"] = {**update["agent_status"], "comparison": "skipped", "evaluation": "skipped"}
@@ -159,8 +158,9 @@ def route_after_orchestrator(state: ResearchState) -> str:
 def route_after_research(state: ResearchState) -> str:
     if state["agent_status"].get("research") == "failed":
         return "end"
-    if not state.get("sources"):
-        return "insufficient"
+    research = state.get("research")
+    if not state.get("sources") or not research or not research.findings:
+        return "insufficient"  # nothing relevant to analyse -> honest report, no LLM claims
     return "comparison"
 
 
