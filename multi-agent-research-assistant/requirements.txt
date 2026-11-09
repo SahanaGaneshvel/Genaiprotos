@@ -2,6 +2,7 @@
 # All inference is local via Ollama (no paid APIs, no API-key SDKs).
 
 streamlit>=1.40          # frontend
+pandas>=2.0              # tables in the UI
 langgraph>=1.0           # multi-agent orchestration (StateGraph)
 pydantic>=2.7            # schemas + validation of LLM output
 requests>=2.32           # HTTP: Ollama REST API, arXiv, GitHub, webpages

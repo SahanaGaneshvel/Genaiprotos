@@ -35,6 +35,40 @@ def extract_json(text: str) -> dict:
     return data
 
 
+def validate_topic(topic: str) -> str:
+    """Reject empty / too short / too long / non-text research topics before any work starts."""
+    topic = " ".join((topic or "").split())
+    if len(topic) < 10:
+        raise ValueError("Please describe the research topic in at least 10 characters.")
+    if len(topic) > 1000:
+        raise ValueError("Research topic is too long (max 1000 characters).")
+    if sum(c.isalpha() for c in topic) < 5:
+        raise ValueError("Research topic must contain words, not only numbers or symbols.")
+    return topic
+
+
+def dedupe_keep_order(items: list[str]) -> list[str]:
+    """Case-insensitive de-duplication that keeps the first spelling seen."""
+    seen, out = set(), []
+    for item in items:
+        key = item.strip().lower()
+        if key and key not in seen:
+            seen.add(key)
+            out.append(item.strip())
+    return out
+
+
+def md_table(headers: list[str], rows: list[list[str]]) -> str:
+    """Render a Markdown table; escapes pipes/newlines so cell text cannot break the layout."""
+
+    def cell(value) -> str:
+        return str(value if value not in (None, "") else "—").replace("|", "\\|").replace("\n", " ")
+
+    lines = ["| " + " | ".join(headers) + " |", "|" + "---|" * len(headers)]
+    lines += ["| " + " | ".join(cell(v) for v in row) + " |" for row in rows]
+    return "\n".join(lines)
+
+
 def truncate(text: str, max_chars: int) -> str:
     """Cut text to max_chars on a word boundary (keeps prompts small for CPU inference)."""
     text = " ".join((text or "").split())

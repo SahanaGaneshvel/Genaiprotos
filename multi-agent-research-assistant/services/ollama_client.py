@@ -61,11 +61,25 @@ def _inline_refs(schema: dict) -> dict:
     return resolve(schema)
 
 
+def is_cloud_model(model: str) -> bool:
+    """Ollama 'cloud' models (e.g. `gpt-oss:120b-cloud`) run on ollama.com, not locally.
+    This project must keep inference local, so they are refused."""
+    tag = model.lower()
+    return tag.endswith("-cloud") or tag.endswith(":cloud")
+
+
 class OllamaClient:
     def __init__(self, settings: Settings | None = None):
         self.settings = settings or get_settings()
         self.model = self.settings.ollama_model
         self.base_url = self.settings.ollama_host
+
+    def _ensure_local_model(self) -> None:
+        if is_cloud_model(self.model):
+            raise OllamaModelNotFoundError(
+                f"'{self.model}' is an Ollama cloud model (runs remotely). This app only uses "
+                "local models — set OLLAMA_MODEL to a pulled local model such as qwen3.5:4b."
+            )
 
     # ------------------------------------------------------------------ health
     def list_models(self) -> list[str]:
@@ -82,8 +96,9 @@ class OllamaClient:
     def check_health(self) -> tuple[bool, str]:
         """Returns (ok, human-readable message). Never raises — used by the UI."""
         try:
+            self._ensure_local_model()
             models = self.list_models()
-        except OllamaConnectionError as exc:
+        except OllamaError as exc:
             return False, str(exc)
         wanted = self.model if ":" in self.model else f"{self.model}:latest"
         if wanted not in models:
@@ -101,8 +116,10 @@ class OllamaClient:
         *,
         json_schema: dict | None = None,
         temperature: float | None = None,
+        max_tokens: int | None = None,
     ) -> str:
         """Send one system+user exchange; return the assistant's text."""
+        self._ensure_local_model()
         payload = {
             "model": self.model,
             "messages": [
@@ -119,6 +136,8 @@ class OllamaClient:
         }
         if json_schema is not None:
             payload["format"] = json_schema
+        if max_tokens:
+            payload["options"]["num_predict"] = max_tokens  # cap output length (CPU time)
 
         resp = self._post(payload)
         # Some models reject the `think` flag entirely — retry once without it.
@@ -145,6 +164,7 @@ class OllamaClient:
         schema: type[T],
         *,
         temperature: float | None = None,
+        max_tokens: int | None = None,
         retries: int = 1,
     ) -> T:
         """Ask for JSON matching `schema`, validate it with Pydantic.
@@ -156,7 +176,9 @@ class OllamaClient:
         prompt = user
         last_error = ""
         for _ in range(retries + 1):
-            raw = self.chat(system, prompt, json_schema=json_schema, temperature=temperature)
+            raw = self.chat(
+                system, prompt, json_schema=json_schema, temperature=temperature, max_tokens=max_tokens
+            )
             try:
                 return schema.model_validate(extract_json(raw))
             except (ValueError, ValidationError) as exc:

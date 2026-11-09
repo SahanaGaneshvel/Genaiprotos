@@ -73,6 +73,17 @@ def test_health_check_reports_missing_model(monkeypatch):
     assert not ok and "ollama pull qwen3.5:4b" in msg
 
 
+def test_cloud_models_are_refused(monkeypatch):
+    post = MagicMock()
+    monkeypatch.setattr(oc.requests, "post", post)
+    client = oc.OllamaClient()
+    client.model = "gpt-oss:120b-cloud"
+    with pytest.raises(oc.OllamaModelNotFoundError, match="cloud"):
+        client.chat("sys", "user")
+    post.assert_not_called()  # nothing is ever sent off the machine
+    assert client.check_health()[0] is False
+
+
 def test_health_check_server_down(monkeypatch):
     def boom(*a, **k):
         raise requests.ConnectionError("refused")
