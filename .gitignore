@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# Secrets — never commit real credentials
+.env
+
+# Local caches / runtime artefacts
+.cache/
+**/outputs/*
+!**/outputs/.gitkeep
+!**/outputs/example_*
+
+# IDE / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
