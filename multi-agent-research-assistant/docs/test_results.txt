@@ -1,6 +1,12 @@
-# Test results — 2026-11-09 16:00
+# Test results — 2026-11-09 18:41
 # Python 3.12.9, pytest 9.2.0; all network and LLM calls mocked
 
+tests/test_api.py::test_health_reports_model_and_status PASSED
+tests/test_api.py::test_example_run_is_served PASSED
+tests/test_api.py::test_stream_sends_live_agent_events_then_final_state PASSED
+tests/test_api.py::test_workflow_crash_is_reported_as_error_event PASSED
+tests/test_api.py::test_invalid_topic_and_depth_rejected PASSED
+tests/test_api.py::test_only_one_run_at_a_time PASSED
 tests/test_app.py::test_app_renders_header_inputs_and_four_agent_cards PASSED
 tests/test_app.py::test_full_results_render_after_a_run PASSED
 tests/test_app.py::test_start_button_disabled_and_error_shown_when_ollama_down PASSED
@@ -128,4 +134,4 @@ tests/test_workflow.py::test_no_sources_produces_honest_insufficient_report PASS
 tests/test_workflow.py::test_sources_but_no_relevant_findings_also_gives_insufficient_report PASSED
 tests/test_workflow.py::test_one_failing_agent_does_not_stop_the_pipeline PASSED
 tests/test_workflow.py::test_reducer_merges_instead_of_overwriting PASSED
-============================= 127 passed in 2.58s =============================
+============================ 133 passed in 14.73s =============================

@@ -9,6 +9,8 @@ requests>=2.32           # HTTP: Ollama REST API, arXiv, GitHub, webpages
 beautifulsoup4>=4.12     # HTML -> text extraction
 ddgs>=9.0                # DuckDuckGo web search (successor of duckduckgo_search)
 python-dotenv>=1.0       # load settings from .env
+fastapi>=0.115           # HTTP API for the Next.js frontend (api/server.py)
+uvicorn>=0.30            # ASGI server for the API
 
 # testing
 pytest>=8.0

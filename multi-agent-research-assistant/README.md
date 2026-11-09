@@ -154,6 +154,26 @@ streamlit run app.py
 Enter a topic, choose **Basic** or **Detailed**, press **Start Research**. Results appear in four
 tabs (Research Findings · Model Comparison · Evaluation · Final Report) with a Markdown download.
 
+**Next.js web app** (animated dashboard + About + interactive Architecture pages) — two terminals:
+```bash
+# 1. API server: runs the same LangGraph workflow and streams events (FastAPI + Server-Sent Events)
+python -m uvicorn api.server:app --port 8000
+
+# 2. Web app (Node.js 20+)
+cd web
+npm install
+npm run build && npx next start -p 3000      # or: npm run dev
+```
+Open http://localhost:3000. **Load example run** shows the saved real run instantly; **Start research**
+runs the live pipeline with animated agent cards. The run state lives in a provider in the root layout,
+so a run keeps streaming while you browse the Architecture page — which then highlights the running agent.
+
+| Page | What it shows |
+|---|---|
+| `/` Dashboard | topic + depth, live animated pipeline, activity log, metrics, 4 result tabs, Markdown download |
+| `/architecture` | animated, clickable flow diagram; per-step detail (LLM / code / external API, output schema, token limit, guard); shared-state keys; all 30 steps in order |
+| `/about` | what the project does, each agent's job (what the model does vs what code does), the 9 guards, stack, limitations |
+
 **Command line** (same workflow, prints live events):
 ```bash
 python -m orchestration.workflow "your topic here" basic
@@ -185,6 +205,7 @@ All tests are offline: Ollama and every network call are mocked (`tests/fakes.py
 | `test_citations.py` | citation consistency, licence classification |
 | `test_workflow.py` | execution order, shared-state updates, live status events, abort paths, failure isolation |
 | `test_app.py` | page renders; Start disabled when Ollama is down; full results (4 tabs, metrics, download) render from the real example run |
+| `test_api.py` | API health, example endpoint, SSE event order, crash reported as error event, validation, one run at a time |
 
 Latest results (127 passed): [`docs/test_results.txt`](docs/test_results.txt).
 
@@ -193,6 +214,12 @@ Latest results (127 passed): [`docs/test_results.txt`](docs/test_results.txt).
 ```
 multi-agent-research-assistant/
 ├── app.py                     Streamlit UI
+├── api/server.py              FastAPI: /api/health, /api/example, /api/research/stream (SSE)
+├── web/                       Next.js 16 + Tailwind v4 + Motion frontend
+│   └── src/
+│       ├── app/               pages: / (dashboard), /about, /architecture
+│       ├── components/        run-provider (live run state), dashboard/, architecture/, about/
+│       └── lib/pipeline.ts    step-by-step description of the pipeline (mirrors the Python code)
 ├── config.py                  all settings (env / .env)
 ├── agents/                    one file per agent, each with its own SYSTEM_PROMPT
 │   ├── research_agent.py

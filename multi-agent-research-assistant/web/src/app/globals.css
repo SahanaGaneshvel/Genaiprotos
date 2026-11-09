@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ theme */
+:root {
+  --bg: #060a14;
+  --surface: #0b1222;
+  --surface-2: #101a2e;
+  --border: rgba(148, 163, 184, 0.14);
+  --border-strong: rgba(148, 163, 184, 0.26);
+  --text: #e6ebf5;
+  --muted: #8b97ad;
+  --accent: #818cf8; /* indigo-400 */
+  --accent-2: #22d3ee; /* cyan-400 */
+  --llm: #a78bfa; /* violet: work done by the local LLM */
+  --code: #34d399; /* emerald: deterministic code */
+  --api: #fbbf24; /* amber: external public API */
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-llm: var(--llm);
+  --color-code: var(--code);
+  --color-api: var(--api);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  color-scheme: dark;
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: rgba(129, 140, 248, 0.35);
+}
+
+/* ------------------------------------------------------------------ backdrop */
+.backdrop-grid {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 75%);
+}
+
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.35;
+  animation: drift 22s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(60px, 40px, 0) scale(1.15); }
+}
+
+.text-gradient {
+  background: linear-gradient(100deg, #c7d2fe 0%, var(--accent) 40%, var(--accent-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(16, 26, 46, 0.85), rgba(11, 18, 34, 0.85));
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  backdrop-filter: blur(8px);
+}
+
+/* flowing dashes on diagram edges */
+.flow-dash {
+  stroke-dasharray: 6 8;
+  animation: dash 1.2s linear infinite;
+}
+
+@keyframes dash {
+  to { stroke-dashoffset: -28; }
+}
+
+/* ------------------------------------------------------------------ report markdown */
+.prose-report {
+  color: #cdd5e3;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+.prose-report h1 { font-size: 1.6rem; font-weight: 700; color: var(--text); margin: 0 0 1rem; }
+.prose-report h2 {
+  font-size: 1.15rem; font-weight: 650; color: var(--text);
+  margin: 2rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border);
+}
+.prose-report p { margin: 0.6rem 0; }
+.prose-report ul, .prose-report ol { margin: 0.5rem 0 0.75rem 1.25rem; }
+.prose-report ul { list-style: disc; }
+.prose-report ol { list-style: decimal; }
+.prose-report li { margin: 0.25rem 0; }
+.prose-report strong { color: var(--text); }
+.prose-report a { color: var(--accent-2); text-decoration: underline; text-underline-offset: 3px; word-break: break-all; }
+.prose-report code { font-family: var(--font-geist-mono); font-size: 0.85em; background: var(--surface-2); padding: 0.1rem 0.35rem; border-radius: 0.3rem; }
+.prose-report blockquote {
+  border-left: 3px solid var(--accent); background: rgba(129, 140, 248, 0.08);
+  padding: 0.6rem 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 0.75rem 0; color: #c7d2fe;
+}
+.prose-report table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 0.75rem 0; display: block; overflow-x: auto; }
+.prose-report th { text-align: left; color: var(--text); background: var(--surface-2); font-weight: 600; }
+.prose-report th, .prose-report td { border: 1px solid var(--border); padding: 0.45rem 0.6rem; vertical-align: top; }
+.prose-report em { color: var(--muted); }
+
+/* ------------------------------------------------------------------ misc */
+.scroll-thin { scrollbar-width: thin; scrollbar-color: rgba(148, 163, 184, 0.25) transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  .orb, .flow-dash { animation: none; }
+}
