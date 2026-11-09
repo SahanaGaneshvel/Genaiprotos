@@ -29,19 +29,19 @@ def _source_type(url: str) -> str:
     return "documentation" if any(d in url for d in DOC_DOMAINS) else "web"
 
 
-# DuckDuckGo first. Its HTML endpoint sometimes returns nothing for automated
-# clients, so we fall back to ddgs' "auto" metasearch (other free engines) and
-# record which backend produced each result — transparent, never silent.
-# The metasearch is itself occasionally empty, so it gets one retry after a pause.
-BACKENDS = ("duckduckgo", "auto", "auto")
-RETRY_PAUSE_S = 2.0
+# DuckDuckGo first. Free search engines often return nothing to automated clients
+# (live testing: at one point only Bing answered, and "auto" did not reach it), so
+# we try a short, fixed chain of free backends and record which one produced each
+# result — transparent, never silent, and bounded (no loops).
+BACKENDS = ("duckduckgo", "bing", "brave", "auto")
+RETRY_PAUSE_S = 1.0
 
 
 def _ddgs_text(query: str, max_results: int) -> tuple[list[dict], str]:
     last_error: Exception | None = None
     for attempt, backend in enumerate(BACKENDS):
-        if attempt == len(BACKENDS) - 1:
-            time.sleep(RETRY_PAUSE_S)
+        if attempt:
+            time.sleep(RETRY_PAUSE_S)  # be polite between engines
         try:
             raw = DDGS(timeout=15).text(query, max_results=max_results, backend=backend)
             if raw:

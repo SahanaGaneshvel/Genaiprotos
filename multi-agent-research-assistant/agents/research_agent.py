@@ -103,6 +103,8 @@ GENERIC_TERMS = {
 }
 
 
+PLACEHOLDER_NAMES = {"", "none", "null", "n/a", "na", "unknown", "not specified", "not stated"}
+
 MULTIMODAL_TOPIC = re.compile(r"multimodal|multi-modal|vision|image|visual|vlm", re.I)
 
 
@@ -309,7 +311,9 @@ def run(
         if finding:
             findings.append(finding)
 
-    models = dedupe_keep_order([m for f in findings for m in f.models_mentioned])
+    models = dedupe_keep_order(
+        [m for f in findings for m in f.models_mentioned if m.strip().lower() not in PLACEHOLDER_NAMES]
+    )
     return sources, ResearchOutput(
         findings=findings, models_identified=models, search_plan=plan, retrieval_errors=errors
     )

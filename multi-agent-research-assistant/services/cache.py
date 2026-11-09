@@ -36,7 +36,9 @@ def get(namespace: str, key: str) -> Any | None:
 
 
 def put(namespace: str, key: str, data: Any) -> None:
-    if get_settings().cache_ttl_hours <= 0:
+    # Never cache empty results: "no results" is often a temporary block or rate limit,
+    # and caching it would hide recovered search engines for the whole TTL.
+    if get_settings().cache_ttl_hours <= 0 or not data:
         return
     path = _path(namespace, key)
     try:

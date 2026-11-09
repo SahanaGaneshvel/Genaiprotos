@@ -79,6 +79,50 @@ def test_narrative_failure_falls_back_to_code_only_report():
     assert "| Model A |" in out.markdown  # tables still present
 
 
+def test_misattributed_narrative_sentence_is_removed():
+    # live bug: "Kimi K3.1-Pro is best for OCR [S2]" while S2 said that about Qwen3-VL
+    reply = {**NARRATIVE, "comparative_analysis":
+             "Model A is a 7B VLM [S1]. Model B is the best OCR model [S1]. Both are open [S1][S2]."}
+    research = RESEARCH.model_copy(update={"models_identified": ["Model A", "Model B"]})
+    out = rp.run("topic", research, COMPARISON, EVALUATION, SOURCES,
+                 llm=FakeLLM({"ReportNarrative": reply}))
+    assert "Model B is the best OCR model" not in out.markdown  # S1 never mentions Model B
+    assert "Model A is a 7B VLM [S1]." in out.markdown
+    assert out.removed_claims == ["Model B is the best OCR model [S1]."]
+    assert "1 narrative sentence(s) were removed" in out.markdown
+
+
+def test_attribution_check_is_strict_for_versions_lenient_for_descriptive_names():
+    from schemas.research import Source
+
+    src = Source(source_id="S8", title="allenzren/open-pi-zero", url="https://github.com/allenzren/open-pi-zero",
+                 source_type="github", content="We fine-tune the PaliGemma model, a VLM with 3B parameters.")
+    by_id = {"S8": src}
+    models = ["open-pi-zero", "PaliGemma VLM", "Kimi K3.1-Pro"]
+    # live false positive: "PaliGemma VLM" written differently in the source -> must be KEPT
+    kept, removed = rp.check_attribution("open-pi-zero builds on the PaliGemma VLM [S8].", models, by_id)
+    assert removed == [] and kept
+    # versioned model name absent from the cited source -> still REMOVED
+    _, removed = rp.check_attribution("Kimi K3.1-Pro is great at OCR [S8].", models, by_id)
+    assert removed == ["Kimi K3.1-Pro is great at OCR [S8]."]
+
+
+def test_rule_based_recommendations_use_licence_and_memory_estimate():
+    from schemas.evaluation import MemoryEstimate
+
+    evaluation = EVALUATION.model_copy(update={"memory_estimates": [MemoryEstimate(
+        model_name="org/Model-A", parameters="8.00B", source_id="S1", fp16_gb=19.2, int8_gb=9.6, int4_gb=4.8)]})
+    recs = rp.rule_based_recommendations(COMPARISON, evaluation)
+    assert recs == ["**Model A** — OSI-approved licence (Apache-2.0) and ~4.8 GB of weights at 4-bit (estimate): "
+                    "candidate for a single-GPU on-prem pilot; measure VRAM and run your own evaluation first [S1]."]
+
+
+def test_recommendations_section_always_has_grounded_advice():
+    out, _ = _report({**NARRATIVE, "recommendations": []})
+    section = out.markdown.split("## 9. Recommendations")[1].split("## 10.")[0]
+    assert "Rule-based" in section and "**Model A**" in section and "[S1]" in section
+
+
 def test_insufficient_evidence_report_makes_no_claims():
     out = rp.build_insufficient_evidence_report("topic", ["web: offline", "arXiv: offline"], "m")
     assert out.insufficient_evidence and "no sources were retrieved" in out.markdown

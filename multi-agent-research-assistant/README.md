@@ -14,9 +14,9 @@ All LLM inference runs **locally through Ollama** — no paid APIs, no API keys 
 
 | Agent | Responsibility | Output (Pydantic schema) |
 |---|---|---|
-| **Research Agent** | Plans search queries; searches the web (DuckDuckGo), Hugging Face model cards, arXiv and GitHub; fetches pages; extracts findings per source | `ResearchOutput` — findings with source ID, title, URL, type, date, summary, key findings, limitations |
-| **Comparison Agent** | Compares the identified models: modalities, parameters, context window, deployment, hardware, licence | `ComparisonOutput` — comparison table + key differences |
-| **Evaluation Agent** | Extracts reported benchmark scores, assesses on-prem suitability, quantisation, trade-offs and missing evidence | `EvaluationOutput` — verified benchmarks, assessments, missing evidence |
+| **Research Agent** | Plans search queries; searches the web (DuckDuckGo + free fallbacks), Hugging Face model cards (Hub API), arXiv and GitHub; fetches pages; extracts findings per source | `ResearchOutput` — findings with source ID, title, URL, type, date, summary, key findings, limitations |
+| **Comparison Agent** | Selects the models, gathers per-model evidence, fills one table row per model (modalities, parameters, context window, deployment, hardware, licence), explains differences | `ComparisonOutput` — comparison table + key differences |
+| **Evaluation Agent** | Extracts reported benchmark scores (verified against source text), assesses on-prem suitability, computes labelled memory estimates, flags missing evidence | `EvaluationOutput` — verified benchmarks, assessments, memory estimates, missing evidence |
 | **Report Agent** | Consolidates everything into a 10-section technical report with references | `ReportOutput` — Markdown + citation audit |
 
 ## 2. Architecture
@@ -28,8 +28,8 @@ flowchart TD
     O --> R[Research Agent]
 
     subgraph Tools["Retrieval tools (code)"]
-        W[DuckDuckGo web search]
-        H[Hugging Face model cards<br/>via web search]
+        W[Web search<br/>DuckDuckGo → Bing → Brave → auto]
+        H[Hugging Face Hub API<br/>model cards + licence + params]
         A[arXiv API]
         G[GitHub REST API]
         F[Page fetcher<br/>Requests + BeautifulSoup]
@@ -60,11 +60,27 @@ flowchart TD
 
 | Step | Done by | Why |
 |---|---|---|
-| Choosing search queries, reading sources, writing prose | **LLM** | needs language understanding |
-| Calling tools, URLs, titles, dates, citation IDs | **Code** | must be exact; a 4B model is unreliable at tool calling |
+| Choosing search queries, reading sources, filling table rows, writing prose | **LLM** | needs language understanding |
+| Calling tools, URLs, titles, dates, citation IDs | **Code** | must be exact; a 2–4B model is unreliable at tool calling |
+| Picking the most informative passages of each page | **Code** (keyword + evidence-signal scoring) | page starts are menus and intros |
+| Which sources support each model row | **Code** (which findings mention the model) | the LLM never chooses its own citations |
+| Licence / parameter count from model cards | **Code** (Hugging Face & GitHub API metadata) | more reliable than LLM copying; origin labelled |
 | Licence category (OSI open source vs open weights) | **Code** (rules over the licence text) | never "upgrade" open weights to open source |
 | Benchmark verification | **Code** | a score is kept only if it literally appears in the cited source |
+| Memory estimates | **Code** (params × bytes/param × 1.2) | arithmetic, labelled *Estimate* |
 | Tables, methodology, references | **Code** | generated from structured state, always consistent |
+
+### Why the Comparison Agent works in small steps
+
+The first live runs asked a 2B model to read every finding and produce the whole table in one
+call — it returned **an empty table**. Splitting the job fixed it:
+
+1. **Select** (LLM): which candidate names are AI models? Code rejects any name not in the research.
+2. **Evidence** (code): collect only the finding lines about each model (+ its own model card).
+3. **Row** (LLM, one small call per model): fill the row from that evidence only.
+4. **Enrich** (code): fill gaps from API metadata, reject non-licences (e.g. a price), classify licence.
+5. **Differences** (LLM): written from the finished table; code attaches the citations of the
+   models each sentence names and drops sentences that name none.
 
 ## 3. How hallucinations are contained
 
@@ -76,10 +92,17 @@ flowchart TD
 4. **Benchmark verification.** A reported score survives only if that number *and* the
    benchmark name appear in the cited source's text; otherwise it is excluded and counted
    in the report. The app never runs benchmarks and says so explicitly.
-5. **Honest failure.** If no sources are retrieved, the report states that research failed
+5. **Attribution check on prose.** If a narrative sentence names a model and cites sources, the
+   cited sources must actually mention that model — otherwise the sentence is removed and counted
+   in the report. (Found live: *"Kimi K3.1-Pro is best for OCR [S2]"*, while S2 said that about Qwen3-VL.)
+6. **Code-set citations in the comparison.** Which sources support a table row is decided by code
+   (which findings mention the model); difference sentences get the citations of the models they name.
+7. **Rule-based recommendations.** Besides the LLM's advice, code derives cited suggestions from the
+   licence category and memory estimate (e.g. *OSI licence + ≤ 24 GB at 4-bit → single-GPU pilot candidate*).
+8. **Honest failure.** If no relevant sources are found, the report states that research failed
    and makes no claims. If extraction fails for a source, its original snippet is shown
-   and labelled as such — nothing is invented.
-6. **Validated structured output.** Every LLM call uses Ollama's JSON-schema `format`
+   and labelled as such. Failed sub-steps are reported as warnings, never hidden.
+9. **Validated structured output.** Every LLM call uses Ollama's JSON-schema `format`
    and Pydantic validation, with one bounded retry.
 
 ## 4. Setup (Windows, macOS, Linux)
@@ -106,6 +129,9 @@ vision encoder (~0.9 GB) that Ollama loads even for text, so the 4B model needs 
 |---|---|
 | ≥ 6 GB | `qwen3.5:4b` (default) |
 | 3–6 GB | `qwen3.5:2b` |
+
+> On the 8 GB development laptop (Windows, VS Code and a browser open) `qwen3.5:4b` failed to load
+> with an out-of-memory error, so the example report was produced with `qwen3.5:2b`.
 
 ```bash
 ollama pull qwen3.5:2b
@@ -150,14 +176,17 @@ All tests are offline: Ollama and every network call are mocked (`tests/fakes.py
 |---|---|
 | `test_schemas.py` | Pydantic validation, URL validation, research finding validation |
 | `test_ollama_client.py` | structured output parsing, malformed output + retry, missing model, server down, out-of-memory, cloud-model refusal |
-| `test_retrieval.py` | arXiv/GitHub/DuckDuckGo parsing, rate limits, offline, robots.txt, search fallback |
-| `test_research_agent.py` | one failed tool doesn't stop research, de-duplication, honest extraction fallback |
-| `test_comparison_agent.py` | unsupported rows/citations removed, licence category set by code |
+| `test_retrieval.py` | arXiv / GitHub / Hugging Face / web parsing, rate limits, offline, robots.txt, backend fallback chain |
+| `test_cache.py` | cache round trip, expiry, empty results never cached |
+| `test_research_agent.py` | one failed tool doesn't stop research, de-duplication, query relaxation, honest extraction fallback |
+| `test_comparison_agent.py` | invented model names ignored, per-model evidence, code-set citations, metadata enrichment, failed steps reported |
 | `test_evaluation_agent.py` | fabricated benchmark numbers rejected, unsupported assessments downgraded |
 | `test_report_agent.py` | 10 sections in order, references = real URLs, uses all three agent outputs, fallback |
 | `test_citations.py` | citation consistency, licence classification |
 | `test_workflow.py` | execution order, shared-state updates, live status events, abort paths, failure isolation |
-| `test_app.py` | Streamlit page renders; Start disabled when Ollama is unavailable |
+| `test_app.py` | page renders; Start disabled when Ollama is down; full results (4 tabs, metrics, download) render from the real example run |
+
+Latest results (127 passed): [`docs/test_results.txt`](docs/test_results.txt).
 
 ## 7. Project structure
 
@@ -175,21 +204,24 @@ multi-agent-research-assistant/
 │   └── workflow.py            LangGraph graph, node wrapper, CLI
 ├── services/
 │   ├── ollama_client.py       local LLM client (REST, JSON schema, validation, errors)
-│   ├── web_search.py          DuckDuckGo via ddgs
+│   ├── web_search.py          DuckDuckGo via ddgs (+ free fallback engines)
+│   ├── huggingface_search.py  Hugging Face Hub API: model cards, licence, parameter count
 │   ├── arxiv_search.py        arXiv Atom API
 │   ├── github_search.py       GitHub REST search + README
 │   ├── document_fetcher.py    robots-aware page fetch + HTML → text
 │   ├── cache.py               JSON file cache (TTL)
 │   └── errors.py              RetrievalError
 ├── schemas/                   Pydantic models per agent
-├── utils/                     citations.py (registry/audit), helpers.py
+├── utils/                     citations.py (registry/audit), evidence.py (per-model evidence), helpers.py
 ├── tests/                     offline test suite
 ├── docs/PROJECT_BRIEF.md      original brief
 └── outputs/                   generated reports + JSON run records
 ```
 
 Deviations from the suggested structure: `config.py` (single place for settings),
-`services/cache.py` and `services/errors.py` (shared by all tools), `tests/fakes.py` (test doubles).
+`services/cache.py` and `services/errors.py` (shared by all tools), `services/huggingface_search.py`
+(official model cards — the brief asks for model cards "where possible"), `utils/evidence.py`
+(per-model evidence shared by Comparison and Evaluation), `tests/fakes.py` (test doubles).
 
 ## 8. Error handling
 
@@ -211,28 +243,83 @@ Deviations from the suggested structure: `config.py` (single place for settings)
 See [`outputs/example_report.md`](outputs/example_report.md) and the full structured record in
 [`outputs/example_run.json`](outputs/example_run.json).
 
-<!-- EXAMPLE_RUN_STATS -->
+**Query:** *"Research the latest open-source multimodal models suitable for on-premise deployment.
+Compare their capabilities, benchmarks, hardware requirements, licensing and limitations."* — depth **Basic**,
+model `qwen3.5:2b`, Windows laptop (i5-1155G7, 8 GB RAM, CPU only).
+
+| Agent | Time | Output |
+|---|---|---|
+| Research | 369 s | 8 sources (2 web, 2 Hugging Face model cards, 2 arXiv, 2 GitHub), 7 judged relevant |
+| Comparison | 110 s | 4 models compared; licence/parameters filled from API metadata |
+| Evaluation | 90 s | 0 verified benchmarks (none found in retrieved text), 2 memory estimates |
+| Report | 118 s | 10 sections, 0 invalid citations, 1 misattributed sentence removed |
+| **Total** | **690 s** | 0 errors |
+
+**What it got right:** every reference is a retrieved URL; licences and parameter counts come from the
+Hugging Face / GitHub APIs with their source cited; Qwen3.8-27B (27.78B, Apache-2.0) is identified as a
+single-GPU pilot candidate at ~16.7 GB (4-bit, estimate) while Kimi K3.1-Pro (2.78T parameters, ~1.7 TB at
+4-bit) is clearly not an on-prem option; the report says plainly that no benchmark could be verified.
+
+**Known flaws in this example (reviewed by hand — left in on purpose):**
+* *"Kimi K3.1-Pro … making it ideal for document extraction and OCR tasks [S3]"* — a reasoning leap by the
+  2B model (another source said that about Qwen3-VL). The attribution check passes because S3 *is* about Kimi;
+  it verifies the model–source pairing, not every claim in the sentence.
+* `mlx-vlm` is an inference framework, not a model; it was included because it has its own repository.
+* The Kimi parameter cell copies a sentence verbatim (*"Our model has parameters of 2780.11B."*).
+* One correctly-cautious sentence was removed by the attribution check because it named a model whose
+  source it did not cite — the check is deliberately strict.
+
+### What live testing changed (9 full runs)
+
+Unit tests with a fake LLM passed from the start; the real model and real internet exposed problems
+the mocks never could. Each fix below has a regression test named after the live failure.
+
+| Run | Observed | Fix |
+|---|---|---|
+| 1 | Model wrote queries like `[multimodal model] [on-premise]`; GitHub returned 0; arXiv matched "premise"; 0 findings yet a "normal" report | query cleaning, generic-word removal + bounded relaxation, "0 findings → insufficient-evidence report" |
+| 2 | Best articles dropped as irrelevant — the model saw only the page's menu/intro; model-card search returned GPT-2 | best-passage selection, HF Hub API sorted by trending, task guard for multimodal topics |
+| 3 | Empty comparison table from one big prompt | Comparison split into select → evidence → one row per model → differences |
+| 4–5 | Differences step failed silently; empty "no results" cached for 24 h; only Bing answered | warnings surfaced, never cache empty results, fixed engine fallback chain |
+| 6 | "Kimi K3" inherited Kimi K3.1-Pro's 2.78T parameters | version-aware name matching |
+| 7 | Architecture components picked as "models"; a price in the licence column; prose misattributed a capability | own-card models always compared, licence sanity check, attribution check |
+| 8 | Attribution check removed a correct sentence ("PaliGemma VLM") | strict for versioned names, whole-word match for descriptive names |
+| — | UI test: status cards stacked instead of updating | `st.empty()` placeholders |
 
 ## 10. Limitations
 
-* **Small local model.** Extraction and comparisons are only as good as a 2–4B model reading
-  1,500–2,500 characters per source; facts can be missed or mis-assigned. Verify critical facts in the cited sources.
+Observed during live end-to-end runs with `qwen3.5:2b` on a CPU-only laptop:
+
+* **Small local model reasoning.** A 2B model extracts facts reasonably but reasons poorly about
+  them — e.g. it once wrote that a 160K context was larger than a 1M context. The design limits the
+  damage (code owns citations, numbers verification, licences, tables), but **narrative sentences can
+  still contain reasoning errors. Verify critical statements in the cited sources.**
+* **Results vary between runs.** Search engines return different pages, and the model's choices
+  differ slightly, so two runs of the same topic produce different tables.
+* **Free web search is fragile.** Free engines often return nothing to automated clients (at one point
+  only Bing answered). The tool tries a fixed chain of engines and records which one answered; if all
+  fail, research continues with the other tools and the report says so.
+* **The attribution check is narrow.** It confirms that cited sources mention the models a sentence
+  names; it cannot verify every claim inside the sentence (see the "ideal for OCR" example above).
+* **Benchmark evidence is rare in retrieved text.** Model cards put scores in images or long tables
+  beyond the passages the model reads, so runs often report *"no benchmark scores could be verified"*
+  — honest, but thin. Verification is lexical: it confirms the number and benchmark name appear in the
+  source, not that they belong together.
 * **Shallow retrieval by design.** ~2–4 sources per category; no PDF parsing (arXiv abstracts only);
   JavaScript-heavy pages yield little text.
-* **Benchmark verification is lexical.** It confirms the number and benchmark name appear in the
-  source, not that the number belongs to that model/benchmark pairing.
-* **Licence classification is rule-based** and conservative; unusual licence names become "Unknown".
-* **Web search backend.** DuckDuckGo's endpoint sometimes returns nothing to automated clients;
-  the tool then falls back to the `ddgs` metasearch and records which backend was used.
-* **CPU speed.** A Basic run takes several minutes on a laptop CPU.
-* **Dates** are publication dates for arXiv, last-push dates for GitHub, and page metadata for
-  websites (often missing).
+* **Licence classification is rule-based** and conservative; unusual names (e.g. Hugging Face's
+  `other`) become "Unknown" rather than guessed.
+* **Memory estimates are arithmetic**, not measurements: weights only, no KV cache or vision encoder.
+* **CPU speed.** A Basic run takes ~9–13 minutes on a 4-core laptop CPU with the 2B model.
+* **Dates** are publication dates for arXiv, creation dates for Hugging Face, last-push dates for
+  GitHub and page metadata for websites (often missing).
 
 ## 11. Possible improvements
 
+* Use a larger local model (4B–8B) on a machine with more RAM or a GPU — the pipeline is unchanged,
+  only `OLLAMA_MODEL` differs; quality of reasoning and narrative should improve markedly.
 * Run Comparison and Evaluation in parallel when a GPU / multiple model instances are available.
-* Semantic (embedding-based) relevance filtering and claim-level verification against source text.
-* PDF parsing of arXiv papers and Hugging Face model-card YAML metadata (licence, params) via the HF API.
+* Embedding-based passage selection and claim-level verification of narrative sentences against source text.
+* Parse benchmark tables from model-card Markdown, and PDF parsing of arXiv papers.
 * A reviewer step that checks the report against the evidence (bounded to one pass).
 * Persist runs in SQLite and allow comparing reports over time.
 * Optional benchmark execution on a small local evaluation set — clearly separated from reported scores.

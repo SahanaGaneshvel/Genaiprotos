@@ -102,7 +102,7 @@ def comparison_node(state: ResearchState) -> dict:
         out = comparison_agent.run(
             state["topic"], state["research"], state["sources"], _llm(), MAX_MODELS.get(state.get("depth"), 4)
         )
-        return {"comparison": out}
+        return {"comparison": out, "errors": [f"comparison: {w}" for w in out.warnings]}
 
     update = run_agent("comparison", state, work)
     update.setdefault("comparison", ComparisonOutput())  # downstream agents always get a value

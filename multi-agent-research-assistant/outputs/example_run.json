@@ -1,0 +1,592 @@
+{
+  "topic": "Research the latest open-source multimodal models suitable for on-premise deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations.",
+  "depth": "basic",
+  "model_name": "qwen3.5:2b",
+  "sources": [
+    {
+      "source_id": "S1",
+      "title": "Top 15 Multimodal Models in 2026 (Open Source & Proprietary)",
+      "url": "https://blog.unitlab.ai/top-multimodal-models/",
+      "source_type": "web",
+      "published": "2026-01-21",
+      "snippet": "Jan 21, 2026 · Discover what multimodal models are, how their architectures work, the top multimodal models, real-world use cases, and key challenges.",
+      "content": "Asad Iqbal January 21, 2026 - 19 min read Home Multimodal AI Top 15 Multimodal Models in 2026 (Open Source & Proprietary) Top 15 Multimodal Models in 2026 (Open Source & Proprietary) Multimodal models are AI systems that process and integrate multiple data types in parallel. They combine text, images, and audio into one unified language model or network. This lets them handle tasks like image captioning and visual question answering by combining visual cues and textual data. TL;DR What are multimodal models, in simple terms? Multimodal models are machine learning and artificial intelligence systems that process multiple data types (modalities) together. Instead of treating each data type separately, a large multimodal model learns joint representations so it can align visual cues, textual descriptions, and other modalities in a shared space. This lets one model handle tasks like image captioning, visual question answering, text-to-image search, and image generation using the same backbone.​ What is the difference between multimodal models and LLM? Traditional unimodal models focus on a single input, like text-only large language models or image-only image recognition systems. Multimodal AI combines a language model with one or more encoders (vision encoder, audio encoder, and more) plus a fusion module that integrates data from different modalities into unified, cross‑modal representations. It lets models process data from multiple modalities at once and generate text descriptions, answer questions, or even generate images conditioned on text. What can modern multimodal models actually do in production? Modern vision language models and large multimodal models support many real‑world tasks: image captioning, visual question answering, OCR and document understanding, chart and table reasoning, text-to-image search, code generation from UI screenshots, and long‑context multimodal analysis of PDFs, slide decks, or videos. Many models now accept multimodal inputs (text + images + audio, and sometimes video) and can process hundreds of pages or minutes of video in one pass, then generate text outputs such as summaries, explanations, or structured data.​ Why do multimodal models matter for AI teams today? Multimodal capabilities let AI systems integrate data from multiple types at once, which improves accuracy compared to models trained on a single modality. For example, combining visual data and textual data can reduce ambiguity and make models less sensitive to noise in one modality. As generative AI systems move beyond pure text, multimodal learning and multimodal datasets become central to competitive AI products.​ What are the key challenges with multimodal models? The main challenges include building large, well‑aligned multimodal datasets, synchronizing multiple data modalities, high compute and memory costs, robust evaluation of cross‑modal reasoning, managing hallucinations when models invent non‑existent visual details, and dealing with bias, privacy, and copyright in multimodal data. There are also engineering challenges around integrating multimodal systems into products and fine tuning them safely on domain‑specific text data, images, and other modalities. We have moved past the time when AI systems only processed text. Now, they can work with different data types, such as text, images, audio, sensor data, and more. They understand how these multiple modalities of information relate and can produce one modality from another (generating images from text descriptions). And multimodal models make this possible. Multimodal models help build many real-life multimodal applications , such as visual assistants capable of diagnosing medical imaging or debugging codebases from a screenshot. In this guide, we'll cover: What are multimodal models? How multimodal model architectures work Multimodal model key use cases and applications Top multimodal models Challenges and future trends If you’re building or fine-tuning AI models, high-quality annotated datasets matter as much as your model choice. We at Unitlab AI help you create and manage data with AI‑assisted annotation for images, video, text, audio, and medical images in a single workspace. Try Unitlab AI for free and see how it accelerates your AI project! Enterprise Multimodal Data Platform for AI Teams | Unitlab Unitlab AI is an enterprise multimodal data platform for curating, annotating, reviewing, versioning, and managing production training data. Unitlab AI What are Multimodal Models? Multimodal models are trained to process and reason over multiple modalities of input. The types of input a model works with depend on the task it is built for. For example, you train a model on medical imaging and textual data to support diagnosis. Popular data types include text data, image pixels, audio waveforms, and video frames. Some specialist models may also use data types such as time-series sequences and geospatial data when the use case requires it. Multimodal model tasks include: Visual question answering (VQA) Image captioning Object detection and image classification Document OCR Object counting Text‑to‑image and image‑to‑text generation Understanding the distinction between unimodal vs. multimodal models is critical for selecting the right approach for a real application. Unimodal models work within a single data domain. For example, BERT can process text-only data, while ResNet and WaveNet (for audio synthesis) are image- and audio-specific, respectively. On the other hand, a multimodal model can take that image plus an accompanying text caption (or question) and use both sources of information. Multimodal systems also tend to be more robust, as if one modality is noisy or missing, they can rely on others. For example, if a camera image is blurry, a multimodal model might still infer correct information from a related text caption or audio clue. How Multimodal Model Architectures Work Although implementations vary, most modern multimodal systems follow a similar high‑level architecture. They start by encoding each modality with a dedicated sub-network, then merging those representations. The modality encoder can include: Vision Encoder (Image Encoder): A convolutional network or, more often, a Vision Transformer (ViT) that turns image pixels into a sequence of visual tokens (image embeddings). Text encoder or Base Language Model: A transformer‑based language model that processes text tokens.​ Audio Encoder: A convolutional or Conformer‑style network that converts raw audio or spectrograms into audio embeddings.​ Video Encoder: A temporal vision transformer or 3D CNN that encodes sequences of frames into spatiotemporal tokens. Once each modality is embedded, the model fuses them. There are two broad architectural styles: Unified-Decoder Approach: Convert every input into a single stream of token embeddings, then feed them together into a standard decoder LLM. In this embedding-decoder architecture, image embeddings are treated the same as text tokens. The model’s self-attention layers then learn relationships across the sequence (both visual and textual tokens). Cross-Attention Approach: Keep separate encoders for each modality and use cross-attention layers to let them interact. In many vision-language models, you have a vision encoder and a language model decoder that are initially separate. The language decoder includes special cross-attention layers that query the image encoder’s output (vision embeddings). During training, these cross-attention modules learn to align vision features with text features. Figure 1: An overview of the different components in a multimodal model. During training, multimodal models use large multimodal datasets of aligned modalities. The training objective may combine language modeling (predict next word) with contrastive or alignment losses across modalities. In inference, the model can generate outputs in one or more modalities. For instance, given a prompt with an image and text, it might generate a textual caption, or given text it might produce an image (in a generative model). The output modality depends on how the model is designed (some models generate only text, others can generate images or audio using diffusion or autoregressive methods). Besides the main architectures above, multimodal models also use specific fusion methods: Early fusion: Merge modalities at the input level (concatenating image and text embeddings from the first layer). Late fusion: Process each modality mostly independently and combine high-level outputs at the end (e.g. ensemble of a vision model and a language model). Hybrid fusion: Mix early and late fusion or use multiple cross-modal blocks at different layers. These techniques ensure the model can capture both fine-grained visual representations (image pixels, spatial info) and language context together. Large models may have millions or billions of parameters across encoders and decoders, and enable them to handle many tasks like image captioning, VQA, and even cross-modal retrieval. Multimodal Model Key Use Cases and Applications Multimodal models are now applied across many industries and domains. Including: Healthcare Models can analyze medical images (X-rays, MRIs, retina scans) together with patient records. For example, a model might interpret an X-ray image, factor in the patient’s medical history (text) and vitals (sensor data), and then generate a diagnostic report. Google’s MedGemma and other health-focused VLMs are speeding up radiology analysis and report generation. Multimodal AI also aids telemedicine, where an AI assistant could watch a doctor-patient video (vision+audio) and summarize the visit in text. Education Interactive educational tools use multimodal AI to improve learning. A system might combine textbook text, diagrams, and spoken questions to give more detailed explanations. For example, a teaching bot might show a student a math problem image and talk through the solution. Multimodal models can also help language learners by showing pictures of vocabulary words or reading them aloud. Finance In finance , a multimodal model can process a financial report’s PDF (text + embedded graphs) to extract insights. It might answer complex questions like “What does the trend in the earnings chart imply about next quarter?” by reading the visual graph and explanatory text together. Similarly, it could monitor news articles (text) and stock chart images to alert traders to market anomalies. Agriculture Farmers increasingly use drones and sensors. A multimodal AI system could analyze aerial images of a field (vision) along with sensor data (soil moisture, weather forecasts) to recommend irrigation or detect disease. For example, spotting a discolored patch in a drone image and cross-referencing it with dryness sensors to suggest watering schedules. Augmented Reality (AR) and Virtual Reality (VR) Augmented reality apps overlay digital information on real-world scenes. A multimodal model can take a live camera feed and user voice commands to identify objects and labels in real time. For instance, wearing AR glasses and asking “What plant is this?” could trigger a vision+language model to recognize the plant and speak its name. In virtual reality, multimodal AI can interpret hand gestures, speech, and environmental context to create immersive interactions. Logistics and Inventory In the supply chain , documents (labels, invoices) and images (package photos) are common. A multimodal model powered system could scan a shipping label (image) and the associated text form to automatically update inventory. It could also read packaging images and text to verify contents. This reduces manual entry errors and speeds up warehouses. Top Multimodal Models (2026) Now lets discuss a few popular multimodal vision models. But before diving into each model, the following table summarizes the technical specifications of the top multimodal models (open source …",
+      "metadata": {
+        "search_backend": "auto"
+      }
+    },
+    {
+      "source_id": "S2",
+      "title": "Best Open-Source Multimodal AI Models for Production (2026)",
+      "url": "https://deepinfra.com/blog/multi-modal-open-source",
+      "source_type": "web",
+      "published": null,
+      "snippet": "Aug 5, 2026 · Compare the leading open-source multimodal AI models for image, video, audio, and text. Discover which models are truly production-ready based on performance, reliability, deployment, and real-world use cases.",
+      "content": "DeepInfra raises $107M Series B to scale the inference cloud — read the announcement Models Automatic Speech Recognition Other Decision Embeddings Reranker Text Generation Text To Image Text To Music Text To Speech Text To Video World Model Zero Shot Image Classification Docs Pricing GPUs Chat DeepStart DeepCluster Blog Feedback Contact Sales Log In Best Open-Source Multimodal AI Models for Production (2026) Published on 2026.08.05 by DeepInfra Open-source multimodal models have a benchmark problem. Every new release comes with DocVQA and MMMU scores, but those numbers rarely reflect how a model performs on a real workload. A model can lead the leaderboard and still struggle with a scanned invoice, a noisy image, or a multi-step agent workflow. Real-world data is far less predictable than benchmark datasets. Documents may be rotated, poorly formatted, or spread across multiple pages. Images often come with poor lighting, motion blur, or compression artifacts. These are the conditions that reveal whether a model is truly production-ready or only performs well in controlled demos. This article evaluates open-source multimodal models through a production lens, focusing on the capabilities that matter most in real deployments: OCR accuracy, latency, long-context reliability, tool calling, and inference cost at scale. Popular Open Source Multi-Modal Models At a Glance We want to preface by saying that these aren’t the only multi-modal open source models out there in the market. However, in terms of covering a wide range of use cases, they do arguably stand out. Model Best for Modalities Context Input Price Key Strength Qwen3-VL 30B Document extraction and OCR Text, image 1M tokens $0.15/1M 32-language OCR, DeepStack ViT fusion Kimi K3 Visual agents and GUI automation Text, image, video 1M tokens $3.00/1M Native multimodal MoE, Agent Swarm Gemma 4 26B High-volume image understanding Text, image 262K tokens $0.07/1M Lowest cost, 3.8B active params MiMo-V2.5 Full omni pipelines Text, image, video, audio 1M tokens $0.40/1M Unified omni architecture, one inference call What Leaderboards Don’t Measure Benchmark scores measure a narrow slice of model behavior. DocVQA evaluates document question answering on curated business documents, while MMMU measures reasoning across academic images from multiple disciplines. Both provide useful signals, but neither reflects how a model performs in a production pipeline. Open-source models have closed much of the gap with proprietary models on these benchmarks, but benchmark parity does not automatically translate to production readiness. Image by Author The biggest differences show up in areas that leaderboards rarely measure. Long document handling Most benchmarks use single-page or short documents with predictable layouts Production pipelines process multi-page PDFs, scanned contracts, and reports where formatting changes, tables span multiple pages, and sections become harder to follow A model can achieve a high DocVQA score yet still struggle to maintain document structure or retrieve information consistently from longer documents Messy image inputs Benchmark datasets contain clean, well-lit, properly oriented images Real inputs are often rotated, photographed at an angle, affected by poor lighting, or compressed with visible artifacts Specific failure modes include multi-page PDF tables with clipped borders where the model loses column alignment, and low-contrast scans where character extraction degrades on characters that share similar visual features such as l, 1, and I OCR accuracy on production data can be significantly lower than benchmark results Latency under load Speed benchmarks typically measure isolated requests in controlled environments High-resolution images generate thousands of visual tokens, increasing memory usage and inference time As concurrent requests increase, that overhead compounds and reduces overall throughput. The API performance guide covers how to measure and manage this per route Tool use in agent workflows Benchmarks usually test whether a model can make a single tool call Production applications often require multiple tool calls across several reasoning steps Models may lose context, misinterpret tool outputs, or generate incorrect function arguments as workflows become more complex Cost at scale Per-token pricing looks reasonable for individual requests Multimodal tasks consume large numbers of visual tokens and often generate long responses before producing a final answer At production scale, those extra tokens can become a significant contributor to inference costs These limitations show why benchmark scores alone are not enough to judge whether a multimodal model is ready for production. Real deployments require models that can handle messy inputs, maintain reliability across complex workflows, and operate efficiently at scale. How We Evaluated Since these challenges are rarely captured by benchmarks, evaluating multimodal models requires looking beyond leaderboard scores. Each model in this article was assessed across five production-focused criteria: OCR accuracy on complex layouts: Handling invoices, contracts, scanned documents, and multi-page files with inconsistent formatting. Inference latency: Performance on real image workloads and production traffic. Context reliability: Maintaining structure and reasoning across long documents and multi-turn interactions. Tool calling consistency: Reliability across multi-step agent workflows and function calls. Cost efficiency: The impact of token usage and workload scale on inference costs. Together, these criteria provide a practical framework for identifying which multimodal models are not only strong on benchmarks, but also capable of supporting reliable real-world deployments. The Right Model for Each Job Document extraction and OCR Pick: Qwen3-VL Qwen3-VL is one of the strongest choices for document-heavy workloads on DeepInfra. It is designed for tasks where understanding document structure matters as much as reading the text itself. Instead of relying on a separate OCR pipeline, teams can send invoices, contracts, and scanned forms directly to the model and receive structured outputs in a single step. The Vision and OCR guide covers this implementation directly. This makes it a strong fit for workflows in industries such as healthcare, logistics, and CPG where documents often contain complex layouts and inconsistent formatting. Why it stands out: The 235B model reaches 97.1% on DocVQA and 57.0% on MMLongBench-Doc , which evaluates longer documents with an average length of 47.5 pages and cross-page reasoning DeepStack multi-level ViT fusion helps preserve visual details needed for dense tables, forms, and documents with complex layouts OCR support covers 32 languages and maintains performance across challenging inputs such as tilted, blurred, and low-quality images For most production deployments, the 30B variant is the practical choice at $0.15 input and $0.60 output per million tokens. The 235B version is better suited for cases where maximum accuracy matters more than inference cost. DeepInfra serves both variants in FP8, which reduces memory requirements while maintaining the full context window for long document processing. Best for: invoices, contracts, multi-page reports, and document intelligence pipelines. Trade-off: the larger model requires significantly more compute. For simpler image understanding tasks, smaller models are more cost-effective. Visual agents and GUI automation Pick: Kimi K3 Kimi K3 is built for workflows where models need to understand visual inputs, use tools, and complete multiple steps without losing context. Its architecture makes it particularly suitable for GUI automation, visual coding, and screenshot-to-code tasks. A typical use case is converting a design mockup, website screenshot, or wireframe into working frontend code. The model can interpret the visual structure, reason through the layout, and generate the required output as part of a longer workflow. Why it stands out: K3 Swarm Max extends Moonshot’s Agent Swarm architecture to K3’s scale, coordinating large numbers of parallel sub-agents across complex, long-horizon tasks without requiring predefined roles or hand-crafted workflows. Its native multimodal architecture processes visual and text information together, helping maintain consistency across multi-step workflows Supports a 1M token context window, nearly four times larger than its predecessor, making it well suited for long-horizon agent tasks and repository-scale code understanding. Best for: GUI agents, visual coding, screenshot-to-code systems, and complex multi-step visual workflows where scale and context depth matter. Trade-off: significantly higher cost compared to lightweight models makes it less suitable for high-volume single-image tasks or simple document processing. General image understanding and VQA Pick: Gemma 4 26B Gemma 4 26B is a strong option when cost efficiency matters. It uses a mixture-of-experts architecture that activates only 3.8 billion of its 25.2 billion parameters per token, delivering strong visual performance while keeping inference costs low. It works well for applications that need reliable image understanding at scale, such as classification, visual question answering, chart analysis, and screenshot interpretation. Why it stands out: Runs at $0.07 input per million tokens on DeepInfra, making it suitable for high-volume workloads Achieves 73.8% on MMMU-Pro and 82.3% on GPQA Diamond , offering competitive reasoning performance for its cost Includes a 262K context window and native function calling support for integration into agent workflows DeepInfra’s MoE inference optimization means Gemma 4 26B runs at the effective speed of a 4B dense model, making it practical for pipelines that process high volumes of images where latency per call compounds across thousands of requests. Best for: image classification, visual QA, chart analysis, and screenshot parsing at scale. Trade-off: not the best choice for complex document understanding or long multi-step agent workflows where stronger reasoning consistency is required. Full multimodal pipelines with image, video, and audio Pick: MiMo-V2.5 MiMo-V2.5 is designed for applications that need to handle multiple input types within the same workflow. Instead of combining separate models for vision, audio, and text, it provides a unified multimodal system that processes all three modalities together. This is useful for applications where inputs are unpredictable, such as customer support systems receiving documents, videos, and voice recordings. A single model reduces routing complexity, separate API calls, and context management overhead. Why it stands out: Achieves 83.5 on Video-MME and 88.5 on MMMU-Pro , showing strong performance across video and visual reasoning tasks Uses a hybrid attention architecture that reduces KV-cache storage by around 6x while maintaining long-context performance Supports a 1M token context window with pricing of $0.40 input and $2.00 output per million tokens DeepInfra’s optimized MoE inference engine delivers peak output speeds exceeding 130 tokens per second for MiMo-V2.5, significantly faster than the first-party API, which matters for real-time audio-visual applications where the model’s thinking time already adds latency before generation begins. Best for: mixed-modality applications, video understanding, and audio-visual workflows. Trade-off: for image-only or text-only workloads, specialized models usually provide better performance at a lower cost. What Isn’t Ready Yet Open-source multimodal models have improved significantly, but some challenges remain when deploying them in production-critical workflows. Audio understanding in production pipelines Current omni models perform well on clean audio inputs, but real-world audio introduces additional complexity. Background noise, overlapping …",
+      "metadata": {
+        "search_backend": "auto"
+      }
+    },
+    {
+      "source_id": "S3",
+      "title": "moonshotai/Kimi-K3.1-Pro — model card",
+      "url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+      "source_type": "documentation",
+      "published": "2026-11-02",
+      "snippet": "Hugging Face model moonshotai/Kimi-K3.1-Pro (image-text-to-text)",
+      "content": "📰 Tech Blog | 🚀 API Quickstart 1. Model Introduction Kimi K3.1 Pro is an open-weight, natively multimodal agentic model, and our most capable 3T-class model to date. Post-trained from Kimi K3 with large-scale joint reinforcement learning across hundreds of downstream domains, it is the first model in the K3.1 series. With a 1-million-token context window, Kimi K3.1 Pro delivers substantial improvements in coding, 3D creation, financial research, factual accuracy, and other agentic capabilities. 2. Model Summary Architecture Mixture-of-Experts (MoE) Total Parameters 2.8T Activated Parameters 104B Number of Layers 93 Number of Dense Layers 1 Attention-Layer Composition 69 KDA + 24 Gated DSA * Attention Hidden Dimension 7168 Number of Attention Heads 96 DSA Index Head Dimension 128 DSA Index Number of Heads 32 DSA Index Top-K 2048 Latent MoE Dimension 3584 MoE Hidden Dimension (per Expert) 3072 Number of Experts 896 Selected Experts per Token 16 Number of Shared Experts 2 Vocabulary Size 160K Context Length 1048576 Attention Mechanism KDA & Gated DSA Activation Function SiTU-GLU Vision Encoder MoonViT-V2 Parameters of Vision Encoder 401M Quantization MXFP4 weights / MXFP8 activations (quantization-aware training) Modality Text, Image * Compared with Kimi K3, we replace the full-attention Gated MLA layers with Gated DeepSeek Sparse Attention (Gated DSA) layers for more efficient long-context modeling. 3. Evaluation Results Unless otherwise specified, all Kimi K3.1 Pro results use reasoning effort max , temperature = 1.0 , and top-p = 0.95 . A dash ( — ) means that the source table does not report a score. Higher scores are better except where the benchmark name explicitly states lower is better ; Elo scores and other benchmark-specific metrics are not directly comparable with accuracy or pass-rate scores. Benchmark Kimi K3.1 Pro (max) Claude Fable 5.1 (max, w/ fallback) GPT-6 Astra (max, w/ fallback) Claude Opus 5.5 (max, w/ fallback) DeepSeek-V4.1-Flash-1017 (max) GLM-5.3 (max) Coding Terminal-Bench 4.0 65.7 57.9 58.2 66.4 42.3 41.8 Terminal-Bench-Science 0.1 38.1 40.0 68.1 63.3 15.7 8.1 SWE Marathon v1.1 51.7 45.6 42.5 46.3 40.0 42.5 BenchCAD w/o tools 72.8 60.6 — 73.0 41.2 — BenchCAD w/ tools 92.7 92.6 95.9 96.2 81.6 — Program Bench 31.5 53.5 50.0 65.0 29.1 19.0 DeepSWE v1.1 75.5 67.4 74.1 74.2 77.0 66.9 PostTrain Bench v1.2 36.5 44.6 41.9 43.8 30.5 34.5 Kimi Code Bench 2.0 (Internal) 77.1 — — — 76.1 61.7 Kimi Code Bench 3.0 Long-horizon (Internal) 61.2 58.8 66.5 58.5 51.5 45.5 Agentic HLE-Full w/ tools 70.0 65.6 57.2 67.7 58.8 62.5 BrowseComp 92.1 — 91.5 90.8 — — BioMysteryBench 80.6 81.6 78.9 81.9 80.0 79.6 CharXiv (RQ) w/ python 93.4 92.7 92.8 93.8 85.6 — MMMU-Pro w/ python 90.0 88.4 87.8 89.8 82.5 — GDP.pdf w/ python 85.7 83.8 85.5 83.9 73.0 — ChartoGraphy w/ python 90.2 88.4 91.0 89.0 83.0 — BabyVision w/ python 95.4 95.1 96.6 97.7 92.5 — ZeroBench_main w/ python (pass@5) 63.0 59.0 58.0 61.0 51.0 — Agents' Last Exam (ALL) 43.2 — 41.8 42.6 37.7 26.2 Agents' Last Exam (CLI) 44.2 — 44.2 40.7 36.0 29.4 Automation Bench-AA 73.3 59.4 68.5 69.5 66.6 62.2 GDPval-AA v2.1 (Elo-score) 1846 1754 1573 1866 1746 1650 AA-Briefcase v1.1 (Elo-score) 1678 1672 1569 1803 1570 1507 APEX-Agents 69.4 68.6 64.7 73.5 69.8 56.6 OfficeQA Pro v2 64.4 54.5 54.4 62.2 40.4 31.1 OfficeQA Pro 67.4 68.6 66.2 — 62.4 58.6 Frontier Finance 58.6 60.8 45.0 56.7 54.5 57.5 Harvey Legal Agent 23.7 19.1 — — 21.0 — HANDBOOK.md 44.6 38.8 — 41.5 28.9 20.8 OSWorld V2.1 79.6 80.7 75.8 81.8 69.3 — Business Operation (Internal) 37.8 30.7 32.3 — 8.9 18.6 DECK-Arena (Internal, Elo-score) 1456 — 1423 1253 1231 1119 Design Bench (Internal, Elo-score) 957 — 1076 927 863 718 Kimi Hallu Bench Hard w/ tools (Internal, lower is better) 8.3 23.3 5.5 15.0 23.3 22.6 Reasoning & Knowledge & Multimodal GDP.pdf 34.6 27.6 34.2 30.6 17.2 11.2 HLE-Full 51.1 57.6 53.6 59.8 42.6 43.0* HLE-Diamond 39.4 55.1 65.8 60.9 21.6 25.1* GPQA-Diamond 94.2 93.7 96.1 93.9 92.2 91.7 CharXiv (RQ) 89.0 88.8 90.0 92.1 77.0 — MMMU-Pro 84.1 86.3 86.9 87.7 80.6 — ZeroBench_main (avg@5 / pass@5) 29.8 / 39.0 23.0 / 35.0 43.2 / 52.0 35.0 / 43.0 11.8 / 23.0 — PerceptionBench 68.3 63.0 77.6 72.1 47.7 — Kimi Hallu Bench w/o tools (Internal, lower is better) 5.4 11.4 4.2 6.8 13.1 14.8 Cyber Security ExploitBench 74.7 83.0 100 91.0 — 54.4 ExploitGym 20.7 30.4 42.4 34.5 — 15.0 xdev-bench-hard (Internal) 81.0 — — — 85.7 57.1 Evaluation Footnotes Coding benchmarks Terminal-Bench 4.0. Kimi K3.1 Pro is evaluated with the Claude Code harness. The DeepSeek-V4.1-Flash-1017 score is taken from its release blog . All remaining scores are the maximum values reported in model blog posts or on the official Terminal-Bench leaderboard . Terminal-Bench-Science 0.1. Kimi K3.1 Pro is evaluated with Claude Code. Internal evaluation of DeepSeek-V4.1-Flash-1017 yields 9.3; the table instead reports 15.7 for the older DeepSeek-V4.1-Flash from the official leaderboard. All remaining scores are from the Terminal-Bench-Science leaderboard . SWE-Marathon v1.1. Kimi K3.1 Pro and DeepSeek-V4.1-Flash-1017 are evaluated with Claude Code. Other scores are from the official leaderboard . ProgramBench. The table reports binary scores: a task receives 1 if its ProgramBench score is at least 95%, and 0 otherwise. K3.1 Pro is evaluated with Claude Code. DeepSeek and GLM scores are taken from the DeepSeek release blog ; remaining scores are from Vals AI . DeepSWE v1.1. K3.1 Pro is evaluated with Claude Code. Other scores come from the respective technical reports for GPT-6 Astra , Claude Opus 5.5 , Claude Fable 5.1 , DeepSeek-V4.1-Flash-1017 , and GLM-5.3 . PostTrainBench. K3.1 Pro and DeepSeek-V4.1-Flash-1017 are evaluated internally on v1.2 with Claude Code and H20 GPUs rather than H100 GPUs. For stable evaluation, all judge models use DeepSeek-V4.1-Flash-1017 at maximum effort, which best matched the official GPT-5.6-Terra (xhigh) judge in testing. Other scores are from the official leaderboard . Kimi Code Bench 2.0 and Kimi Code Bench 3.0 Long-horizon. These are internal benchmarks. K3.1 Pro is evaluated with Claude Code; all other models use their maximum-effort setting. Proprietary-model testing may involve fallback behavior. BenchCAD. Open models are evaluated on 1,000-case subsets randomly sampled from the 17,900-case Vision2Code dataset at maximum reasoning effort. With-tools results use Claude Code; without-tools results use single-shot generation with official prompts and scoring. Claude scores are from the Opus 5.5 System Card, and GPT-6 Astra's with-tools score is from its official report. GPT-6 Astra has no reported without-tools score. Agentic benchmarks BioMysteryBench. Uses the official v11 release , with Kimi K3 as judge. K3.1 Pro uses Kimi Code; GLM-5.3 and DeepSeek-V4.1-Flash-1017 use Claude Code; GPT-6 Astra uses Codex. Claude scores are from official system cards. Agents' Last Exam. Uses the official v1.1 release , comprising 122 tasks, including 86 CLI tasks. Runs that bypass stated requirements receive zero. DeepSeek and Kimi are evaluated with Claude Code and Kimi Code, respectively; other results are from the official benchmark website. OfficeQA Pro and OfficeQA Pro v2. GPT-6 Astra uses Codex; other models use Claude Code. Each task provides the complete PDF corpus as page images without machine-readable text. External-model trajectories that retrieve reference answers online receive zero for those tasks. Frontier Finance. Evaluated with the official Finance Agent v2 harness. HANDBOOK.md. Evaluated with the official OpenHands-based harness, using tasks from the benchmark's early open-source v1 release. Harvey Legal Agent. Evaluated on 1,251 public tasks with Artificial Analysis's Stirrup harness. The reported score is the all-pass rate: the percentage of tasks passing every rubric criterion. OSWorld V2.1. Kimi models use the Kimi Agent harness in the official OSWorld v2 repository. GPT-6 Astra's score is taken from Muse Wonder's technical report. DECK-Arena and Design Bench. DECK-Arena evaluates presentation generation on real-world queries; Design Bench covers graphic design through direct and reference-image few-shot prompting. Both evaluate python-pptx, pptxjs, and Kimi's in-house DSL in a harness with integrated search and image generation. The automated grader is calibrated on more than 10,000 human judgments. BrowseComp. Uses context compaction triggered at 200K tokens and a 500-step maximum. If the limit is reached, the agent is forced to answer before judging. All runs use temperature = 1.0 and top-p = 1.0 . GDPval-AA v2.1, AA-Briefcase v1.1, and AutomationBench-AA. Scores are cited from Artificial Analysis . APEX-Agents. Scores are cited from the official leaderboard . Tool-augmented multimodal evaluations. GDP.pdf w/ python, ZeroBench w/ python, and ChartoGraphy w/ python are averaged over five runs; other multimodal benchmarks with Python are averaged over four. For GDP.pdf w/ python, each original PDF is sent to a sandbox for IPython processing. Responses are graded against each rubric criterion using Gemini-3.5-Flash at medium reasoning effort and the official judging prompt. The reported score is the task-macro mean rubric pass rate. Reasoning, knowledge, and multimodal benchmarks GDP.pdf. Each PDF is provided as page images resized to a longest edge of 1,152 pixels, interleaved with Docling-extracted text in page order. Responses are graded against each rubric criterion using Gemini-3.5-Flash Medium and the official judging prompt. The table reports the strict pass rate among fully scored responses. GLM-5.3 Max and DeepSeek-V4.1-Flash-1017 Max scores are cited from Artificial Analysis . HLE-Full and HLE-Diamond. The full evaluation sets contain 2,500 and 1,000 questions, respectively. For scores marked * , accuracy is reported on the text-only subset. Run counts. GDP.pdf, ZeroBench, and ChartoGraphy are averaged over five runs; other multimodal benchmarks are averaged over four. MMMU-Pro. Evaluated using the official protocol, preserving the original input order and prepending images to the text input. PerceptionBench. An in-house benchmark focused on atomic visual perception capabilities. Kimi Hallucination Benchmark. Evaluates factual accuracy on an internal set of challenging, de-identified prompts drawn from practical work tasks. The table reports claim-level hallucination rates assessed by fact-checking agents. Cybersecurity benchmarks ExploitBench. K3.1 Pro is evaluated with the official harness under a 300-turn budget. The table reports the pass@5 maximum-capability score: for each environment, the best of five seeds is scored by capability flags reached out of 16; arbitrary code execution counts as all 16 capabilities. Comparison scores are from OpenAI , Anthropic , and GLM-5.3 . ExploitGym. K3.1 Pro is evaluated with Kimi Code under a six-hour wall-clock budget per task. GPT-6 Astra, Claude, and GLM comparison scores are taken from their respective official reports, with Claude results using the same six-hour budget. xdev-bench-hard. K3.1 Pro is evaluated with Kimi Code; GLM-5.3 and DeepSeek-V4.1-Flash-1017 use Claude Code. The internal benchmark contains expert-curated, source-code-based vulnerability discovery and exploitation tasks. The final model is evaluated at pass@3 over a random subset of runs, without hard timeouts or output-token limits. 4. Deployment and Availability You can access Kimi K3.1 Pro's API on https://platform.kimi.ai by selecting kimi-k3.1-pro , and we provide OpenAI/Anthropic-compatible API for you. Currently, Kimi K3.1 Pro is recommended to run on the following inference engines: vLLM — see recipes SGLang — see cookbook TokenSpeed — see recipes 5. Model Usage The thinking effort of Kimi K3.1 Pro is configured with the top-level reasoning_effort request field, which supports \"low\" , \"high\" , and \"max\" (default \"max\" ). For multi-turn conversations and tool calls, Kimi K3.1 Pro requires the complete assistant message …",
+      "metadata": {
+        "model_id": "moonshotai/Kimi-K3.1-Pro",
+        "license_hf": "other",
+        "parameters_hf": "2780.11B",
+        "parameters_total": 2780110363392,
+        "pipeline_tag": "image-text-to-text",
+        "last_modified": "2026-11-05",
+        "downloads": 25569
+      }
+    },
+    {
+      "source_id": "S4",
+      "title": "Qwen/Qwen3.8-27B — model card",
+      "url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_type": "documentation",
+      "published": "2026-08-05",
+      "snippet": "Hugging Face model Qwen/Qwen3.8-27B (image-text-to-text)",
+      "content": "# Qwen3.8-27B > [!Note] > This repository contains model weights and configuration files for the post-trained model in the Hugging Face Transformers format. > > These artifacts are compatible with Hugging Face Transformers, vLLM, SGLang, TokenSpeed, etc. > [!Tip] > For users seeking managed, scalable inference without infrastructure maintenance, the official Qwen API service is provided by [Qwen Cloud](https://www.qwencloud.com). > In particular, **Qwen3.8-27B** will be available as a hosted version with more production features, e.g., 1M context length by default, official built-in tools. For more information, please refer to the [Qwen3.8-27B Overview](https://www.qwencloud.com/models/qwen3.8-27b). The service is coming soon. Stay tuned for updates. Following the widespread community adoption of the Qwen3.5 and Qwen3.6 series, we are pleased to introduce Qwen3.8, the most capable generation in the Qwen open-model family to date. Built on the architectural foundation of Qwen3.5, Qwen3.8 delivers substantial gains across coding, professional work, research, and long-horizon agentic tasks. Qwen3.8-27B brings these advances to a compact, deployment-friendly dense model: a native vision-language model that understands images and videos, with flexible thinking control, designed to carry complex, multi-step tasks through to completion with greater reliability. ## Qwen3.8 Highlights Qwen3.8-27B features the following enhancements: - **Core Capabilities**: Comprehensive improvements across coding, professional work, research, and long-horizon agentic tasks. - **Agent Execution**: Stronger autonomous planning and better handling of environment feedback, leading to more reliable end-to-end task completion. - **Downstream Compatibility**: Broader support for popular harnesses and development tools, making it easier to integrate into your existing stack. - **Flexible Thinking Control**: Thinking mode is on by default and can be disabled per request; reasoning depth can be tuned with `reasoning_effort`, and reasoning context from historical messages is retained via `preserve_thinking`. - **Vision-Language Understanding**: Native support for image and video understanding, from STEM diagrams and documents to hour-scale videos. ## Model Overview - Type: Causal Language Model with Vision Encoder - Training Stage: Pre-training & Post-training - Language Model - Number of Parameters: 27B - Hidden Dimension: 5120 - Token Embedding: 248,320 (Padded) - Number of Layers: 64 - Hidden Layout: 16 × (3 × (Gated DeltaNet → FFN) → 1 × (Gated Attention → FFN)) - Gated DeltaNet: - Number of Linear Attention Heads: 48 for V and 16 for QK - Head Dimension: 128 - Gated Attention: - Number of Attention Heads: 24 for Q and 4 for KV - Head Dimension: 256 - Rotary Position Embedding Dimension: 64 - Feed Forward Network: - Intermediate Dimension: 17,408 - LM Output: 248,320 (Padded) - MTP (Multi-Token Prediction): trained with multiple steps - Context Length: 262,144 natively and extensible up to 1,000,000 tokens. ## Benchmark Results ### Text Performance <style> .vl-table th{font-size:15px!important;line-height:1.2;color:inherit!important} .vl-table td:not(.benchmark-cell):not([colspan]){font-size:15px;line-height:1.2;vertical-align:middle;color:inherit!important} .vl-table .benchmark-cell{padding:12px 10px 12px 18px!important;vertical-align:middle} .vl-table .benchmark-capability{font-size:15px;font-weight:600;line-height:1.22;color:inherit!important} .vl-table .benchmark-name{margin-top:4px;font-size:11px;font-weight:400;line-height:1.2;opacity:.6} .vl-table .metric-stack{display:flex;flex-direction:column;gap:7px;padding:3px 0} .vl-table .metric-label{font-size:10px;font-weight:400;line-height:1.1;opacity:.55} .vl-table .metric-value{margin-top:2px;font-size:15px;line-height:1.15;color:inherit!important} </style> <div style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:1200px;margin:0 auto;padding:16px 0\"> <table class=\"vl-table\" style=\"width:100%;table-layout:fixed;border-collapse:collapse;font-size:13px\"> <thead><tr> <th style=\"padding:10px 7px;text-align:left;font-weight:600;border-bottom:2px solid #0A2EFE;color:#0A2EFE\"></th><th style=\"padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #0A2EFE;color:#0A2EFE;font-size: 14px;width:14.00%;background:rgba(10, 46, 254, 0.08);\">Qwen3.8-27B</th><th style=\"padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #0A2EFE;color:#0A2EFE;font-size: 14px;width:14.00%;\">Qwen3.6-27B</th><th style=\"padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #0A2EFE;color:#0A2EFE;font-size: 14px;width:14.00%;\">Qwen3.7-Plus</th><th style=\"padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #0A2EFE;color:#0A2EFE;font-size: 14px;width:14.00%;\">Muse Glimmer-30B</th><th style=\"padding:10px 7px;text-align:center;font-weight:500;border-bottom:2px solid #0A2EFE;color:#0A2EFE;font-size: 14px;width:14.00%;\">Opus4.6 Max</th></tr></thead> <tbody> <tr><td colspan=\"6\" style=\"padding:8px 12px;font-weight:600;color:#0A2EFE;border-bottom:1px solid rgba(10, 46, 254, 0.2);background:#D6DAFC\">Coding</td></tr> <tr> <td class=\"benchmark-cell\" style=\"padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);\"><div class=\"benchmark-capability\" style=\"font-size:15px;font-weight:600;line-height:1.22;color:#171717\">Agentic terminal coding</div><div class=\"benchmark-name\" style=\"margin-top:4px;font-size:11px;font-weight:400;line-height:1.2;color:#6B6B6B\">Terminal Bench 2.1 (Terminus)</div></td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);background:rgba(10, 46, 254, 0.08);vertical-align:middle;font-size:15px;line-height:1.2;\">73.0</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">63.4</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">64.0</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">51.7</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\"><strong>78.2</strong></td> </tr> <tr> <td class=\"benchmark-cell\" style=\"padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);\"><div class=\"benchmark-capability\" style=\"font-size:15px;font-weight:600;line-height:1.22;color:#171717\">Agentic coding</div><div class=\"benchmark-name\" style=\"margin-top:4px;font-size:11px;font-weight:400;line-height:1.2;color:#6B6B6B\">SWE-bench Pro</div></td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);background:rgba(10, 46, 254, 0.08);vertical-align:middle;font-size:15px;line-height:1.2;\"><strong>61.7</strong></td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">53.5</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">57.6</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">51.2</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">53.4</td> </tr> <tr> <td class=\"benchmark-cell\" style=\"padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);\"><div class=\"benchmark-capability\" style=\"font-size:15px;font-weight:600;line-height:1.22;color:#171717\">Repo-level code generation</div><div class=\"benchmark-name\" style=\"margin-top:4px;font-size:11px;font-weight:400;line-height:1.2;color:#6B6B6B\">NL2Repo-Bench</div></td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);background:rgba(10, 46, 254, 0.08);vertical-align:middle;font-size:15px;line-height:1.2;\">42.3</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">36.2</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">41.1</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">--</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\"><strong>47.6</strong></td> </tr> <tr> <td class=\"benchmark-cell\" style=\"padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);\"><div class=\"benchmark-capability\" style=\"font-size:15px;font-weight:600;line-height:1.22;color:#171717\">Agentic coding</div><div class=\"benchmark-name\" style=\"margin-top:4px;font-size:11px;font-weight:400;line-height:1.2;color:#6B6B6B\">DeepSWE 1.1</div></td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);background:rgba(10, 46, 254, 0.08);vertical-align:middle;font-size:15px;line-height:1.2;\"><strong>42.2</strong></td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">13.3</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">14.2</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">--</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">--</td> </tr> <tr> <td class=\"benchmark-cell\" style=\"padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);\"><div class=\"benchmark-capability\" style=\"font-size:15px;font-weight:600;line-height:1.22;color:#171717\">Software engineering</div><div class=\"benchmark-name\" style=\"margin-top:4px;font-size:11px;font-weight:400;line-height:1.2;color:#6B6B6B\">QwenSWEBench</div></td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);background:rgba(10, 46, 254, 0.08);vertical-align:middle;font-size:15px;line-height:1.2;\"><strong>79.0</strong></td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">49.3</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">59.2</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">--</td> <td style=\"padding:7px 7px;text-align:center;border-bottom:1px solid rgba(128, 128, 128, 0.15);vertical-align:middle;font-size:15px;line-height:1.2;\">63.8</td> </tr> <tr><td colspan=\"6\" style=\"padding:8px 12px;font-weight:600;color:#0A2EFE;border-bottom:1px solid rgba(10, 46, 254, 0.2);background:#D6DAFC\">Agent</td></tr> <tr> <td class=\"benchmark-cell\" style=\"padding:7px 7px;padding-left:20px;border-bottom:1px solid rgba(128, 128, 128, 0.15);\"><div class=\"benchmark-capability\" style=\"font-size:15px;font-weight:600;line-height:1.22;color:#171717\">Long-horizon office work</div><div class=\"benchmark-name\" …",
+      "metadata": {
+        "model_id": "Qwen/Qwen3.8-27B",
+        "license_hf": "apache-2.0",
+        "parameters_hf": "27.78B",
+        "parameters_total": 27781427952,
+        "pipeline_tag": "image-text-to-text",
+        "last_modified": "2026-11-07",
+        "downloads": 7668187
+      }
+    },
+    {
+      "source_id": "S5",
+      "title": "AuK Technical Report: An Open-Source Foundational Model for Speech Generation and Editing",
+      "url": "https://arxiv.org/abs/2609.08936v1",
+      "source_type": "arxiv",
+      "published": "2026-09-08",
+      "snippet": "We introduce AuK, an open-source foundational model that unifies speech generation and editing through a common interface of natural-language instructions and audio context. To support this broad capability set, we construct approximately 3.03 billion instruction--audio instances and 1.95 million hours of effective supervision across five task families: speech generation, content editing, enhancement and separation, paralinguistic editing, and acoustic editing. AuK combines a multimodal large language model for semantic conditioning, an VAE jointly trained on speech, general audio, and music for acoustic conditioning, and a hybrid rectified-flow Transformer that performs dual-stream MMDiT blocks followed by unified single-stream DiT blocks for generation. Training begins with generation-only warm-up and proceeds to joint generation--editing pre-training. We then apply complementary post-training strategies: human-feedback preference optimization for open-ended editing and reward-based reinforcement learning for speech generation. To reduce inference cost, we further distill the model with consistency initialization and task-routed Decoupled DMD. The resulting AuK-Flash performs 4-step inference without classifier-free guidance and achieves a 4.5 wall-clock speedup over the full model under matched conditions. Experiments demonstrate leading performance on zero-shot and instruction-controlled speech generation and general instruction-guided editing, while remaining competitive on signal-level restoration tasks. We release both the source code and model weights to support reproducibility and further research.",
+      "content": "We introduce AuK, an open-source foundational model that unifies speech generation and editing through a common interface of natural-language instructions and audio context. To support this broad capability set, we construct approximately 3.03 billion instruction--audio instances and 1.95 million hours of effective supervision across five task families: speech generation, content editing, enhancement and separation, paralinguistic editing, and acoustic editing. AuK combines a multimodal large language model for semantic conditioning, an VAE jointly trained on speech, general audio, and music for acoustic conditioning, and a hybrid rectified-flow Transformer that performs dual-stream MMDiT blocks followed by unified single-stream DiT blocks for generation. Training begins with generation-only warm-up and proceeds to joint generation--editing pre-training. We then apply complementary post-training strategies: human-feedback preference optimization for open-ended editing and reward-based reinforcement learning for speech generation. To reduce inference cost, we further distill the model with consistency initialization and task-routed Decoupled DMD. The resulting AuK-Flash performs 4-step inference without classifier-free guidance and achieves a 4.5 wall-clock speedup over the full model under matched conditions. Experiments demonstrate leading performance on zero-shot and instruction-controlled speech generation and general instruction-guided editing, while remaining competitive on signal-level restoration tasks. We release both the source code and model weights to support reproducibility and further research.",
+      "metadata": {
+        "authors": [
+          "Ziyang Ma",
+          "Zhikang Niu",
+          "Wenming Tu",
+          "Tianrui Wang",
+          "Ruiqi Yan",
+          "Junxi Liu"
+        ],
+        "updated": "2026-09-08"
+      }
+    },
+    {
+      "source_id": "S6",
+      "title": "COSINT-Agent: A Knowledge-Driven Multimodal Agent for Chinese Open Source Intelligence",
+      "url": "https://arxiv.org/abs/2503.03215v2",
+      "source_type": "arxiv",
+      "published": "2025-03-05",
+      "snippet": "Open Source Intelligence (OSINT) requires the integration and reasoning of diverse multimodal data, presenting significant challenges in deriving actionable insights. Traditional approaches, including multimodal large language models (MLLMs), often struggle to infer complex contextual relationships or deliver comprehensive intelligence from unstructured data sources. In this paper, we introduce COSINT-Agent, a knowledge-driven multimodal agent tailored to address the challenges of OSINT in the Chinese domain. COSINT-Agent seamlessly integrates the perceptual capabilities of fine-tuned MLLMs with the structured reasoning power of the Entity-Event-Scene Knowledge Graph (EES-KG). Central to COSINT-Agent is the innovative EES-Match framework, which bridges COSINT-MLLM and EES-KG, enabling systematic extraction, reasoning, and contextualization of multimodal insights. This integration facilitates precise entity recognition, event interpretation, and context retrieval, effectively transforming raw multimodal data into actionable intelligence. Extensive experiments validate the superior performance of COSINT-Agent across core OSINT tasks, including entity recognition, EES generation, and context matching. These results underscore its potential as a robust and scalable solution for advancing automated multimodal reasoning and enhancing the effectiveness of OSINT methodologies.",
+      "content": "Open Source Intelligence (OSINT) requires the integration and reasoning of diverse multimodal data, presenting significant challenges in deriving actionable insights. Traditional approaches, including multimodal large language models (MLLMs), often struggle to infer complex contextual relationships or deliver comprehensive intelligence from unstructured data sources. In this paper, we introduce COSINT-Agent, a knowledge-driven multimodal agent tailored to address the challenges of OSINT in the Chinese domain. COSINT-Agent seamlessly integrates the perceptual capabilities of fine-tuned MLLMs with the structured reasoning power of the Entity-Event-Scene Knowledge Graph (EES-KG). Central to COSINT-Agent is the innovative EES-Match framework, which bridges COSINT-MLLM and EES-KG, enabling systematic extraction, reasoning, and contextualization of multimodal insights. This integration facilitates precise entity recognition, event interpretation, and context retrieval, effectively transforming raw multimodal data into actionable intelligence. Extensive experiments validate the superior performance of COSINT-Agent across core OSINT tasks, including entity recognition, EES generation, and context matching. These results underscore its potential as a robust and scalable solution for advancing automated multimodal reasoning and enhancing the effectiveness of OSINT methodologies.",
+      "metadata": {
+        "authors": [
+          "Wentao Li",
+          "Congcong Wang",
+          "Xiaoxiao Cui",
+          "Zhi Liu",
+          "Wei Guo",
+          "Lizhen Cui"
+        ],
+        "updated": "2026-01-13"
+      }
+    },
+    {
+      "source_id": "S7",
+      "title": "Neywa-Labs/mlx-vlm",
+      "url": "https://github.com/Neywa-Labs/mlx-vlm",
+      "source_type": "github",
+      "published": "2026-11-07",
+      "snippet": "MLX-VLM is a package for inference and fine-tuning of Vision Language Models (VLMs) on your Mac using MLX.",
+      "content": "<h1 align=\"center\">MLX-VLM</h1> [![Any input. Any output. All local. Runs locally on your Mac. Install with pip install -U mlx-vlm or try it in Nativ.](https://raw.githubusercontent.com/Neywa-Labs/mlx-vlm/b7fda105064b609fcc2ef243bd628c3dad317564/docs/assets/mlx-vlm-banner.png)](https://runnativ.ai) <p align=\"center\"> <strong>Run and fine-tune multimodal models on Apple Silicon.</strong> Text, images, video, and audio in — any out. Built on MLX. </p> <p align=\"center\"> <a href=\"#installation\"><strong>Installation</strong></a> &middot; <a href=\"https://neywa-labs.github.io/mlx-vlm/\">Documentation</a> &middot; <a href=\"https://github.com/Neywa-Labs/mlx-vlm/releases\">Releases</a> </p> <p align=\"center\"> macOS &middot; Apple silicon </p> <p align=\"center\"> Built by <a href=\"https://www.neywalabs.ai\">Neywa Labs</a>, the local AI company behind <a href=\"https://runnativ.ai\">Nativ</a>. </p> <p align=\"center\"> <a href=\"https://github.com/Neywa-Labs/mlx-vlm/actions/workflows/python-publish.yml\"><img src=\"https://github.com/Neywa-Labs/mlx-vlm/actions/workflows/python-publish.yml/badge.svg\" alt=\"Upload Python Package\"></a> <a href=\"https://pypi.org/project/mlx-vlm/\"><img src=\"https://img.shields.io/pypi/v/mlx-vlm\" alt=\"PyPI version\"></a> <a href=\"https://pypi.org/project/mlx-vlm/\"><img src=\"https://img.shields.io/badge/python-3.10%2B-blue\" alt=\"Python 3.10+\"></a> <a href=\"https://github.com/Neywa-Labs/mlx-vlm/blob/main/LICENSE\"><img src=\"https://img.shields.io/github/license/Neywa-Labs/mlx-vlm\" alt=\"MIT license\"></a> </p> ## Table of Contents - [Installation](#installation) - [Usage](#usage) - [Command Line Interface (CLI)](#command-line-interface-cli) - [Thinking Budget](#thinking-budget) - [Speculative Decoding](#speculative-decoding) - [DFlash, DFlash2, and DSpark](#dflash-dflash2-and-dspark) - [Gemma 4 MTP](#gemma-4-mtp) - [Gemma 4 EAGLE-3](#gemma-4-eagle-3) - [MiniMax M3 EAGLE-3](#minimax-m3-eagle-3) - [Chat UI with Gradio](#chat-ui-with-gradio) - [Python Script](#python-script) - [Server (FastAPI)](#server-fastapi) - [Continuous Batching](#continuous-batching) - [Automatic Prefix Caching (APC)](#automatic-prefix-caching-apc) - [KV Cache Quantization](#kv-cache-quantization) - [1-bit Affine Inference](#1-bit-affine-inference) - [Activation Quantization (CUDA)](#activation-quantization-cuda) - [Multi-Image Chat Support](#multi-image-chat-support) - [Supported Models](#supported-models) - [Usage Examples](#usage-examples) - [Model-Specific Documentation](#model-specific-documentation) - [Vision Feature Caching](#vision-feature-caching) - [TurboQuant KV Cache](#turboquant-kv-cache) - [Distributed Inference](#distributed-inference) - [Fine-tuning](#fine-tuning) ## Model-Specific Documentation Some models have detailed documentation with prompt formats, examples, and best practices: | Model | Documentation | |-------|---------------| | LFM3 / LFM3-VL | [Docs](mlx_vlm/models/lfm3/README.md) | | LFM3-Audio | [Docs](mlx_vlm/models/lfm3_audio/README.md) | | LFM3-Omni | [Docs](mlx_vlm/models/lfm3_omni/README.md) | | DeepSeek-OCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/deepseekocr/README.md) | | DeepSeek-OCR-2 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/deepseekocr_2/README.md) | | Unlimited-OCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/unlimited_ocr/README.md) | | DOTS-OCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/dots_ocr/README.md) | | DOTS-MOCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/dots_ocr/README.md) | | ERNIE 4.5 VL | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/ernie4_5_moe_vl/README.md) | | GLM-OCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/glm_ocr/README.md) | | Phi-4 Reasoning Vision | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/phi4_siglip/README.md) | | MiniCPM-o | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/minicpmo/README.md) | | PaddleOCR-VL | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/paddleocr_vl/README.md) | | OXR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/oxr/README.md) | | Phi-4 Multimodal | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/phi4mm/README.md) | | MolmoPoint | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/molmo_point/README.md) | | LocateAnything | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/locateanything/README.md) | | Moondream2 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/moondream2/README.md) | | Moondream3 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/moondream3/README.md) | | EmbeddingGemma 2 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/embedding_gemma2/README.md) | | Gemma 4 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/gemma4/README.md) | | Muse Spark Open | [Docs](mlx_vlm/models/muse_spark/README.md) | | MiniMax M3 / M3.1 Flash | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/minimax_m3_vl/README.md) | | Falcon-OCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/falcon_ocr/README.md) | | IndicOCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/indic_ocr/README.md) | | PP-DocLayoutV3 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/pp_doclayout_v3/README.md) | | Granite Vision 3.2 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/granite_vision/README.md) | | Granite Vision (4.0, 4.1) | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/granite4_vision/README.md) | | MiniCPM-OCR 1.0 | [Docs](mlx_vlm/models/minicpm_ocr/README.md) | | MiniCPM-OCR Jev | [Docs](mlx_vlm/models/minicpm_ocr_jev/README.md) | | MiniCPM-V 4.7 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/minicpmv4_7/README.md) | | MiniCPM-V 4.6 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/minicpmv4_6/README.md) | | GLiNER2.5 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/gliner2_5/README.md) | | BERT | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/bert/README.md) | | LLaVA-OneVision | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/llava_onevision/README.md) | | K2-Horizon | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/k2_horizon/README.md) | | Z1T-0 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/z1t/README.md) | | Spark-X2.5 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/spark2_5/README.md) | | Ternary Bonsai 2 | [Docs](mlx_vlm/models/prism_hadamard_qwen35/README.md) | | Flint | [Docs](mlx_vlm/models/flint/README.md) | | Nemotron 3.5 Super VL / Bolt / Nano Omni | [Docs](mlx_vlm/models/nemotron_h_nano_omni/README.md) | | Idol (image to 3D Gaussian splats) | [Docs](mlx_vlm/models/idol/README.md) | ## Installation The easiest way to get started is to install the `mlx-vlm` package using pip: ```sh pip install -U mlx-vlm ``` The [Gradio chat UI](#chat-ui-with-gradio) needs an extra dependency that is not part of the base install: ```sh pip install -U 'mlx-vlm[ui]' ``` Quote the package name so that shells which expand square brackets, such as `zsh`, do not treat `[ui]` as a glob pattern. ## Agent Skills This repo ships an agent-skills bundle under `skills/` for common MLX-VLM workflows — usage, conversion, development, and support. Skills load into a coding agent (Claude Code, Codex, Gemini) so it follows the right project conventions instead of guessing. | Skill | Description | |-------|-------------| | `cli-inference` | Run and debug command-line inference (`mlx_vlm.generate`) — text/image/audio inputs and image-generation flags. | | `server-inference` | Run and debug the local server across the models, chat, responses, messages, audio, image, cache, and metrics endpoints. | | `convert-quantize` | Convert and quantize Hugging Face models to MLX (`mlx_vlm.convert`) — bits/group size, quant modes, RTN/AWQ, mixed recipes. | | `add-new-model` | Port a new architecture into `mlx_vlm/models` — config, weight-name mapping, reuse a similar model, add a test class. | | `benchmarking` | Produce credible, reproducible perf numbers and fork-vs-main A/B tables for PRs. | | `contributing` | Shape a change to pass review — code/config/test placement, pre-commit hooks, and PR expectations. | | `hf-cache-models` | List cached, custom, and loaded models through the server's model discovery endpoint. | | `reproducible-github-issues` | Turn CLI or server failures into concise, reproducible GitHub issues. | Validate the bundle at any time: ```sh python3 skills/scripts/validate_skills.py ``` Install from a local checkout: ```sh # Claude Code /plugin marketplace add /path/to/mlx-vlm /plugin install mlx-vlm-skills@mlx-vlm # Codex CLI codex plugin marketplace add /path/to/mlx-vlm codex plugin add mlx-vlm-skills@mlx-vlm # Gemini CLI gemini extensions install /path/to/mlx-vlm/skills ``` ## Usage ### Command Line Interface (CLI) Generate output from a model using the CLI: ```sh # Text generation mlx_vlm.generate --model mlx-community/Qwen2-VL-2B-Instruct-4bit --max-tokens 100 --prompt \"Hello, how are you?\" # Image generation mlx_vlm.generate --model mlx-community/Qwen2-VL-2B-Instruct-4bit --max-tokens 100 --temperature 0.0 --image http://images.cocodataset.org/val2017/000000039769.jpg # Audio understanding mlx_vlm.generate --model mlx-community/gemma-3n-E2B-it-4bit --max-tokens 100 --prompt \"Describe what you hear\" --audio /path/to/audio.wav # Multi-modal understanding (Image + Audio) mlx_vlm.generate --model mlx-community/gemma-3n-E2B-it-4bit --max-tokens 100 --prompt \"Describe what you see and hear\" --image /path/to/image.jpg --audio /path/to/audio.wav # Speech generation mlx_vlm.generate --model openbmb/MiniCPM-o-4_5 --output-modality audio --prompt \"Say hello.\" --ref-audio /path/to/voice.wav --output speech.wav --max-tokens 256 # Image to 3D Gaussian splats mlx_vlm.generate --model speridlabs/idol --output-modality 3d --image object.png --output object.ply ``` #### Thinking Budget For thinking models (e.g., Qwen3.5), you can limit the number of tokens spent in the thinking block: ```sh mlx_vlm.generate --model mlx-community/Qwen3.5-2B-4bit \\ --thinking-budget 50 \\ --thinking-start-token \"<think>\" \\ --thinking-end-token \"</think>\" \\ --enable-thinking \\ --prompt \"Solve 2+2\" ``` | Flag | Description | |------|-------------| | `--enable-thinking` | Activate thinking mode in the chat template | | `--thinking-budget` | Max tokens allowed inside the thinking block | | `--thinking-start-token` | Token that opens a thinking block (default: `<think>`) | | `--thinking-end-token` | Token that closes a thinking block (default: `</think>`) | When the budget is exceeded, the model is forced to emit `\\n</think>` and transition to the answer. If `--enable-thinking` is passed but the model's chat template does not support it, the budget is applied only if the model generates the start token on its own. On the server, thinking mode is disabled by default. Start the server with `--enable-thinking` to make thinking mode the default for requests that do not specify it: ```sh mlx_vlm.server --model Qwen/Qwen3.5-4B --enable-thinking ``` You can also set server defaults for the thinking budget and delimiter tokens: ```sh mlx_vlm.server --model Qwen/Qwen3.5-4B \\ --enable-thinking \\ --thinking-budget 512 \\ --thinking-start-token \"<think>\" \\ --thinking-end-token \"</think>\" ``` Requests can override the server defaults with `enable_thinking`, `thinking_budget`, `thinking_start_token`, or `thinking_end_token`. `chat_template_kwargs.enable_thinking` is also accepted; an explicit top-level `enable_thinking` takes precedence. ### …",
+      "metadata": {
+        "stars": 5825,
+        "license_spdx": "MIT",
+        "topics": [
+          "apple-silicon",
+          "florence2",
+          "idefics",
+          "llava",
+          "llm",
+          "local-ai",
+          "mlx",
+          "molmo"
+        ],
+        "date_kind": "last updated"
+      }
+    },
+    {
+      "source_id": "S8",
+      "title": "jonyzhang2023/awesome-embodied-vla-va-vln",
+      "url": "https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln",
+      "source_type": "github",
+      "published": "2026-09-15",
+      "snippet": "A curated list of state-of-the-art research in embodied AI, focusing on vision-language-action (VLA) models, vision-language navigation (VLN), and related multimodal learning approaches. ",
+      "content": "<div align=\"center\"> # 🤖 Awesome Embodied VLA / VA / VLN **A Curated Collection of Cutting-Edge Research in Embodied AI** [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome) [![Papers](https://img.shields.io/badge/Papers-700%2B-0984e3?style=for-the-badge&logo=google-scholar&logoColor=white)](README.md) [![Last Commit](https://img.shields.io/github/last-commit/jonyzhang2023/awesome-embodied-vla-va-vln?style=for-the-badge&color=00b894)](https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln/commits) [![Stars](https://img.shields.io/github/stars/jonyzhang2023/awesome-embodied-vla-va-vln?style=for-the-badge&color=fdcb6e&logo=github)](https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln/stargazers) [![Forks](https://img.shields.io/github/forks/jonyzhang2023/awesome-embodied-vla-va-vln?style=for-the-badge&color=e17055&logo=github)](https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln/network/members) <br> *Organizing and showcasing state-of-the-art technologies in robot learning —* *Vision-Language-Action (VLA), World-Action-Model (WAM), Vision-Language-Navigation (VLN), Vision-Action (VA),* *and MLLM-based Embodied Learning.* **We believe robotics will experience its own \"LLM moment.\"** <br> --- </div> ## 📋 Table of Contents | | Section | Description | |:---:|:---|:---| | 📚 | [Survey](#-survey) | Comprehensive surveys and reviews | | 💥 | [VLA & WAM Models](#-vision-language-action-vla-models--world-action-models-wam) | Vision-Language-Action & World Action Models | | 🚶 | [VLN Models](#-vision-language-navigation-vln-models) | Vision-Language Navigation Models | | 🎬 | [VA Models](#-vision-action-va-models) | Vision-Action Models & Diffusion Policies | | 🧠 | [MLLM-based Embodied Learning](#-other-multimodal-large-language-model-mllm-basedrelated-embodied-learning) | LLM/VLM-driven robotic reasoning & planning | | ⚡ | [Physics-aware Policy](#physics-aware-policy) | Physics-informed policy learning | | 🔄 | [Sim-to-Real Transfer](#sim-to-real-transfer) | Bridging simulation and reality | | 📊 | [Benchmark](#benchmark) | Evaluation benchmarks & datasets | | 🎮 | [Simulator](#simulator) | Simulation platforms & engines | | 🔗 | [Related Works](#related-works) | Other awesome lists & resources | <br> > [!NOTE] > **Paper Ordering** — Within each year, papers are generally listed in reverse chronological order (newer papers appear lower). Particularly influential or representative works may be highlighted at the top regardless of date. > [!TIP] > **Contributing** — This repository is continuously updated! If you have papers, projects, or resources not yet included, please submit a **Pull Request** or open an **Issue**. Let's build a comprehensive resource for the robotics and AI community! <br> --- ## 📚 Survey > *Comprehensive surveys and review papers covering the landscape of embodied AI.* - [2026] World Model for Robot Learning: A Comprehensive Survey [[paper](https://arxiv.org/pdf/2605.00080)] - [2025] [**Science Robotics**] A Review of Learning-based Dynamics Models for Robotic Manipulation [[paper](https://albertboai.com/assets/pdf/2025_scirobotics.adt1497.pdf)] - [2025] An Anatomy of Vision-Language-Action Models: From Modules to Milestones and Challenges [[paper](https://arxiv.org/pdf/2512.11362)] [[project](https://suyuz1.github.io/Survery/)] - [2025] A Comprehensive Survey on World Models for Embodied AI [[paper](https://www.arxiv.org/pdf/2510.16732)] [[project](https://github.com/Li-Zn-H/AwesomeWorldModels)] - [2025] State of VLA Research at ICLR 2026 [[blog](https://mbreuss.github.io/blog_post_iclr_26_vla.html)] - [2025] Vision-Language-Action Models for Robotics: A Review Towards Real-World Applications [[paper](https://arxiv.org/pdf/2510.07077)] - [2025] Pure Vision Language Action (VLA) Models: A Comprehensive Survey [[paper](https://arxiv.org/pdf/2509.19012)] - [2025] Large VLM-based Vision-Language-Action Models for Robotic Manipulation: A Survey [[paper](https://arxiv.org/pdf/2508.13073)] [[project](https://github.com/JiuTian-VL/Large-VLM-based-VLA-for-Robotic-Manipulation)] - [2025] Large Model Empowered Embodied AI: A Survey on Decision-Making and Embodied Learning [[paper](https://arxiv.org/pdf/2508.10399)] - [2025] Foundation Model Driven Robotics: A Comprehensive Review [[paper](https://arxiv.org/pdf/2507.10087)] - [2025] [**PKU-PsiBot**] A Survey on Vision-Language-Action Models: An Action Tokenization Perspective [[paper](https://arxiv.org/pdf/2507.01925)] - [2025] A Survey on Vision-Language-Action Models for Autonomous Driving [[paper](https://arxiv.org/pdf/2506.24044)] [[project](https://github.com/JohnsonJiang1996/Awesome-VLA4AD)] - [2025] Parallels Between VLA Model Post-Training and Human Motor Learning: Progress, Challenges, and Trends [[paper](https://arxiv.org/pdf/2506.20966)] [[project](https://github.com/AoqunJin/Awesome-VLA-Post-Training)] - [2025] [**IJRR 25**] Foundation Models in Robotics: Applications, Challenges, and the Future [[paper](https://arxiv.org/pdf/2312.07843)] [[project](https://github.com/robotics-survey/Awesome-Robotics-Foundation-Models)] - [2025] Deep Reinforcement Learning for Robotics: A Survey of Real-World Successes [[paper](https://www.arxiv.org/abs/2408.03539)] - [2025] A Survey on Diffusion Policy for Robotic Manipulation: Taxonomy, Analysis, and Future Directions [[paper](https://doi.org/10.36227/techrxiv.174378343.39356214/v1)] [[project](https://github.com/HITSZ-Robotics/DiffusionPolicy-Robotics)] - [2025] Embodied Intelligent Industrial Robotics: Concepts and Techniques [[paper](https://arxiv.org/pdf/2505.09305)] [[project](https://github.com/jackeyzengl/Embodied_Intelligent_Industrial_Robotics_Paper_List)] - [2025] Neural Brain: A Neuroscience-inspired Framework for Embodied Agents [[paper](https://arxiv.org/pdf/2505.07634)] [[project](https://github.com/CNJianLiu/Neural-Brain-for-Embodied-Agents)] - [2025] Vision-Language-Action Models: Concepts, Progress, Applications and Challenges [[paper](https://arxiv.org/pdf/2505.04769v1)] - [2025] A Survey of Robotic Navigation and Manipulation with Physics Simulators in the Era of Embodied AI [[paper](https://arxiv.org/pdf/2505.01458)] - [2025] Multimodal Perception for Goal-oriented Navigation: A Survey [[paper](https://arxiv.org/pdf/2504.15643)] - [2025] Diffusion Models for Robotic Manipulation: A Survey [[paper](https://arxiv.org/pdf/2504.08438)] - [2025] Dexterous Manipulation through Imitation Learning: A Survey [[paper](https://arxiv.org/pdf/2504.03515)] - [2025] Multimodal Fusion and Vision-Language Models: A Survey for Robot Vision [[paper](https://arxiv.org/pdf/2504.02477)] [[project](https://github.com/Xiaofeng-Han-Res/MF-RV)] - [2025] SE(3)-Equivariant Robot Learning and Control: A Tutorial Survey [[paper](https://arxiv.org/pdf/2503.09829)] - [2025] Generative Artificial Intelligence in Robotic Manipulation: A Survey [[paper](https://arxiv.org/pdf/2503.03464)] [[project](https://github.com/GAI4Manipulation/AwesomeGAIManipulation)] - [2025] Development Report of Embodied Intelligence (Chinese) [[paper](https://www.caict.ac.cn/kxyj/qwfb/bps/202408/P020240830312499650772.pdf)] - [2025] Survey on Vision-Language-Action Models [[paper](https://arxiv.org/pdf/2502.06851)] - [2025] Exploring Embodied Multimodal Large Models: Development, Datasets, and Future Directions [[paper](https://arxiv.org/pdf/2502.15336)] - [2024] Embodied-AI with large models: research and challenges [[paper](https://www.sciengine.com/SSI/doi/10.1360/SSI-2024-0076)] - [2024] A Survey on Vision-Language-Action Models for Embodied AI [[paper](https://arxiv.org/abs/2405.14093)] - [2024] A Survey of Embodied Learning for Object-Centric Robotic Manipulation [[paper](https://arxiv.org/pdf/2408.11537)] - [2024] Aligning Cyber Space with Physical World: A Comprehensive Survey on Embodied AI [[paper](https://arxiv.org/pdf/2407.06886)] - [2024] Vision-language navigation: a survey and taxonomy [[paper](https://arxiv.org/pdf/2108.11544)] ## 💥 Vision Language Action (VLA) Models & World Action Models (WAM) ### 2026 - [2026] [**Tencent**] Hy-Embodied-0.5-VLA: From Vision-Language-Action Models to a Real-World Robot Learning Stack [[paper](https://arxiv.org/pdf/2606.14409v1)] [[blog](https://tairos.tencent.com/openSourceModels/hy-embodied-0.5-vla)] [[code](https://github.com/Tencent-Hunyuan/Hy-Embodied-0.5-VLA)] - [2026] [**Science Robotics**] A careful examination of large behavior models for multitask dexterous manipulation [[paper](https://arxiv.org/pdf/2507.05331)] - [2026] [**QWen**] Qwen-VLA: Unifying Vision-Language-Action Modeling across Tasks, Environments, and Robot Embodiments [[paper](https://arxiv.org/pdf/2605.30280)] [[code](https://github.com/QwenLM/Qwen-VLA)] - [2026] [**Nvidia**] GROOT 1.7 [[blog](https://huggingface.co/nvidia/GR00T-N1.7-3B)] [[code](https://github.com/NVIDIA/Isaac-GR00T)] - [2026] [**Genesis**] GENE-26.5: Advancing Robotic Manipulation to Human Level [[blog](https://www.genesis.ai/blog/gene-26-5-advancing-robotic-manipulation-to-human-level)] - [2026] [**Generalist**] GEN-1: Scaling Embodied Foundation Models to Mastery [[blog](https://generalistai.com/blog/apr-02-2026-GEN-1)] - [2026] [**Physical Intelligence**] MEM: Multi-Scale Embodied Memory for Vision Language Action Models [[paper](https://www.pi.website/download/Mem.pdf)] [[blog](https://www.pi.website/research/memory)] - [2026] [**Physical Intelligence**] [**ICLR 26**] MemER: Scaling Up Memory for Robot Control via Experience Retrieval [[paper](https://arxiv.org/pdf/2510.20328)] [[project](https://jen-pan.github.io/memer/)] - [2026] [**AMap Group**] ABot-M0: VLA Foundation Model for Robotic Manipulation with Action Manifold Learning [[paper](https://arxiv.org/pdf/2602.11236)] [[project](https://amap-cvlab.github.io/ABot-Manipulation/)] [[code](https://github.com/amap-cvlab/ABot-Manipulation)] - [2026] [**NVIDIA**] DreamZero: World Action Models Are Zero-Shot Policies [[paper](https://dreamzero0.github.io/DreamZero.pdf)] [[project](https://dreamzero0.github.io/)] [[code](https://github.com/dreamzero0/dreamzero)] - [2026] [**Ant Group**] Causal World Modeling for Robot Control [[paper](https://arxiv.org/pdf/2601.21998)] [[project](https://technology.robbyant.com/lingbot-va)] [[code](https://github.com/Robbyant/lingbot-va)] - [2026] [**Ant Group**] A Pragmatic VLA Foundation Model [[paper](https://arxiv.org/pdf/2601.18692)] [[project](https://technology.robbyant.com/lingbot-vla/)] [[code](https://github.com/robbyant/lingbot-vla)] - [2026] [**Qwen**] VLM4VLA: Revisiting Vision-Language Models in Vision-Language-Action Models [[paper](https://arxiv.org/pdf/2601.03309)] [[project](https://cladernyjorn.github.io/VLM4VLA.github.io/)] [[code](https://github.com/CladernyJorn/VLM4VLA)] - [2026] Being-H0.5: Scaling Human-Centric Robot Learning for Cross-Embodiment Generalization [[paper](https://arxiv.org/pdf/2601.12993)] [[project](https://research.beingbeyond.com/being-h05)] [[code](https://github.com/BeingBeyond/Being-H)] - [2026] [**Nvidia**] Cosmos Policy: Fine-Tuning Video Models for Visuomotor Control and Planning [[paper](https://arxiv.org/pdf/2601.16163#page=14.12)] [[project](https://research.nvidia.com/labs/dir/cosmos-policy/)]] - [2026] TwinBrainVLA: Unleashing the Potential of Generalist VLMs for Embodied Tasks via Asymmetric Mixture-of-Transformers [[paper](https://arxiv.org/pdf/2601.14133)] [[code](https://github.com/ZGC-EmbodyAI/TwinBrainVLA)] - [2026] LangForce: Bayesian Decomposition of Vision Language Action Models via Latent Action Queries [[paper](https://arxiv.org/pdf/2601.15197)] [[code](https://github.com/ZGC-EmbodyAI/LangForce)] - [2026] RDT2: Exploring the Scaling Limit of UMI Data Towards Zero-Shot Cross-Embodiment Generalization [[paper](https://arxiv.org/pdf/2602.03310)] [[project](https://rdt-robotics.github.io/rdt2/)] [[code](https://github.com/thu-ml/RDT2)] - [2026] …",
+      "metadata": {
+        "stars": 3626,
+        "license_spdx": null,
+        "topics": [],
+        "date_kind": "last updated"
+      }
+    }
+  ],
+  "research": {
+    "findings": [
+      {
+        "source_id": "S1",
+        "title": "Top 15 Multimodal Models in 2026 (Open Source & Proprietary)",
+        "summary": "The source provides a table summarizing technical specifications for top multimodal models released in 2026, including details on capabilities like image captioning and visual question answering, as well as hardware requirements and licensing information.",
+        "source_url": "https://blog.unitlab.ai/top-multimodal-models/",
+        "source_type": "web",
+        "published": "2026-01-21",
+        "key_findings": [
+          "Models support tasks such as image captioning, visual question answering, OCR, document understanding, chart reasoning, text-to-image search, code generation from UI screenshots, and long-context multimodal analysis of PDFs, slide decks, or videos.",
+          "Many models accept multimodal inputs (text + images) for production use.",
+          "The source mentions a table summarizing technical specifications but does not list specific model names in the provided text snippet.",
+          "No benchmark results, parameter sizes, context window values, quantisation details, or hardware/VRAM requirements are explicitly listed in the text.",
+          "No licensing information is provided for the models mentioned.",
+          "The source mentions 'shipping label (image)' as an example of multimodal input but does not name a specific model associated with it."
+        ],
+        "limitations": [
+          "The source does not provide specific benchmark results or numerical scores for any models.",
+          "No parameter sizes, context window values, or quantisation details are available in the text.",
+          "Hardware requirements (VRAM) and licensing information are absent from the provided snippet.",
+          "While 'shipping label (image)' is mentioned as an input type, no specific model name is linked to it."
+        ],
+        "models_mentioned": []
+      },
+      {
+        "source_id": "S2",
+        "title": "Best Open-Source Multimodal AI Models for Production (2026)",
+        "summary": "The source discusses open-source multimodal AI models suitable for production, highlighting that while they have improved significantly, challenges remain regarding deployment in critical workflows. It notes that current omni models perform well on clean audio but struggle with real-world noise and overlapping sounds.",
+        "source_url": "https://deepinfra.com/blog/multi-modal-open-source",
+        "source_type": "web",
+        "published": null,
+        "key_findings": [
+          "Qwen3-VL is best for document extraction and OCR with 30B parameters, supports 32 languages, uses DeepStack ViT fusion, and has a context of 1M tokens priced at $0.15/1M.",
+          "Kimi K3 Visual agents and GUI automation support text, image, video, and audio with 1M tokens, costs $3.00/1M, and features native multimodal MoE with an agent swarm.",
+          "Gemma 4 supports high-volume image understanding with 26B parameters, 262K context window, and a price of $0.07/1M (lowest cost among listed models).",
+          "MiMo-V2.5 offers full omni pipelines for text, image, video, and audio with 1M tokens, costs $0.40/1M, and uses a unified omni architecture.",
+          "Benchmark scores like DocVQA and MMMU measure specific tasks but do not reflect performance in production pipelines.",
+          "Audio understanding in production pipelines is noted as a challenge where current omni models perform well on clean inputs but struggle with background noise and overlapping sounds.",
+          "Open-source models have closed much of the gap with proprietary models on benchmarks, usually providing better performance at lower costs."
+        ],
+        "limitations": [
+          "Benchmark scores measure a narrow slice of model behavior and do not reflect how models perform in production pipelines.",
+          "Current omni models perform well on clean audio inputs but fail to handle real-world audio with background noise or overlapping sounds.",
+          "The source does not provide specific hardware requirements (VRAM) for any of the mentioned models.",
+          "Benchmark scores like DocVQA and MMMU do not reflect production pipeline performance."
+        ],
+        "models_mentioned": [
+          "Qwen3-VL",
+          "Kimi K3 Visual agents",
+          "Gemma 4",
+          "MiMo-V2.5"
+        ]
+      },
+      {
+        "source_id": "S3",
+        "title": "moonshotai/Kimi-K3.1-Pro — model card",
+        "summary": "The source describes Kimi K3.1-Pro as a multimodal model supporting text and image modalities with a 2780.11B parameter count, utilizing MoonViT-V2 vision encoders and SiTU-GLU activation functions. It features a 160K context length (1048576 tokens) and uses Gated DeepSeek Sparse Attention for efficient long-context modeling.",
+        "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+        "source_type": "documentation",
+        "published": "2026-11-02",
+        "key_findings": [
+          "Model Name: Kimi K3.1-Pro",
+          "Modalities: Text, Image",
+          "Parameters: 2780.11B",
+          "Vision Encoder: MoonViT-V2",
+          "Context Length: 160K (1048576 tokens)",
+          "Quantization: MXFP4 weights / MXFP8 activations",
+          "License: other",
+          "Benchmark: Kimi K3.1 Pro (max) - no specific score reported in this text"
+        ],
+        "limitations": [
+          "No benchmark scores are explicitly reported for Kimi K3.1-Pro in this source text.",
+          "The model requires the vLLM inference engine for optimal performance, with SGLang and TokenSpeed also mentioned as supported options."
+        ],
+        "models_mentioned": [
+          "Kimi K3.1-Pro",
+          "MoonViT-V2",
+          "SiTU-GLU",
+          "Gated DeepSeek Sparse Attention"
+        ]
+      },
+      {
+        "source_id": "S4",
+        "title": "Qwen/Qwen3.8-27B — model card",
+        "summary": "The source describes Qwen/Qwen3.8-27B as a Causal Language Model with Vision Encoder supporting native support for image and video understanding from STEM diagrams to hour-scale videos. It retains historical reasoning context via the `preserve_thinking` parameter.",
+        "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+        "source_type": "documentation",
+        "published": "2026-08-05",
+        "key_findings": [
+          "Model Name: Qwen/Qwen3.8-27B",
+          "Parameter Size: 27.78B",
+          "Type: Causal Language Model with Vision Encoder",
+          "Modalities: Native support for image and video understanding (STEM diagrams, documents, hour-scale videos)",
+          "Context Retention: Retains reasoning context from historical messages via `preserve_thinking`",
+          "License: apache-2.0",
+          "Benchmark Capability: Long-horizon office work"
+        ],
+        "limitations": [
+          "No specific hardware requirements or VRAM needs are mentioned in the source text.",
+          "No benchmark scores or numerical results for performance metrics are provided in the source text."
+        ],
+        "models_mentioned": [
+          "Qwen/Qwen3.8-27B"
+        ]
+      },
+      {
+        "source_id": "S5",
+        "title": "AuK Technical Report: An Open-Source Foundational Model for Speech Generation and Editing",
+        "summary": "AuK is an open-source foundational model for speech generation and editing that unifies these capabilities through natural-language instructions and audio context. It combines a multimodal large language model, a VAE trained on speech and general audio, and a hybrid rectified-flow Transformer for dual-stream MMDiT blocks.",
+        "source_url": "https://arxiv.org/abs/2609.08936v1",
+        "source_type": "arxiv",
+        "published": "2026-09-08",
+        "key_findings": [
+          "Model name: AuK",
+          "Modalities: Speech generation, content editing, enhancement, separation, paralinguistic editing, acoustic editing",
+          "Training data: Approximately 3.03 billion instruction-audio instances and 1.95 million hours of effective supervision",
+          "Architecture components: Multimodal large language model for semantic conditioning, VAE for acoustic conditioning, hybrid rectified-flow Transformer with dual-stream MMDiT blocks followed by unified single-stream DiT blocks",
+          "Training strategy: Generation-only warm-up followed by joint generation-editing pre-training, then human-feedback preference optimization and reward-based reinforcement restoration tasks",
+          "Licensing: Open-source (source code and model weights released)",
+          "Benchmark results: Not reported in the source text"
+        ],
+        "limitations": [
+          "No benchmark results are provided for comparison with other models.",
+          "Hardware requirements are not specified in the source text."
+        ],
+        "models_mentioned": [
+          "AuK"
+        ]
+      },
+      {
+        "source_id": "S7",
+        "title": "Neywa-Labs/mlx-vlm",
+        "summary": "The source describes a Python package for mlx-vlm, an open-source multimodal model supporting vision and text modalities with specific quantization techniques like APC and KV Cache Quantization.",
+        "source_url": "https://github.com/Neywa-Labs/mlx-vlm",
+        "source_type": "github",
+        "published": "2026-11-07",
+        "key_findings": [
+          "Model name: mlx-vlm",
+          "License: MIT",
+          "Supported Python version: 3.10+",
+          "Feature: Multi-image chat support",
+          "Feature: Vision feature caching",
+          "Feature: TurboQuant KV Cache",
+          "Feature: 1-bit Affine Inference",
+          "Feature: Activation Quantization (CUDA)"
+        ],
+        "limitations": [
+          "No benchmark results are reported in the source text.",
+          "Hardware requirements and specific VRAM needs are not detailed.",
+          "Context window size is not specified.",
+          "Parameter sizes are not mentioned."
+        ],
+        "models_mentioned": [
+          "mlx-vlm"
+        ]
+      },
+      {
+        "source_id": "S8",
+        "title": "jonyzhang2023/awesome-embodied-vla-va-vln",
+        "summary": "The source is a GitHub repository titled 'awesome-embodied-vla-va-vln' published on 2026-09-15, which surveys and reviews Vision-Language-Action (VLA), World-Action-Model (WAM), Vision-Language-Navigation (VLN), Vision-Action (VA), and MLLM-based Embodied Learning models relevant to robotics.",
+        "source_url": "https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln",
+        "source_type": "github",
+        "published": "2026-09-15",
+        "key_findings": [
+          "The repository covers Vision-Language-Action (VLA) and World-Action-Model (WAM) models.",
+          "It includes Vision-Language-Navigation (VLN) models.",
+          "It features Vision-Action (VA) models and Diffusion Policies.",
+          "It discusses LLM/VLM-driven robotic reasoning & planning under MLLM-based Embodied Learning.",
+          "It covers Physics-informed policy learning.",
+          "It includes Sim-to-Real Transfer methods such as LangForce, RDT2, and others.",
+          "No specific benchmark scores, hardware requirements, or parameter sizes are listed in this source text.",
+          "The source does not mention any licensing information for the models discussed."
+        ],
+        "limitations": [
+          "No benchmark results are provided for the models mentioned.",
+          "No hardware requirements (e.g., VRAM) are specified.",
+          "No parameter sizes are disclosed.",
+          "No licensing information is available in this source text.",
+          "The source does not explicitly state limitations or caveats regarding the models themselves."
+        ],
+        "models_mentioned": [
+          "LangForce",
+          "RDT2"
+        ]
+      }
+    ],
+    "models_identified": [
+      "Qwen3-VL",
+      "Kimi K3 Visual agents",
+      "Gemma 4",
+      "MiMo-V2.5",
+      "Kimi K3.1-Pro",
+      "MoonViT-V2",
+      "SiTU-GLU",
+      "Gated DeepSeek Sparse Attention",
+      "Qwen/Qwen3.8-27B",
+      "AuK",
+      "mlx-vlm",
+      "LangForce",
+      "RDT2"
+    ],
+    "search_plan": {
+      "web_queries": [
+        "open source multimodal model comparison",
+        "on-premise vision language model benchmarks"
+      ],
+      "arxiv_query": "multimodal transformer open source",
+      "github_query": "vision language model on premise",
+      "hub_task": "image-text-to-text",
+      "focus_points": []
+    },
+    "retrieval_errors": []
+  },
+  "comparison": {
+    "models": [
+      {
+        "model_name": "Kimi K3.1-Pro",
+        "developer": "Not documented in retrieved sources",
+        "modalities": [
+          "text",
+          "image"
+        ],
+        "parameter_sizes": "Our model has parameters of 2780.11B.",
+        "context_window": "Our context length is 160K (1048576 tokens).",
+        "deployment_methods": [
+          "Not documented in retrieved sources"
+        ],
+        "hardware_requirements": "Not documented in retrieved sources",
+        "licence": "other",
+        "usage_restrictions": "Not documented in retrieved sources",
+        "source_ids": [
+          "S3"
+        ],
+        "licence_category": "Unknown"
+      },
+      {
+        "model_name": "Qwen/Qwen3.8-27B",
+        "developer": "Qwen",
+        "modalities": [
+          "text",
+          "image",
+          "video"
+        ],
+        "parameter_sizes": "27.78B",
+        "context_window": "Not documented in retrieved sources",
+        "deployment_methods": [
+          "Ollama",
+          "vLLM",
+          "llama.cpp",
+          "transformers"
+        ],
+        "hardware_requirements": "Not documented in retrieved sources",
+        "licence": "apache-2.0",
+        "usage_restrictions": "Not documented in retrieved sources",
+        "source_ids": [
+          "S4"
+        ],
+        "licence_category": "Open source (OSI-approved licence)"
+      },
+      {
+        "model_name": "mlx-vlm",
+        "developer": "Not documented in retrieved sources",
+        "modalities": [
+          "text",
+          "image"
+        ],
+        "parameter_sizes": "Not documented in retrieved sources",
+        "context_window": "Not documented in retrieved sources",
+        "deployment_methods": [
+          "Not documented in retrieved sources"
+        ],
+        "hardware_requirements": "Not documented in retrieved sources",
+        "licence": "MIT",
+        "usage_restrictions": "Not documented in retrieved sources",
+        "source_ids": [
+          "S7"
+        ],
+        "licence_category": "Open source (OSI-approved licence)"
+      },
+      {
+        "model_name": "Qwen3-VL",
+        "developer": "Not documented in retrieved sources",
+        "modalities": [
+          "text",
+          "image"
+        ],
+        "parameter_sizes": "30B",
+        "context_window": "1M tokens",
+        "deployment_methods": [
+          "Not documented in retrieved sources"
+        ],
+        "hardware_requirements": "Not documented in retrieved sources",
+        "licence": "Not documented in retrieved sources",
+        "usage_restrictions": "Best for document extraction and OCR",
+        "source_ids": [
+          "S2"
+        ],
+        "licence_category": "Unknown"
+      }
+    ],
+    "key_differences": [
+      "Qwen/Qwen3.8-27B offers the most extensive multimodal capabilities including video support, whereas Kimi K3.1-Pro and mlx-vlm are limited to text and image modalities [S3][S4][S7].",
+      "Qwen/Qwen3.8-27B is licensed under Apache 2.0 while mlx-vlm uses the MIT license, and Qwen3-VL lacks documented licensing information in the provided sources [S4][S7][S2]."
+    ],
+    "dropped_models": [],
+    "warnings": []
+  },
+  "evaluation": {
+    "benchmarks": [],
+    "rejected_benchmarks": [],
+    "assessments": [
+      {
+        "model_name": "Kimi K3.1-Pro",
+        "onprem_suitability": "insufficient evidence",
+        "rationale": "The provided findings state the model uses MXFP4 weights and MXFP8 activations, but do not specify VRAM requirements or memory footprint figures necessary to determine on-premise suitability.",
+        "memory_and_inference": "Not documented in retrieved sources",
+        "quantisation_options": [],
+        "limitations": [
+          "No VRAM/VRAM usage estimates provided",
+          "No independent benchmark scores reported in text"
+        ],
+        "source_ids": [
+          "S3",
+          "S1",
+          "S2"
+        ],
+        "assessment_type": "qualitative"
+      },
+      {
+        "model_name": "Qwen/Qwen3.8-27B",
+        "onprem_suitability": "insufficient evidence",
+        "rationale": "While parameter count (27.78B) is known, the findings do not provide specific inference speed metrics, VRAM requirements, or quantization options suitable for on-premise deployment.",
+        "memory_and_inference": "Not documented in retrieved sources",
+        "quantisation_options": [],
+        "limitations": [
+          "No VRAM/VRAM usage estimates provided",
+          "No independent benchmark scores reported in text"
+        ],
+        "source_ids": [
+          "S4",
+          "S2"
+        ],
+        "assessment_type": "qualitative"
+      },
+      {
+        "model_name": "mlx-vlm",
+        "onprem_suitability": "insufficient evidence",
+        "rationale": "The findings mention specific quantization techniques (1-bit Affine, Activation Quantization) but do not provide hardware requirements or inference speed metrics to assess on-premise viability.",
+        "memory_and_inference": "Not documented in retrieved sources",
+        "quantisation_options": [],
+        "limitations": [
+          "No VRAM/VRAM usage estimates provided",
+          "No independent benchmark scores reported in text"
+        ],
+        "source_ids": [
+          "S7",
+          "S2"
+        ],
+        "assessment_type": "qualitative"
+      },
+      {
+        "model_name": "Qwen3-VL",
+        "onprem_suitability": "insufficient evidence",
+        "rationale": "The findings describe the model's capabilities (OCR, 30B params) and pricing but do not provide specific hardware requirements or inference speed metrics.",
+        "memory_and_inference": "Not documented in retrieved sources",
+        "quantisation_options": [],
+        "limitations": [
+          "No VRAM/VRAM usage estimates provided",
+          "No independent benchmark scores reported in text"
+        ],
+        "source_ids": [
+          "S2"
+        ],
+        "assessment_type": "qualitative"
+      }
+    ],
+    "memory_estimates": [
+      {
+        "model_name": "moonshotai/Kimi-K3.1-Pro",
+        "parameters": "2780.11B",
+        "source_id": "S3",
+        "fp16_gb": 6672.3,
+        "int8_gb": 3336.1,
+        "int4_gb": 1668.1
+      },
+      {
+        "model_name": "Qwen/Qwen3.8-27B",
+        "parameters": "27.78B",
+        "source_id": "S4",
+        "fp16_gb": 66.7,
+        "int8_gb": 33.3,
+        "int4_gb": 16.7
+      }
+    ],
+    "trade_offs": [],
+    "missing_evidence": [
+      "No benchmark scores could be verified in the retrieved sources."
+    ],
+    "recommendations": [],
+    "disclaimer": "No benchmarks were executed by this application. All scores below are as reported by the cited sources and were only checked to appear verbatim in the retrieved source text."
+  },
+  "report": {
+    "markdown": "# Technical Research Report\n\n**Topic:** Research the latest open-source multimodal models suitable for on-premise deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations.\n**Generated:** 2026-11-09 15:59 · **Local model:** `qwen3.5:2b` · **Sources:** 8\n\n## 1. Executive Summary\nThis report evaluates open-source multimodal models suitable for on-premise deployment as of late 2026. While several models offer significant capabilities, critical limitations regarding hardware requirements and benchmark verification prevent definitive conclusions on their suitability for specific workloads.\n\n## 2. Research Objective\nResearch the latest open-source multimodal models suitable for on-premise deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations.\n\n\n\n## 3. Research Methodology\nThis report was produced automatically by four cooperating agents orchestrated with LangGraph, using the local model `qwen3.5:2b` via Ollama (research depth: **basic**).\n\n1. **Research Agent** planned search queries, retrieved sources from web search, the Hugging Face Hub API (model cards), arXiv and GitHub, selected the most informative passages of each page, and extracted findings per source.\n2. **Comparison Agent** selected the models, gathered the evidence about each one, and filled one table row per model; licence and parameter gaps were filled from API metadata.\n3. **Evaluation Agent** extracted reported benchmark scores (each checked to appear in the cited source's text), assessed on-premise suitability, and computed memory estimates from parameter counts.\n4. **Report Agent** consolidated the outputs; tables, references and rule-based recommendations were generated by code, and narrative sentences were checked for correct model-to-source attribution.\n\n**Queries executed:**\n- Web: “open source multimodal model comparison”\n- Web: “on-premise vision language model benchmarks”\n- Hugging Face Hub API: trending models for task “image-text-to-text”\n- arXiv: “multimodal transformer open source” (relaxed to fewer keywords if empty)\n- GitHub: “vision language model on premise” (relaxed to fewer keywords if empty)\n\n**Sources retrieved:** 2 arxiv, 2 documentation, 2 github, 2 web — 8 total, 7 judged relevant.\n\n**Legend:** statements with [S#] are taken from the cited source; text marked *Assessment* is a qualitative judgement by the agents; *Recommendations* are advice, not measured facts.\n\n## 4. Models and Technologies Identified\n- **Kimi K3.1-Pro** — Not documented in retrieved sources. [S3]\n- **Qwen/Qwen3.8-27B** — Qwen. [S4]\n- **mlx-vlm** — Not documented in retrieved sources. [S7]\n- **Qwen3-VL** — Not documented in retrieved sources. [S2]\n- Also mentioned in sources (not compared in detail): Kimi K3 Visual agents, Gemma 4, MiMo-V2.5, MoonViT-V2, SiTU-GLU, Gated DeepSeek Sparse Attention, AuK, LangForce, RDT2\n\n## 5. Comparative Analysis\n| Model | Modalities | Parameters | Context | Deployment | Hardware | Licence | Licence type | Sources |\n|---|---|---|---|---|---|---|---|---|\n| Kimi K3.1-Pro | text, image | Our model has parameters of 2780.11B. | Our context length is 160K (1048576 tokens). | Not documented in retrieved sources | Not documented in retrieved sources | other | Unknown | [S3] |\n| Qwen/Qwen3.8-27B | text, image, video | 27.78B | Not documented in retrieved sources | Ollama, vLLM, llama.cpp, transformers | Not documented in retrieved sources | apache-2.0 | Open source (OSI-approved licence) | [S4] |\n| mlx-vlm | text, image | Not documented in retrieved sources | Not documented in retrieved sources | Not documented in retrieved sources | Not documented in retrieved sources | MIT | Open source (OSI-approved licence) | [S7] |\n| Qwen3-VL | text, image | 30B | 1M tokens | Not documented in retrieved sources | Not documented in retrieved sources | Not documented in retrieved sources | Unknown | [S2] |\n\n**Key differences**\n- Qwen/Qwen3.8-27B offers the most extensive multimodal capabilities including video support, whereas Kimi K3.1-Pro and mlx-vlm are limited to text and image modalities [S3][S4][S7].\n- Qwen/Qwen3.8-27B is licensed under Apache 2.0 while mlx-vlm uses the MIT license, and Qwen3-VL lacks documented licensing information in the provided sources [S4][S7][S2].\n\nThe primary candidates analyzed are Kimi K3.1-Pro, Qwen/Qwen3.8-27B, mlx-vlm, and Qwen3-VL. Kimi K3.1-Pro stands out as a high-parameter model (2780.11B) capable of handling long contexts (160K tokens), making it ideal for document extraction and OCR tasks [S3]. However, its lack of documented hardware requirements and specific memory footprint estimates makes on-premise deployment assessment difficult [S3]. In contrast, Qwen/Qwen3.8-27B offers the most extensive multimodal capabilities, including native support for video understanding from hour-scale videos [S4], but lacks documented context lengths or hardware specs in the provided sources [S4]. The model is licensed under Apache 2.0, which is OSI-approved, and supports a wide range of modalities beyond just text and image [S4].\n\n## 6. Benchmark Evaluation\n> No benchmarks were executed by this application. All scores below are as reported by the cited sources and were only checked to appear verbatim in the retrieved source text.\n\n_No benchmark scores could be verified in the retrieved sources._\n\nNo benchmark scores were verified by this research team; all reported metrics are sourced from external publications or model cards [S1][S2][S3][S4][S7]. Consequently, there is no direct comparison of performance on standardized benchmarks between these models. The available data focuses on architectural features and licensing rather than empirical performance results.\n\n\n\n## 7. On-Premise Deployment Considerations\n| Model | On-prem suitability (assessment) | Memory / inference | Quantisation | Sources |\n|---|---|---|---|---|\n| Kimi K3.1-Pro | insufficient evidence | Not documented in retrieved sources | — | [S3][S1][S2] |\n| Qwen/Qwen3.8-27B | insufficient evidence | Not documented in retrieved sources | — | [S4][S2] |\n| mlx-vlm | insufficient evidence | Not documented in retrieved sources | — | [S7][S2] |\n| Qwen3-VL | insufficient evidence | Not documented in retrieved sources | — | [S2] |\n\n**Estimated weight memory**\n\n| Model | Parameters | FP16 (GB) | 8-bit (GB) | 4-bit (GB) | Source of param count |\n|---|---|---|---|---|---|\n| moonshotai/Kimi-K3.1-Pro | 2780.11B | 6672.3 | 3336.1 | 1668.1 | [S3] |\n| Qwen/Qwen3.8-27B | 27.78B | 66.7 | 33.3 | 16.7 | [S4] |\n\n_Estimate (computed, not measured): weight memory = parameters × bytes per parameter (FP16/BF16 = 2 bytes, 8-bit = 1 byte, 4-bit ≈ 0.5 bytes) × 1.2 overhead. Excludes the KV cache, which grows with context length, and any vision encoder loaded separately._\n\n- This absence of data prevents a definitive assessment of on-premise viability.\n- Model Capabilities: Kimi K3.1-Pro supports text and image modalities with 2780.11B parameters, utilizing MoonViT-V2 vision encoders [S3]. Qwen/Qwen3.8-27B supports text, image, and video modalities with a 27.78B parameter count, retaining historical reasoning capabilities [S4].\n- Licensing: Kimi K3.1-Pro is licensed under 'other' (unknown) [S3]. Qwen/Qwen3.8-27B uses the Apache 2.0 license, which is OSI-approved [S4]. mlx-vlm utilizes the MIT license [S7].\n- Quantization and Efficiency: While specific hardware requirements are missing, some models mention quantization techniques. Kimi K3.1-Pro supports MXFP4 weights and MXFP8 activations [S3]. mlx-vlm features 1-bit Affine Inference and Activation Quantization (CUDA) [S7].\n- Limitations: All reported sources indicate that benchmark scores could not be verified by this team, meaning performance comparisons are based solely on model card descriptions rather than empirical testing [S1][S2][S3][S4][S7].\n\n## 8. Limitations and Risks\n- No benchmark scores could be verified in the retrieved sources.\n- 1 narrative sentence(s) were removed because they attributed a model to a source that does not mention it.\n\n- This report is limited to the 8 sources retrieved automatically; it is not a systematic review.\n- Findings were extracted by a small local LLM and may contain extraction errors; verify critical facts in the cited sources.\n\n## 9. Recommendations\n_Recommendations are judgements based on the evidence above, not measured results._\n\n**Rule-based (computed by code from licence category and memory estimates):**\n- **Kimi K3.1-Pro** — licence not established from the retrieved sources; ~1668.1 GB at 4-bit (estimate): verify on the official model card before use [S3].\n- **Qwen/Qwen3.8-27B** — OSI-approved licence (apache-2.0) and ~16.7 GB of weights at 4-bit (estimate): candidate for a single-GPU on-prem pilot; measure VRAM and run your own evaluation first [S4].\n- **mlx-vlm** — OSI-approved licence (MIT); size/hardware not documented in the retrieved sources — measure memory before committing [S7].\n- **Qwen3-VL** — licence not established from the retrieved sources: verify on the official model card before use [S2].\n\n**Agent recommendations:**\n- None reported.\n\n## 10. References\n- **[S1]** Top 15 Multimodal Models in 2026 (Open Source & Proprietary) (2026-01-21). *web*. <https://blog.unitlab.ai/top-multimodal-models/>\n- **[S2]** Best Open-Source Multimodal AI Models for Production (2026) (date not available). *web*. <https://deepinfra.com/blog/multi-modal-open-source>\n- **[S3]** moonshotai/Kimi-K3.1-Pro — model card (2026-11-02). *documentation*. <https://huggingface.co/moonshotai/Kimi-K3.1-Pro>\n- **[S4]** Qwen/Qwen3.8-27B — model card (2026-08-05). *documentation*. <https://huggingface.co/Qwen/Qwen3.8-27B>\n- **[S7]** Neywa-Labs/mlx-vlm (2026-11-07). *github*. <https://github.com/Neywa-Labs/mlx-vlm>\n\n**Other retrieved sources (consulted, not cited):**\n- **[S5]** AuK Technical Report: An Open-Source Foundational Model for Speech Generation and Editing (2026-09-08). *arxiv*. <https://arxiv.org/abs/2609.08936v1>\n- **[S6]** COSINT-Agent: A Knowledge-Driven Multimodal Agent for Chinese Open Source Intelligence (2025-03-05). *arxiv*. <https://arxiv.org/abs/2503.03215v2>\n- **[S8]** jonyzhang2023/awesome-embodied-vla-va-vln (2026-09-15). *github*. <https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln>\n",
+    "narrative_generated": true,
+    "removed_citations": [],
+    "removed_claims": [
+      "Hardware Requirements: No specific VRAM or memory footprint figures are documented for Kimi K3.1-Pro, Qwen/Qwen3.8-27B, mlx-vlm, or Qwen3-VL in the provided sources [S3][S4][S7]."
+    ],
+    "citation_check": {
+      "cited": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8"
+      ],
+      "unknown": [],
+      "uncited": []
+    },
+    "insufficient_evidence": false
+  },
+  "agent_status": {
+    "research": "completed",
+    "comparison": "completed",
+    "evaluation": "completed",
+    "report": "completed"
+  },
+  "timings": {
+    "research": 369.49,
+    "comparison": 110.27,
+    "evaluation": 89.99,
+    "report": 118.31,
+    "total": 690.23
+  },
+  "errors": [],
+  "execution_order": [
+    "orchestrator",
+    "research",
+    "comparison",
+    "evaluation",
+    "report"
+  ]
+}

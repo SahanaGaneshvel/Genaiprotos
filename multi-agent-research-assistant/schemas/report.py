@@ -21,5 +21,8 @@ class ReportOutput(BaseModel):
     markdown: str
     narrative_generated: bool = True
     removed_citations: list[str] = Field(default_factory=list, description="invalid [S#] stripped from LLM text")
+    removed_claims: list[str] = Field(
+        default_factory=list, description="narrative sentences dropped: model attributed to a source that never mentions it"
+    )
     citation_check: dict = Field(default_factory=dict)
     insufficient_evidence: bool = False

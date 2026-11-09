@@ -7,12 +7,14 @@ Input:  ResearchOutput.findings  (NOT raw web pages — it works on the research
 
 Small focused steps instead of one big prompt (a single prompt produced an empty
 table with a 2B model during live testing):
-  1. SELECT    LLM  -> which candidate names are AI models (code rejects names not in the research)
+  1. SELECT    code -> models with their own model card / repo are always included;
+               LLM  -> picks the remaining slots (code rejects names not in the research)
   2. EVIDENCE  code -> the finding lines about each model + its supporting source IDs
   3. ROW       LLM  -> one small call per model: fill the row from that evidence only
   4. ENRICH    code -> fill undocumented licence / parameter cells from API metadata;
                        classify licence: OSI open source vs open weights (deterministic)
-  5. DIFFER    LLM  -> key differences written from the finished table; code de-duplicates
+  5. DIFFER    LLM  -> key differences written from the finished table; code attaches the
+                       citations of the models each sentence names, and de-duplicates
 """
 
 from __future__ import annotations
@@ -30,7 +32,7 @@ from schemas.comparison import (
 from schemas.research import ResearchOutput, Source
 from services.ollama_client import OllamaClient, OllamaConnectionError, OllamaError, OllamaModelNotFoundError
 from utils.citations import find_citations, strip_invalid_citations
-from utils.evidence import mentions, model_evidence, rank_models
+from utils.evidence import has_own_source, mentions, model_evidence, rank_models
 
 SYSTEM_PROMPT = """You are the COMPARISON AGENT in a team of AI research agents.
 Your responsibility: compare the AI models found by the Research Agent.
@@ -129,10 +131,17 @@ def enrich_from_metadata(row: ModelComparison, by_id: dict[str, Source]) -> None
             row.parameter_sizes = f"{meta['parameters_hf']} (Hugging Face weight files [{sid}])"
 
 
-def select_models(llm, topic: str, candidates: list[str], max_models: int) -> list[str]:
-    """LLM picks; code keeps only names that really are in the candidate list."""
+def select_models(
+    llm, topic: str, candidates: list[str], max_models: int, guaranteed: list[str] | None = None
+) -> list[str]:
+    """Models with their own model card / repo are always compared (most reliable evidence);
+    the LLM picks the remaining slots, and code keeps only names that are in the candidate list.
+    Live run: the LLM picked architecture components ("SiTU-GLU") over the Kimi K3.1-Pro card."""
     if not candidates:
         return []
+    chosen = list(dict.fromkeys(guaranteed or []))[:max_models]
+    if len(chosen) >= max_models:
+        return chosen
     allowed = {c.lower(): c for c in candidates}
     try:
         picked = llm.chat_structured(
@@ -145,12 +154,13 @@ def select_models(llm, topic: str, candidates: list[str], max_models: int) -> li
         raise
     except OllamaError:
         picked = []
-    chosen = []
     for name in picked:
         real = allowed.get(name.strip().lower())
         if real and real not in chosen:
             chosen.append(real)
-    return chosen[:max_models] or candidates[:max_models]  # fallback: most-evidenced names
+    if not chosen:  # fallback: most-evidenced names
+        chosen = candidates[:max_models]
+    return chosen[:max_models]
 
 
 def _row_table(rows: list[ModelComparison]) -> str:
@@ -160,6 +170,28 @@ def _row_table(rows: list[ModelComparison]) -> str:
         f"sources={''.join(f'[{s}]' for s in r.source_ids)}"
         for r in rows
     )
+
+
+NOT_A_LICENCE = re.compile(r"[$€£]|\bper\b|\btokens?\b|/\s?1?M\b|pricing|price", re.I)
+
+
+def sanitize_licence(value: str) -> str:
+    """A live run put a price ("$0.07/1M tokens") in the licence field. Reject non-licences."""
+    return NOT_DOCUMENTED if NOT_A_LICENCE.search(value or "") else value
+
+
+def attach_citations(sentence: str, rows: list[ModelComparison]) -> str:
+    """The small model often omits citations. Code cites the sources of the table rows whose
+    model names the sentence mentions; a sentence naming no model is unsupported -> ''."""
+    if find_citations(sentence):
+        return sentence
+    ids = []
+    for row in rows:
+        if mentions(row.model_name, sentence):
+            ids += [s for s in row.source_ids if s not in ids]
+    if not ids:
+        return ""
+    return sentence.rstrip(" .") + " " + "".join(f"[{i}]" for i in ids) + "."
 
 
 def _dedupe_sentences(sentences: list[str]) -> list[str]:
@@ -187,7 +219,8 @@ def run(
 
     # 1. SELECT
     candidates = rank_models(research)
-    chosen = select_models(llm, topic, candidates, max_models)
+    with_cards = [c for c in candidates if has_own_source(c, research)]
+    chosen = select_models(llm, topic, candidates, max_models, guaranteed=with_cards)
 
     # 2-4. EVIDENCE -> ROW -> ENRICH
     rows: list[ModelComparison] = []
@@ -203,12 +236,14 @@ def run(
             ComparisonRowLLM, max_tokens=500,
         )
         row = ModelComparison(model_name=name, source_ids=ids, **fields.model_dump())
+        row.licence = sanitize_licence(row.licence)
         enrich_from_metadata(row, by_id)
         row.licence_category = classify_licence(row.licence)
         rows.append(row)
 
     # 5. DIFFERENCES (only meaningful with 2+ rows)
     differences: list[str] = []
+    warnings: list[str] = []
     if len(rows) >= 2:
         try:
             raw = llm.chat_structured(
@@ -216,10 +251,14 @@ def run(
                 DifferencesLLM, max_tokens=600,
             )
             cleaned = [strip_invalid_citations(s, valid_ids)[0] for s in raw.key_differences]
-            differences = [s for s in cleaned if find_citations(s)]  # uncited claims are dropped
+            cited = [attach_citations(s, rows) for s in cleaned]
+            differences = [s for s in cited if s]  # sentences about no known model are dropped
+            if raw.key_differences and not differences:
+                warnings.append("No key-difference sentence could be tied to a cited model; all were dropped.")
         except (OllamaConnectionError, OllamaModelNotFoundError):
             raise
-        except OllamaError:
-            differences = []
+        except OllamaError as exc:
+            warnings.append(f"Key-differences step failed and was skipped: {str(exc)[:150]}")
 
-    return ComparisonOutput(models=rows, key_differences=_dedupe_sentences(differences), dropped_models=dropped)
+    return ComparisonOutput(models=rows, key_differences=_dedupe_sentences(differences),
+                            dropped_models=dropped, warnings=warnings)

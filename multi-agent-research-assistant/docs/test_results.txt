@@ -1,0 +1,131 @@
+# Test results — 2026-11-09 16:00
+# Python 3.12.9, pytest 9.2.0; all network and LLM calls mocked
+
+tests/test_app.py::test_app_renders_header_inputs_and_four_agent_cards PASSED
+tests/test_app.py::test_full_results_render_after_a_run PASSED
+tests/test_app.py::test_start_button_disabled_and_error_shown_when_ollama_down PASSED
+tests/test_cache.py::test_round_trip PASSED
+tests/test_cache.py::test_empty_results_are_never_cached PASSED
+tests/test_cache.py::test_expired_entries_are_ignored PASSED
+tests/test_citations.py::test_grouped_citations_are_normalised PASSED
+tests/test_citations.py::test_unknown_citations_are_stripped PASSED
+tests/test_citations.py::test_keep_valid_ids_dedupes_and_filters PASSED
+tests/test_citations.py::test_consistency_check_flags_unknown_and_uncited PASSED
+tests/test_citations.py::test_licence_classification_never_overclaims_open_source[Apache-2.0-Open source (OSI-approved licence)] PASSED
+tests/test_citations.py::test_licence_classification_never_overclaims_open_source[MIT-Open source (OSI-approved licence)] PASSED
+tests/test_citations.py::test_licence_classification_never_overclaims_open_source[Apache-2.0 (Qwen2.5-VL-7B)-Open source (OSI-approved licence)] PASSED
+tests/test_citations.py::test_licence_classification_never_overclaims_open_source[Qwen License-Open weights (custom / restricted licence)] PASSED
+tests/test_citations.py::test_licence_classification_never_overclaims_open_source[Modified MIT License-Open weights (custom / restricted licence)] PASSED
+tests/test_citations.py::test_licence_classification_never_overclaims_open_source[Llama 3.2 Community License-Open weights (custom / restricted licence)] PASSED
+tests/test_citations.py::test_licence_classification_never_overclaims_open_source[Gemma Terms of Use (custom)-Open weights (custom / restricted licence)] PASSED
+tests/test_citations.py::test_licence_classification_never_overclaims_open_source[CC-BY-NC-4.0-Open weights (custom / restricted licence)] PASSED
+tests/test_citations.py::test_licence_classification_never_overclaims_open_source[Not documented in retrieved sources-Unknown] PASSED
+tests/test_citations.py::test_licence_classification_never_overclaims_open_source[NOASSERTION-Unknown] PASSED
+tests/test_comparison_agent.py::test_selection_keeps_only_names_from_the_research PASSED
+tests/test_comparison_agent.py::test_each_row_prompt_contains_only_that_models_evidence PASSED
+tests/test_comparison_agent.py::test_source_ids_are_set_by_code_from_evidence PASSED
+tests/test_comparison_agent.py::test_undocumented_licence_filled_from_api_metadata_with_label PASSED
+tests/test_comparison_agent.py::test_differences_deduplicated_and_uncited_claims_dropped PASSED
+tests/test_comparison_agent.py::test_code_attaches_citations_from_the_models_a_sentence_names PASSED
+tests/test_comparison_agent.py::test_models_with_their_own_card_are_always_compared PASSED
+tests/test_comparison_agent.py::test_placeholder_values_become_not_documented_so_metadata_can_fill_them PASSED
+tests/test_comparison_agent.py::test_price_in_licence_field_is_rejected PASSED
+tests/test_comparison_agent.py::test_failed_differences_step_is_reported_not_hidden PASSED
+tests/test_comparison_agent.py::test_selection_failure_falls_back_to_most_evidenced_models PASSED
+tests/test_comparison_agent.py::test_comparison_with_no_findings_skips_llm PASSED
+tests/test_comparison_agent.py::test_mentions_matches_name_variants_but_not_other_versions PASSED
+tests/test_comparison_agent.py::test_own_source_requires_exact_card_or_repo_name PASSED
+tests/test_comparison_agent.py::test_rank_models_orders_by_evidence_and_drops_unmentioned PASSED
+tests/test_comparison_agent.py::test_rank_models_prefers_models_with_their_own_model_card PASSED
+tests/test_comparison_agent.py::test_model_card_contributes_all_its_facts_and_api_metadata PASSED
+tests/test_evaluation_agent.py::test_only_scores_found_in_source_text_are_kept PASSED
+tests/test_evaluation_agent.py::test_assessment_without_evidence_is_downgraded PASSED
+tests/test_evaluation_agent.py::test_disclaimer_says_no_benchmarks_were_run PASSED
+tests/test_evaluation_agent.py::test_score_check_requires_benchmark_name_too PASSED
+tests/test_evaluation_agent.py::test_memory_estimates_come_only_from_api_parameter_counts PASSED
+tests/test_evaluation_agent.py::test_no_findings_means_no_llm_call_and_missing_evidence PASSED
+tests/test_ollama_client.py::test_structured_output_is_validated PASSED
+tests/test_ollama_client.py::test_malformed_output_retries_then_succeeds PASSED
+tests/test_ollama_client.py::test_malformed_output_gives_up_after_retries PASSED
+tests/test_ollama_client.py::test_missing_model_raises_model_not_found PASSED
+tests/test_ollama_client.py::test_out_of_memory_gives_actionable_message PASSED
+tests/test_ollama_client.py::test_connection_failure_raises_connection_error PASSED
+tests/test_ollama_client.py::test_health_check_reports_missing_model PASSED
+tests/test_ollama_client.py::test_cloud_models_are_refused PASSED
+tests/test_ollama_client.py::test_health_check_server_down PASSED
+tests/test_ollama_client.py::test_schema_refs_are_inlined PASSED
+tests/test_ollama_client.py::test_extract_json_handles_common_llm_noise[{"a": 1}] PASSED
+tests/test_ollama_client.py::test_extract_json_handles_common_llm_noise[```json\n{"a": 1}\n```] PASSED
+tests/test_ollama_client.py::test_extract_json_handles_common_llm_noise[Here you go: {"a": 1} hope it helps] PASSED
+tests/test_ollama_client.py::test_extract_json_handles_common_llm_noise[<think>hmm</think>{"a": 1}] PASSED
+tests/test_ollama_client.py::test_extract_json_rejects_garbage PASSED
+tests/test_report_agent.py::test_report_has_all_ten_sections_in_order PASSED
+tests/test_report_agent.py::test_invalid_citations_removed_and_references_are_real_urls PASSED
+tests/test_report_agent.py::test_report_prompt_uses_all_three_agent_outputs PASSED
+tests/test_report_agent.py::test_report_states_benchmarks_were_not_run PASSED
+tests/test_report_agent.py::test_narrative_failure_falls_back_to_code_only_report PASSED
+tests/test_report_agent.py::test_misattributed_narrative_sentence_is_removed PASSED
+tests/test_report_agent.py::test_attribution_check_is_strict_for_versions_lenient_for_descriptive_names PASSED
+tests/test_report_agent.py::test_rule_based_recommendations_use_licence_and_memory_estimate PASSED
+tests/test_report_agent.py::test_recommendations_section_always_has_grounded_advice PASSED
+tests/test_report_agent.py::test_insufficient_evidence_report_makes_no_claims PASSED
+tests/test_report_agent.py::test_insufficient_report_lists_irrelevant_sources_honestly PASSED
+tests/test_research_agent.py::test_research_agent_survives_one_failed_tool PASSED
+tests/test_research_agent.py::test_failed_page_fetch_is_flagged_as_limitation PASSED
+tests/test_research_agent.py::test_bad_plan_output_uses_fallback_plan PASSED
+tests/test_research_agent.py::test_bad_extraction_keeps_source_with_honest_note PASSED
+tests/test_research_agent.py::test_missing_model_is_not_swallowed PASSED
+tests/test_research_agent.py::test_register_sources_dedupes_urls_and_arxiv_versions PASSED
+tests/test_research_agent.py::test_hub_metadata_is_given_to_the_llm_as_labelled_fact PASSED
+tests/test_research_agent.py::test_keyword_variants_drop_generic_terms_and_relax PASSED
+tests/test_research_agent.py::test_empty_github_query_is_relaxed_once PASSED
+tests/test_research_agent.py::test_multimodal_topic_overrides_wrong_hub_task PASSED
+tests/test_research_agent.py::test_source_marked_irrelevant_but_with_findings_is_kept PASSED
+tests/test_research_agent.py::test_extract_prompt_contains_only_that_source PASSED
+tests/test_retrieval.py::test_arxiv_query_builder PASSED
+tests/test_retrieval.py::test_arxiv_parses_atom_feed PASSED
+tests/test_retrieval.py::test_arxiv_rate_limit_raises_retrieval_error PASSED
+tests/test_retrieval.py::test_arxiv_offline_raises_retrieval_error PASSED
+tests/test_retrieval.py::test_github_maps_repo_fields PASSED
+tests/test_retrieval.py::test_github_rate_limit_message PASSED
+tests/test_retrieval.py::test_github_token_sent_when_configured PASSED
+tests/test_retrieval.py::test_web_search_skips_invalid_urls_and_tags_docs PASSED
+tests/test_retrieval.py::test_web_search_rate_limit PASSED
+tests/test_retrieval.py::test_web_search_falls_back_through_backend_chain PASSED
+tests/test_retrieval.py::test_web_search_empty_results PASSED
+tests/test_retrieval.py::test_web_search_tries_each_backend_once_then_gives_up PASSED
+tests/test_retrieval.py::test_hf_search_maps_card_metadata_and_skips_quantised_copies PASSED
+tests/test_retrieval.py::test_extract_text_strips_boilerplate_and_finds_date PASSED
+tests/test_retrieval.py::test_fetch_page_returns_none_on_failure PASSED
+tests/test_retrieval.py::test_fetch_page_respects_robots PASSED
+tests/test_schemas.py::test_valid_urls_accepted[https://arxiv.org/abs/1] PASSED
+tests/test_schemas.py::test_valid_urls_accepted[http://example.com/a?b=c] PASSED
+tests/test_schemas.py::test_invalid_urls_rejected[] PASSED
+tests/test_schemas.py::test_invalid_urls_rejected[example.com] PASSED
+tests/test_schemas.py::test_invalid_urls_rejected[ftp://x.org/f] PASSED
+tests/test_schemas.py::test_invalid_urls_rejected[javascript:alert(1)] PASSED
+tests/test_schemas.py::test_invalid_urls_rejected[https://] PASSED
+tests/test_schemas.py::test_invalid_urls_rejected[https://a b.com] PASSED
+tests/test_schemas.py::test_source_rejects_bad_url_and_unknown_type PASSED
+tests/test_schemas.py::test_research_finding_requires_registry_style_id PASSED
+tests/test_schemas.py::test_search_plan_needs_at_least_one_web_query PASSED
+tests/test_schemas.py::test_search_plan_cleans_bracketed_queries_from_small_models PASSED
+tests/test_schemas.py::test_search_plan_rejects_unknown_hub_task PASSED
+tests/test_schemas.py::test_comparison_row_defaults_to_not_documented PASSED
+tests/test_schemas.py::test_evaluation_rejects_unknown_suitability_level PASSED
+tests/test_schemas.py::test_invalid_topics_rejected[] PASSED
+tests/test_schemas.py::test_invalid_topics_rejected[short] PASSED
+tests/test_schemas.py::test_invalid_topics_rejected[1234567890 !!!] PASSED
+tests/test_schemas.py::test_invalid_topics_rejected[topic3] PASSED
+tests/test_schemas.py::test_valid_topic_is_normalised PASSED
+tests/test_schemas.py::test_select_relevant_text_skips_boilerplate_and_keeps_order PASSED
+tests/test_schemas.py::test_md_table_escapes_pipes PASSED
+tests/test_workflow.py::test_agents_execute_in_fixed_order_and_share_state PASSED
+tests/test_workflow.py::test_live_status_events_are_real_transitions PASSED
+tests/test_workflow.py::test_missing_model_stops_before_any_agent PASSED
+tests/test_workflow.py::test_invalid_topic_is_rejected PASSED
+tests/test_workflow.py::test_no_sources_produces_honest_insufficient_report PASSED
+tests/test_workflow.py::test_sources_but_no_relevant_findings_also_gives_insufficient_report PASSED
+tests/test_workflow.py::test_one_failing_agent_does_not_stop_the_pipeline PASSED
+tests/test_workflow.py::test_reducer_merges_instead_of_overwriting PASSED
+============================= 127 passed in 2.58s =============================

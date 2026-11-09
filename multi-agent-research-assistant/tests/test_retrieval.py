@@ -128,9 +128,10 @@ def test_web_search_rate_limit(monkeypatch):
         web_search.search_web("vlm")
 
 
-def test_web_search_falls_back_to_auto_backend(monkeypatch):
+def test_web_search_falls_back_through_backend_chain(monkeypatch):
+    # real situation from live testing: only Bing answered
     def text(query, max_results, backend):
-        if backend == "duckduckgo":
+        if backend != "bing":
             raise web_search.DDGSException("No results found.")
         return [{"title": "Blog", "href": "https://example.com/post", "body": "post"}]
 
@@ -138,7 +139,7 @@ def test_web_search_falls_back_to_auto_backend(monkeypatch):
     fake.return_value.text.side_effect = text
     monkeypatch.setattr(web_search, "DDGS", fake)
     [src] = web_search.search_web("vlm")
-    assert src.metadata["search_backend"] == "auto"
+    assert src.metadata["search_backend"] == "bing"
 
 
 def test_web_search_empty_results(monkeypatch):
@@ -148,20 +149,18 @@ def test_web_search_empty_results(monkeypatch):
     assert web_search.search_web("zzzz") == []
 
 
-def test_web_search_retries_metasearch_once_when_empty(monkeypatch):
+def test_web_search_tries_each_backend_once_then_gives_up(monkeypatch):
     calls = []
 
     def text(query, max_results, backend):
         calls.append(backend)
-        if len(calls) < 3:
-            raise web_search.DDGSException("No results found.")
-        return [{"title": "Blog", "href": "https://example.com/post", "body": "post"}]
+        raise web_search.DDGSException("No results found.")
 
     fake = MagicMock()
     fake.return_value.text.side_effect = text
     monkeypatch.setattr(web_search, "DDGS", fake)
-    assert len(web_search.search_web("vlm")) == 1
-    assert calls == ["duckduckgo", "auto", "auto"]
+    assert web_search.search_web("vlm") == []
+    assert calls == ["duckduckgo", "bing", "brave", "auto"]  # bounded, no loops
 
 
 # ---------------------------------------------------------------- Hugging Face

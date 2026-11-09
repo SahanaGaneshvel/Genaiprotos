@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 NOT_DOCUMENTED = "Not documented in retrieved sources"
 
@@ -40,6 +40,9 @@ class ModelSelection(BaseModel):
     models: list[str] = Field(default_factory=list, description="names copied exactly from the candidate list")
 
 
+PLACEHOLDERS = {"", "none", "null", "n/a", "na", "unknown", "not specified", "not stated", "-", "—"}
+
+
 class ComparisonRowLLM(BaseModel):
     """Step 2 (one call per model): fill the row from that model's evidence only."""
 
@@ -51,6 +54,14 @@ class ComparisonRowLLM(BaseModel):
     hardware_requirements: str = NOT_DOCUMENTED
     licence: str = NOT_DOCUMENTED
     usage_restrictions: str = NOT_DOCUMENTED
+
+    @field_validator(
+        "developer", "parameter_sizes", "context_window", "hardware_requirements", "licence", "usage_restrictions"
+    )
+    @classmethod
+    def _placeholder_means_not_documented(cls, v: str) -> str:
+        # live run: the model returned "" for parameters, which blocked filling 27.78B from API metadata
+        return NOT_DOCUMENTED if (v or "").strip().lower() in PLACEHOLDERS else v.strip()
 
 
 class DifferencesLLM(BaseModel):
@@ -67,3 +78,4 @@ class ComparisonOutput(BaseModel):
     dropped_models: list[str] = Field(
         default_factory=list, description="Candidates removed: not in the research, or no supporting evidence"
     )
+    warnings: list[str] = Field(default_factory=list, description="Steps that failed and were skipped")

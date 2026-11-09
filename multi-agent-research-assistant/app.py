@@ -115,7 +115,9 @@ with st.container(border=True):
 
 # ------------------------------------------------------------------ agent cards
 st.subheader("Agent execution")
-slots = dict(zip(AGENTS, st.columns(4)))
+# st.empty() placeholders: each update REPLACES the card. (Writing into the column itself
+# appended a new card per status event — found by tests/test_app.py.)
+slots = {agent: col.empty() for agent, col in zip(AGENTS, st.columns(4))}
 result = st.session_state.get("result")
 for agent in AGENTS:
     status = result["agent_status"].get(agent, "pending") if result else "pending"
@@ -269,7 +271,8 @@ with tab4:
         chk = report.citation_check
         st.caption(
             f"Citation check — cited: {len(chk.get('cited', []))}, unknown IDs: {len(chk.get('unknown', []))}, "
-            f"invalid citations removed: {len(report.removed_citations)}"
+            f"invalid citations removed: {len(report.removed_citations)}, "
+            f"misattributed sentences removed: {len(report.removed_claims)}"
             + ("" if report.narrative_generated else " · narrative fell back to structured output")
         )
         st.divider()

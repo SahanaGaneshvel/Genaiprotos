@@ -1,5 +1,7 @@
 """Headless UI smoke tests using Streamlit's AppTest (no browser, no Ollama)."""
 
+import json
+
 import pytest
 import streamlit as st
 from streamlit.testing.v1 import AppTest
@@ -33,6 +35,48 @@ def test_app_renders_header_inputs_and_four_agent_cards(monkeypatch):
     for name in ("Research Agent", "Comparison Agent", "Evaluation Agent", "Report Agent"):
         assert name in page
     assert page.count("Pending") == 4
+
+
+def _example_state() -> dict:
+    """The saved state of the real example run, rebuilt into Pydantic objects."""
+    from schemas.comparison import ComparisonOutput
+    from schemas.evaluation import EvaluationOutput
+    from schemas.report import ReportOutput
+    from schemas.research import ResearchOutput, Source
+
+    raw = json.loads((PROJECT_ROOT / "outputs" / "example_run.json").read_text(encoding="utf-8"))
+    return {
+        **raw,
+        "sources": [Source(**s) for s in raw["sources"]],
+        "research": ResearchOutput(**raw["research"]),
+        "comparison": ComparisonOutput(**raw["comparison"]),
+        "evaluation": EvaluationOutput(**raw["evaluation"]),
+        "report": ReportOutput(**raw["report"]),
+    }
+
+
+def test_full_results_render_after_a_run(monkeypatch):
+    import orchestration.workflow as wf
+
+    state = _example_state()
+
+    def fake_run(topic, depth, on_event):
+        for agent in ("research", "comparison", "evaluation", "report"):
+            on_event({"agent": agent, "status": "running"})
+            on_event({"agent": agent, "status": "completed", "seconds": 1.0})
+        return state
+
+    monkeypatch.setattr(wf, "run_workflow", fake_run)
+    monkeypatch.setattr(wf, "save_run", lambda s: {"markdown": "x.md", "json": "x.json"})
+    at = _app(monkeypatch, healthy=True)
+    at.button[0].click().run()
+    assert not at.exception
+    assert [t.label for t in at.tabs] == ["Research Findings", "Model Comparison", "Evaluation", "Final Report"]
+    assert at.metric[0].value == str(len(state["sources"]))  # sources retrieved
+    page = " ".join(m.value for m in at.markdown)
+    assert page.count("Completed") == 4  # all four agent cards show the real final status
+    assert "## 10. References" in page  # rendered report
+    assert any(d.proto.label.startswith("⬇️ Download report") for d in at.get("download_button"))
 
 
 def test_start_button_disabled_and_error_shown_when_ollama_down(monkeypatch):
