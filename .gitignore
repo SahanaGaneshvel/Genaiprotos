@@ -7,7 +7,7 @@ __pycache__/
 .venv/
 venv/
 
-# Secrets — never commit real credentials
+# Secrets: never commit real credentials
 .env
 
 # Local caches / runtime artefacts

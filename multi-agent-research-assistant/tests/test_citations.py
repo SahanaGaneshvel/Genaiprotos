@@ -1,4 +1,4 @@
-"""Citation consistency tests — the core anti-fabrication guarantees."""
+"""Citation consistency tests: the core anti-fabrication guarantees."""
 
 import pytest
 

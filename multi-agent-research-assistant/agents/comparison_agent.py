@@ -1,9 +1,9 @@
-"""AGENT 2 — Comparison Agent.
+"""AGENT 2: Comparison Agent.
 
 Responsibility: turn the Research Agent's findings into a model-by-model comparison
 (modalities, size, context window, deployment, hardware, licence).
 
-Input:  ResearchOutput.findings  (NOT raw web pages — it works on the research team's evidence)
+Input:  ResearchOutput.findings  (not raw web pages: it works on the research team's evidence)
 
 Small focused steps instead of one big prompt (a single prompt produced an empty
 table with a 2B model during live testing):
@@ -88,7 +88,7 @@ PROPRIETARY_HINTS = re.compile(r"(proprietary|closed|api[- ]only|commercial lice
 
 
 def classify_licence(licence: str) -> str:
-    """Deterministic licence classification — the LLM reports the licence text,
+    """Deterministic licence classification: the LLM reports the licence text,
     code decides the category, so 'open source' is never claimed loosely."""
     text = (licence or "").strip()
     if not text or text == NOT_DOCUMENTED or text.lower() in ("unknown", "noassertion", "other"):

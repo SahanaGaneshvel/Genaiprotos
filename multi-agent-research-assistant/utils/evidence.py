@@ -1,4 +1,4 @@
-"""Group research evidence by model — done by code, shared by Comparison and Evaluation.
+"""Group research evidence by model, done by code, shared by Comparison and Evaluation.
 
 Why: a single prompt with every finding asked a 2B model to do too much at once
 (a live run produced an empty comparison table). Giving it only the lines that are
@@ -33,14 +33,14 @@ def mentions(name: str, text: str) -> bool:
 def source_mentions(name: str, corpus: str) -> bool:
     """Lenient variant used to check attributions against a source's text.
 
-    Versioned names ("Kimi K3.1-Pro") need an exact match — version confusion is the error we guard
+    Versioned names ("Kimi K3.1-Pro") need an exact match, version confusion is the error we guard
     against. Descriptive names without digits ("PaliGemma VLM") only need every word to occur:
     a live run wrongly flagged a sentence because the source said "PaliGemma" and "VLM" separately."""
     if mentions(name, corpus):
         return True
     if re.search(r"\d", name):
         return False
-    # every word, as a whole word — short tokens are often the distinguishing part ("Model B")
+    # every word, as a whole word, short tokens are often the distinguishing part ("Model B")
     words = re.findall(r"[a-z]+", name.split("/")[-1].lower())
     low = corpus.lower()
     return bool(words) and all(re.search(rf"\b{re.escape(w)}\b", low) for w in words)
@@ -52,7 +52,8 @@ def _finding_text(f: ResearchFinding) -> str:
 
 def _identifier(title: str) -> str:
     """'moonshotai/Kimi-K3.1-Pro (model card)' -> 'kimik31pro'; 'org/moondream' -> 'moondream'."""
-    return _squash(re.split(r" \(model card\)| — ", title)[0].split("/")[-1])
+    # new titles: "org/X (model card)"; runs recorded before 10 Nov 2026 used "org/X <em dash> model card"
+    return _squash(re.split(r" \(model card\)| \u2014 ", title)[0].split("/")[-1])
 
 
 def is_own_source(name: str, finding: ResearchFinding) -> bool:

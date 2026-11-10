@@ -1,4 +1,4 @@
-"""AGENT 4 — Report Agent.
+"""AGENT 4: Report Agent.
 
 Responsibility: consolidate the Research, Comparison and Evaluation outputs into one
 coherent technical report with the 10 required sections.
@@ -6,7 +6,7 @@ coherent technical report with the 10 required sections.
 Division of labour:
   LLM  -> ReportNarrative: executive summary, analysis prose, deployment notes, risks, recommendations
   CODE -> research objective, methodology (from real run statistics), every table,
-          and the References section (from the source registry — real URLs only)
+          and the References section (from the source registry: real URLs only)
 Afterwards code strips any citation ID that is not in the registry and audits the report.
 
 If no sources were retrieved, build_insufficient_evidence_report() is used instead: the

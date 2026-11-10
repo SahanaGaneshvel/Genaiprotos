@@ -1,4 +1,4 @@
-"""DuckDuckGo web search (via the `ddgs` package — no API key)."""
+"""DuckDuckGo web search (via the `ddgs` package, no API key)."""
 
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ def _source_type(url: str) -> str:
 # DuckDuckGo first. Free search engines often return nothing to automated clients
 # (live testing: at one point only Bing answered, and "auto" did not reach it), so
 # we try a short, fixed chain of free backends and record which one produced each
-# result — transparent, never silent, and bounded (no loops).
+# result. Transparent, never silent, and bounded (no loops).
 BACKENDS = ("duckduckgo", "bing", "brave", "auto")
 RETRY_PAUSE_S = 1.0
 

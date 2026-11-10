@@ -1,7 +1,7 @@
 """GitHub repository search via the public REST API.
 
 Unauthenticated by default (10 search requests/min). If GITHUB_TOKEN is set it is
-sent as a Bearer token — it is never logged or shown in the UI.
+sent as a Bearer token; it is never logged or shown in the UI.
 """
 
 from __future__ import annotations

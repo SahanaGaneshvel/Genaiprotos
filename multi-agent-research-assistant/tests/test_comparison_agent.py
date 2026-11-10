@@ -8,7 +8,7 @@ from utils.evidence import is_own_source, mentions, model_evidence, rank_models
 SOURCES = make_sources()  # S1 card, S2 paper, S3 GitHub repo (licence metadata "MIT")
 RESEARCH = ResearchOutput(
     findings=[
-        ResearchFinding(source_id="S1", title="org/Model-A — model card", summary="7B VLM",
+        ResearchFinding(source_id="S1", title="org/Model-A (model card)", summary="7B VLM",
                         source_url="https://huggingface.co/org/model-a", source_type="documentation",
                         key_findings=["7B parameters", "Apache-2.0"], models_mentioned=["Model A"]),
         ResearchFinding(source_id="S2", title="Model B paper", summary="Model B is a 3B omni model",
@@ -150,10 +150,13 @@ def test_mentions_matches_name_variants_but_not_other_versions():
 
 
 def test_own_source_requires_exact_card_or_repo_name():
-    card = ResearchFinding(source_id="S3", title="moonshotai/Kimi-K3.1-Pro — model card", summary="s",
+    card = ResearchFinding(source_id="S3", title="moonshotai/Kimi-K3.1-Pro (model card)", summary="s",
                            source_url="https://huggingface.co/moonshotai/Kimi-K3.1-Pro", source_type="documentation")
     assert is_own_source("Kimi K3.1-Pro", card)
     assert not is_own_source("Kimi K3", card)
+    # runs recorded before 10 Nov 2026 used an em dash: "org/X \u2014 model card"
+    old = card.model_copy(update={"title": "moonshotai/Kimi-K3.1-Pro \u2014 model card"})
+    assert is_own_source("Kimi K3.1-Pro", old)
 
 
 def test_rank_models_orders_by_evidence_and_drops_unmentioned():
@@ -163,7 +166,7 @@ def test_rank_models_orders_by_evidence_and_drops_unmentioned():
 
 
 def test_rank_models_prefers_models_with_their_own_model_card():
-    card = ResearchFinding(source_id="S1", title="org/Model-X — model card", summary="s",
+    card = ResearchFinding(source_id="S1", title="org/Model-X (model card)", summary="s",
                            source_url="https://huggingface.co/org/Model-X", source_type="documentation")
     listing = ResearchFinding(source_id="S2", title="Top models", summary="Model Y and Model Y2 and Model-X",
                               source_url="https://example.com/top", source_type="web",
@@ -175,7 +178,7 @@ def test_rank_models_prefers_models_with_their_own_model_card():
 
 
 def test_model_card_contributes_all_its_facts_and_api_metadata():
-    card = Source(source_id="S9", title="org/Model-C — model card", url="https://huggingface.co/org/Model-C",
+    card = Source(source_id="S9", title="org/Model-C (model card)", url="https://huggingface.co/org/Model-C",
                   source_type="documentation", metadata={"license_hf": "apache-2.0", "parameters_hf": "4.2B"})
     research = ResearchOutput(findings=[ResearchFinding(
         source_id="S9", title=card.title, summary="s", source_url=card.url, source_type="documentation",

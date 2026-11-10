@@ -41,7 +41,7 @@ class ModelSelection(BaseModel):
     models: list[str] = Field(default_factory=list, description="names copied exactly from the candidate list")
 
 
-PLACEHOLDERS = {"", "none", "null", "n/a", "na", "unknown", "not specified", "not stated", "-", "—"}
+PLACEHOLDERS = {"", "none", "null", "n/a", "na", "unknown", "not specified", "not stated", "-", "\u2014"}
 # "Not specified in source text", "Not explicitly stated in the text", "Unknown (not given)", ...
 NOTHING_KNOWN = re.compile(r"^(not (explicitly |clearly )?(specified|documented|stated|mentioned|provided|available|given)|unknown)")
 

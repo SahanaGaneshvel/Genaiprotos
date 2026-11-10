@@ -1,8 +1,8 @@
 """Schemas for retrieved sources and the Research Agent's findings.
 
 Two layers on purpose:
-  * Source           — produced by CODE (retrieval tools). Ground truth: real URL, real title.
-  * ResearchFinding  — produced by the LLM *about* one Source. It can only reference
+  * Source:          produced by CODE (retrieval tools). Ground truth: real URL, real title.
+  * ResearchFinding: produced by the LLM *about* one Source. It can only reference
                        a source_id that exists; it can never invent a URL.
 """
 

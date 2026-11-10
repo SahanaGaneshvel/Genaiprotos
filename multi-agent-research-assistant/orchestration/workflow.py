@@ -152,7 +152,7 @@ def report_node(state: ResearchState) -> dict:
 
 
 def insufficient_report_node(state: ResearchState) -> dict:
-    """Report Agent's honest mode when retrieval found nothing — no LLM, no claims."""
+    """Report Agent's honest mode when retrieval found nothing: no LLM, no claims."""
 
     def work():
         errors = state["research"].retrieval_errors if state.get("research") else []

@@ -26,24 +26,24 @@ This report was produced automatically by four cooperating agents orchestrated w
 - arXiv: “multimodal transformer open source” (relaxed to fewer keywords if empty)
 - GitHub: “vision language model open weights” (relaxed to fewer keywords if empty)
 
-**Sources retrieved:** 2 arxiv, 2 documentation, 2 github, 2 web — 8 total, 8 judged relevant.
+**Sources retrieved:** 2 arxiv, 2 documentation, 2 github, 2 web, 8 total, 8 judged relevant.
 
 **Legend:** statements with [S#] are taken from the cited source; text marked *Assessment* is a qualitative judgement by the agents; *Recommendations* are advice, not measured facts.
 
 ## 4. Models and Technologies Identified
-- **Kimi K3.1-Pro** — Not documented in retrieved sources. [S3]
-- **Qwen/Qwen3.8-27B** — Qwen. [S4]
-- **showlab/ShowUI** — showlab. [S7]
-- **open-pi-zero** — Not documented in retrieved sources. [S8]
+- **Kimi K3.1-Pro**: Not documented in retrieved sources. [S3]
+- **Qwen/Qwen3.8-27B**: Qwen. [S4]
+- **showlab/ShowUI**: showlab. [S7]
+- **open-pi-zero**: Not documented in retrieved sources. [S8]
 - Also mentioned in sources (not compared in detail): InternVL2, LLaVA-1.6, Qwen2-VL, Qwen3-VL, Kimi K3 Visual agents, Gemma 4, MiMo-V2.5, MoonViT-V2, SiTU-GLU, Gated DSA, DeepSeek Sparse Attention, AuK, COSINT-Agent, MLLMs, showlab/ShowUI-2B
 
 ## 5. Comparative Analysis
 | Model | Modalities | Parameters | Context | Deployment | Hardware | Licence | Licence type | Sources |
 |---|---|---|---|---|---|---|---|---|
-| Kimi K3.1-Pro | text, image | 2780.11B | 160K (1048576 tokens) | — | Not documented in retrieved sources | other | Unknown | [S3] |
-| Qwen/Qwen3.8-27B | text, image, video | [27.78B] | [Not documented in retrieved sources] | — | [Not documented in retrieved sources] | apache-2.0 | Open source (OSI-approved licence) | [S4] |
+| Kimi K3.1-Pro | text, image | 2780.11B | 160K (1048576 tokens) |, | Not documented in retrieved sources | other | Unknown | [S3] |
+| Qwen/Qwen3.8-27B | text, image, video | [27.78B] | [Not documented in retrieved sources] |, | [Not documented in retrieved sources] | apache-2.0 | Open source (OSI-approved licence) | [S4] |
 | showlab/ShowUI | text | 2B | Not documented in retrieved sources | vLLM | No GPU needed for local deployment via HF Spaces demo | Apache-2.0 | Open source (OSI-approved licence) | [S7] |
-| open-pi-zero | text, image | [3B parameters] | Block-wise causal masking | — | Peak VRAM of 40GB with bsz 16 on H100s; 8-12 hours inference time on H100s (bsz 32) | MIT | Open source (OSI-approved licence) | [S8] |
+| open-pi-zero | text, image | [3B parameters] | Block-wise causal masking |, | Peak VRAM of 40GB with bsz 16 on H100s; 8-12 hours inference time on H100s (bsz 32) | MIT | Open source (OSI-approved licence) | [S8] |
 
 **Key differences**
 - Kimi K3.1-Pro is the largest model in the list at 27.8 trillion parameters but lacks documented hardware requirements and video support, whereas Qwen/Qwen3.8-27B offers multimodal capabilities including video with an Apache-2.0 license [S3][S4].
@@ -64,10 +64,10 @@ No benchmark scores were verified in the retrieved sources. The provided informa
 ## 7. On-Premise Deployment Considerations
 | Model | On-prem suitability (assessment) | Memory / inference | Quantisation | Sources |
 |---|---|---|---|---|
-| Kimi K3.1-Pro | insufficient evidence | Not documented in retrieved sources | — | [S3][S4][S8] |
-| Qwen/Qwen3.8-27B | insufficient evidence | Not documented in retrieved sources | — | [S4] |
-| InternVL2 | insufficient evidence | Not documented in retrieved sources | — | [S1] |
-| LLaVA-1.6 | insufficient evidence | Not documented in retrieved sources | — | [S1] |
+| Kimi K3.1-Pro | insufficient evidence | Not documented in retrieved sources |, | [S3][S4][S8] |
+| Qwen/Qwen3.8-27B | insufficient evidence | Not documented in retrieved sources |, | [S4] |
+| InternVL2 | insufficient evidence | Not documented in retrieved sources |, | [S1] |
+| LLaVA-1.6 | insufficient evidence | Not documented in retrieved sources |, | [S1] |
 
 **Estimated weight memory**
 
@@ -90,18 +90,18 @@ _Estimate (computed, not measured): weight memory = parameters × bytes per para
 _Recommendations are judgements based on the evidence above, not measured results._
 
 **Rule-based (computed by code from licence category and memory estimates):**
-- **Kimi K3.1-Pro** — licence not established from the retrieved sources; ~1668.1 GB at 4-bit (estimate): verify on the official model card before use [S3].
-- **Qwen/Qwen3.8-27B** — OSI-approved licence (apache-2.0) and ~16.7 GB of weights at 4-bit (estimate): candidate for a single-GPU on-prem pilot; measure VRAM and run your own evaluation first [S4].
-- **showlab/ShowUI** — OSI-approved licence (Apache-2.0); size/hardware not documented in the retrieved sources — measure memory before committing [S7].
-- **open-pi-zero** — OSI-approved licence (MIT); size/hardware not documented in the retrieved sources — measure memory before committing [S8].
+- **Kimi K3.1-Pro**: licence not established from the retrieved sources; ~1668.1 GB at 4-bit (estimate): verify on the official model card before use [S3].
+- **Qwen/Qwen3.8-27B**: OSI-approved licence (apache-2.0) and ~16.7 GB of weights at 4-bit (estimate): candidate for a single-GPU on-prem pilot; measure VRAM and run your own evaluation first [S4].
+- **showlab/ShowUI**: OSI-approved licence (Apache-2.0); size/hardware not documented in the retrieved sources, measure memory before committing [S7].
+- **open-pi-zero**: OSI-approved licence (MIT); size/hardware not documented in the retrieved sources, measure memory before committing [S8].
 
 **Agent recommendations:**
 - None reported.
 
 ## 10. References
 - **[S1]** Best Open-Source Multimodal AI Models 2026: - yuzec.com (2026-06-22). *web*. <https://yuzec.com/blog/open-source-multimodal-ai-2026>
-- **[S3]** moonshotai/Kimi-K3.1-Pro — model card (2026-11-02). *documentation*. <https://huggingface.co/moonshotai/Kimi-K3.1-Pro>
-- **[S4]** Qwen/Qwen3.8-27B — model card (2026-08-05). *documentation*. <https://huggingface.co/Qwen/Qwen3.8-27B>
+- **[S3]** moonshotai/Kimi-K3.1-Pro (model card) (2026-11-02). *documentation*. <https://huggingface.co/moonshotai/Kimi-K3.1-Pro>
+- **[S4]** Qwen/Qwen3.8-27B (model card) (2026-08-05). *documentation*. <https://huggingface.co/Qwen/Qwen3.8-27B>
 - **[S7]** showlab/ShowUI (2026-04-24). *github*. <https://github.com/showlab/ShowUI>
 - **[S8]** allenzren/open-pi-zero (2025-01-31). *github*. <https://github.com/allenzren/open-pi-zero>
 

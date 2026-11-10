@@ -1,4 +1,4 @@
-"""Retrieval tool tests — every network call is mocked (no internet needed)."""
+"""Retrieval tool tests: every network call is mocked (no internet needed)."""
 
 from unittest.mock import MagicMock
 

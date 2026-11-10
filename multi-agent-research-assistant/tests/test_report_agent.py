@@ -1,4 +1,4 @@
-"""Report Agent tests — structure, citation integrity, honest failure modes."""
+"""Report Agent tests: structure, citation integrity, honest failure modes."""
 
 import re
 

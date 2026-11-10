@@ -1,4 +1,4 @@
-"""Ollama client tests — all HTTP calls are mocked, no server needed."""
+"""Ollama client tests: all HTTP calls are mocked, no server needed."""
 
 import json
 from unittest.mock import MagicMock

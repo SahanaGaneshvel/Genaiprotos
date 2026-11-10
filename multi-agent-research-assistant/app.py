@@ -1,4 +1,4 @@
-"""Streamlit frontend — Multi-Agent AI Research Assistant.
+"""Streamlit frontend for the Multi-Agent AI Research Assistant.
 
 Run:  streamlit run app.py
 
@@ -90,7 +90,7 @@ def link_df(rows: list[dict]) -> None:
 settings = get_settings()
 st.title("Multi-Agent AI Research Assistant")
 st.caption(
-    "Four specialised agents — Research, Comparison, Evaluation and Report — collaborate through a "
+    "Four specialised agents (Research, Comparison, Evaluation and Report) collaborate through a "
     "LangGraph workflow to produce a cited technical report. All inference runs locally via Ollama."
 )
 healthy, health_msg = ollama_health(settings.ollama_model)
@@ -111,12 +111,12 @@ with st.container(border=True):
         help="Basic: ~2 sources per category (faster). Detailed: ~4 per category (slower on CPU).",
     )
     start = c2.button("Start Research", type="primary", disabled=not healthy, width="stretch")
-    st.caption("On a CPU-only machine a Basic run takes several minutes — every source is read by the local model.")
+    st.caption("On a CPU-only machine a Basic run takes several minutes: every source is read by the local model.")
 
 # ------------------------------------------------------------------ agent cards
 st.subheader("Agent execution")
 # st.empty() placeholders: each update REPLACES the card. (Writing into the column itself
-# appended a new card per status event — found by tests/test_app.py.)
+# appended a new card per status event; found by tests/test_app.py.)
 slots = {agent: col.empty() for agent, col in zip(AGENTS, st.columns(4))}
 result = st.session_state.get("result")
 for agent in AGENTS:
@@ -191,7 +191,7 @@ with tab1:
     if research and research.search_plan:
         p = research.search_plan
         st.caption(
-            f"Search plan — web: {' | '.join(p.web_queries)} · arXiv: {p.arxiv_query} · GitHub: {p.github_query}"
+            f"Search plan · web: {' | '.join(p.web_queries)} · arXiv: {p.arxiv_query} · GitHub: {p.github_query}"
         )
     if not research or not research.findings:
         st.info("No relevant findings.")
@@ -206,7 +206,7 @@ with tab1:
     if sources:
         st.markdown("##### All retrieved sources")
         link_df([{"ID": s.source_id, "Title": s.title, "Type": s.source_type,
-                  "Date": s.published or "—", "URL": s.url} for s in sources])
+                  "Date": s.published or "-", "URL": s.url} for s in sources])
 
 with tab2:
     if not comparison or not comparison.models:
@@ -270,7 +270,7 @@ with tab4:
         )
         chk = report.citation_check
         st.caption(
-            f"Citation check — cited: {len(chk.get('cited', []))}, unknown IDs: {len(chk.get('unknown', []))}, "
+            f"Citation check · cited: {len(chk.get('cited', []))}, unknown IDs: {len(chk.get('unknown', []))}, "
             f"invalid citations removed: {len(report.removed_citations)}, "
             f"misattributed sentences removed: {len(report.removed_claims)}"
             + ("" if report.narrative_generated else " · narrative fell back to structured output")

@@ -1,14 +1,14 @@
-"""AGENT 3 — Evaluation Agent.
+"""AGENT 3: Evaluation Agent.
 
-Responsibility: judge the evidence — benchmarks, limitations, on-prem suitability,
+Responsibility: judge the evidence: benchmarks, limitations, on-prem suitability,
 memory/quantisation, trade-offs and *missing* evidence.
 
 Input:  ResearchOutput.findings + the original Source texts (for verification)
 LLM:    one structured call -> EvaluationLLMOutput
-Code:   BENCHMARK VERIFICATION — a score is only kept if that exact number appears in
+Code:   BENCHMARK VERIFICATION: a score is only kept if that exact number appears in
         the cited source's retrieved text. Anything else is moved to `rejected_benchmarks`
         and flagged as missing evidence. The app never runs benchmarks itself and says so.
-        MEMORY ESTIMATES — arithmetic from API parameter counts, labelled as estimates.
+        MEMORY ESTIMATES: arithmetic from API parameter counts, labelled as estimates.
 """
 
 from __future__ import annotations

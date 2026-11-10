@@ -2,7 +2,7 @@
 
 A proof-of-concept **AI research team**: four specialised agents, coordinated by a LangGraph
 workflow, investigate a technical topic and produce a structured, cited Markdown report.
-All LLM inference runs **locally through Ollama** — no paid APIs, no API keys required.
+All LLM inference runs **locally through Ollama**: no paid APIs, no API keys required.
 
 > Example query: *"Research the latest open-source multimodal models suitable for on-premise
 > deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations."*
@@ -14,10 +14,10 @@ All LLM inference runs **locally through Ollama** — no paid APIs, no API keys 
 
 | Agent | Responsibility | Output (Pydantic schema) |
 |---|---|---|
-| **Research Agent** | Plans search queries; searches the web (DuckDuckGo + free fallbacks), Hugging Face model cards (Hub API), arXiv and GitHub; fetches pages; extracts findings per source | `ResearchOutput` — findings with source ID, title, URL, type, date, summary, key findings, limitations |
-| **Comparison Agent** | Selects the models, gathers per-model evidence, fills one table row per model (modalities, parameters, context window, deployment, hardware, licence), explains differences | `ComparisonOutput` — comparison table + key differences |
-| **Evaluation Agent** | Extracts reported benchmark scores (verified against source text), assesses on-prem suitability, computes labelled memory estimates, flags missing evidence | `EvaluationOutput` — verified benchmarks, assessments, memory estimates, missing evidence |
-| **Report Agent** | Consolidates everything into a 10-section technical report with references | `ReportOutput` — Markdown + citation audit |
+| **Research Agent** | Plans search queries; searches the web (DuckDuckGo + free fallbacks), Hugging Face model cards (Hub API), arXiv and GitHub; fetches pages; extracts findings per source | `ResearchOutput`: findings with source ID, title, URL, type, date, summary, key findings, limitations |
+| **Comparison Agent** | Selects the models, gathers per-model evidence, fills one table row per model (modalities, parameters, context window, deployment, hardware, licence), explains differences | `ComparisonOutput`: comparison table + key differences |
+| **Evaluation Agent** | Extracts reported benchmark scores (verified against source text), assesses on-prem suitability, computes labelled memory estimates, flags missing evidence | `EvaluationOutput`: verified benchmarks, assessments, memory estimates, missing evidence |
+| **Report Agent** | Consolidates everything into a 10-section technical report with references | `ReportOutput`: Markdown + citation audit |
 
 ## 2. Architecture
 
@@ -48,7 +48,7 @@ flowchart TD
 
 * **Fixed, loop-free sequence.** The only branches are "cannot start" and "no sources".
   Comparison and Evaluation are *logically* parallel (both consume only the Research
-  output) but run sequentially — one local model on a CPU would queue the requests anyway.
+  output) but run sequentially, because one local model on a CPU would queue the requests anyway.
 * **Shared state** ([orchestration/state.py](orchestration/state.py)) is a `TypedDict`. Each node
   returns only the keys it changed; *reducers* merge `agent_status`, `timings` and `errors`
   so agents never overwrite each other's bookkeeping.
@@ -73,7 +73,7 @@ flowchart TD
 ### Why the Comparison Agent works in small steps
 
 The first live runs asked a 2B model to read every finding and produce the whole table in one
-call — it returned **an empty table**. Splitting the job fixed it:
+call. It returned **an empty table**. Splitting the job fixed it:
 
 1. **Select** (LLM): which candidate names are AI models? Code rejects any name not in the research.
 2. **Evidence** (code): collect only the finding lines about each model (+ its own model card).
@@ -88,12 +88,12 @@ call — it returned **an empty table**. Splitting the job fixed it:
    Research Agent numbers them `S1..Sn`. The LLM only ever writes IDs like `[S3]`.
 2. **Invalid citations are removed.** Any `[S#]` not in the registry is stripped
    ([utils/citations.py](utils/citations.py)); comparison rows with no valid source are dropped.
-3. **References are built by code** from the registry — every URL in the report was actually retrieved.
+3. **References are built by code** from the registry, so every URL in the report was actually retrieved.
 4. **Benchmark verification.** A reported score survives only if that number *and* the
    benchmark name appear in the cited source's text; otherwise it is excluded and counted
    in the report. The app never runs benchmarks and says so explicitly.
 5. **Attribution check on prose.** If a narrative sentence names a model and cites sources, the
-   cited sources must actually mention that model — otherwise the sentence is removed and counted
+   cited sources must actually mention that model; otherwise the sentence is removed and counted
    in the report. (Found live: *"Kimi K3.1-Pro is best for OCR [S2]"*, while S2 said that about Qwen3-VL.)
 6. **Code-set citations in the comparison.** Which sources support a table row is decided by code
    (which findings mention the model); difference sentences get the citations of the models they name.
@@ -154,7 +154,7 @@ streamlit run app.py
 Enter a topic, choose **Basic** or **Detailed**, press **Start Research**. Results appear in four
 tabs (Research Findings · Model Comparison · Evaluation · Final Report) with a Markdown download.
 
-**Next.js web app** (animated dashboard + About + interactive Architecture pages) — two terminals:
+**Next.js web app** (the behind-the-scenes page) needs two terminals:
 ```bash
 # 1. API server: runs the same LangGraph workflow and streams events (FastAPI + Server-Sent Events)
 python -m uvicorn api.server:app --port 8000
@@ -256,7 +256,7 @@ multi-agent-research-assistant/
 
 Deviations from the suggested structure: `config.py` (single place for settings),
 `services/cache.py` and `services/errors.py` (shared by all tools), `services/huggingface_search.py`
-(official model cards — the brief asks for model cards "where possible"), `utils/evidence.py`
+(official model cards; the brief asks for model cards "where possible"), `utils/evidence.py`
 (per-model evidence shared by Comparison and Evaluation), `tests/fakes.py` (test doubles).
 
 ## 8. Error handling
@@ -280,8 +280,8 @@ See [`outputs/example_report.md`](outputs/example_report.md) and the full struct
 [`outputs/example_run.json`](outputs/example_run.json).
 
 **Query:** *"Research the latest open-source multimodal models suitable for on-premise deployment.
-Compare their capabilities, benchmarks, hardware requirements, licensing and limitations."* — depth **Basic**,
-model `qwen3.5:2b`, Windows laptop (i5-1155G7, 8 GB RAM, CPU only).
+Compare their capabilities, benchmarks, hardware requirements, licensing and limitations."* Run at depth **Basic** with
+model `qwen3.5:2b` on a Windows laptop (i5-1155G7, 8 GB RAM, CPU only).
 
 The same run is what the website replays (`web/public/recorded-run.json`, 59 recorded events).
 
@@ -299,10 +299,10 @@ of the models it names (set by code); Qwen3.8-27B (27.78B, Apache-2.0) comes out
 candidate at ~16.7 GB (4-bit, estimate), while Kimi K3.1-Pro (2.78T parameters, ~1.7 TB at 4-bit) is clearly
 not an on-prem option; the report says plainly that no benchmark could be verified.
 
-**Known flaws in this example (reviewed by hand — left in on purpose):**
-* *"Kimi K3.1-Pro is the largest model … at 27.8 trillion parameters"* — the 2B model's arithmetic
+**Known flaws in this example (reviewed by hand and left in on purpose):**
+* *"Kimi K3.1-Pro is the largest model … at 27.8 trillion parameters"*: the 2B model's arithmetic
   (2,780B is 2.78 trillion). The table and memory estimate, which come from code, are correct.
-* open-pi-zero's context cell reads *"Block-wise causal masking"* — the model put an architecture detail in
+* open-pi-zero's context cell reads *"Block-wise causal masking"*: the model put an architecture detail in
   the wrong field. Code can reject non-answers ("not stated …") and non-licences (prices), but not every
   misplaced fact.
 * The H100 hardware mentioned for open-pi-zero comes from its training instructions, not inference needs.
@@ -315,20 +315,20 @@ the mocks never could. Each fix below has a regression test named after the live
 | Run | Observed | Fix |
 |---|---|---|
 | 1 | Model wrote queries like `[multimodal model] [on-premise]`; GitHub returned 0; arXiv matched "premise"; 0 findings yet a "normal" report | query cleaning, generic-word removal + bounded relaxation, "0 findings → insufficient-evidence report" |
-| 2 | Best articles dropped as irrelevant — the model saw only the page's menu/intro; model-card search returned GPT-2 | best-passage selection, HF Hub API sorted by trending, task guard for multimodal topics |
+| 2 | Best articles dropped as irrelevant: the model saw only the page's menu/intro; model-card search returned GPT-2 | best-passage selection, HF Hub API sorted by trending, task guard for multimodal topics |
 | 3 | Empty comparison table from one big prompt | Comparison split into select → evidence → one row per model → differences |
 | 4–5 | Differences step failed silently; empty "no results" cached for 24 h; only Bing answered | warnings surfaced, never cache empty results, fixed engine fallback chain |
 | 6 | "Kimi K3" inherited Kimi K3.1-Pro's 2.78T parameters | version-aware name matching |
 | 7 | Architecture components picked as "models"; a price in the licence column; prose misattributed a capability | own-card models always compared, licence sanity check, attribution check |
 | 8 | Attribution check removed a correct sentence ("PaliGemma VLM") | strict for versioned names, whole-word match for descriptive names |
-| — | UI test: status cards stacked instead of updating | `st.empty()` placeholders |
+| tests | UI test: status cards stacked instead of updating | `st.empty()` placeholders |
 
 ## 10. Limitations
 
 Observed during live end-to-end runs with `qwen3.5:2b` on a CPU-only laptop:
 
 * **Small local model reasoning.** A 2B model extracts facts reasonably but reasons poorly about
-  them — e.g. it once wrote that a 160K context was larger than a 1M context. The design limits the
+  them. For example, it once wrote that a 160K context was larger than a 1M context. The design limits the
   damage (code owns citations, numbers verification, licences, tables), but **narrative sentences can
   still contain reasoning errors. Verify critical statements in the cited sources.**
 * **Results vary between runs.** Search engines return different pages, and the model's choices
@@ -339,8 +339,8 @@ Observed during live end-to-end runs with `qwen3.5:2b` on a CPU-only laptop:
 * **The attribution check is narrow.** It confirms that cited sources mention the models a sentence
   names; it cannot verify every claim inside the sentence (see the "ideal for OCR" example above).
 * **Benchmark evidence is rare in retrieved text.** Model cards put scores in images or long tables
-  beyond the passages the model reads, so runs often report *"no benchmark scores could be verified"*
-  — honest, but thin. Verification is lexical: it confirms the number and benchmark name appear in the
+  beyond the passages the model reads, so runs often report *"no benchmark scores could be verified"*.
+  That is honest, but thin. Verification is lexical: it confirms the number and benchmark name appear in the
   source, not that they belong together.
 * **Shallow retrieval by design.** ~2–4 sources per category; no PDF parsing (arXiv abstracts only);
   JavaScript-heavy pages yield little text.
@@ -353,11 +353,11 @@ Observed during live end-to-end runs with `qwen3.5:2b` on a CPU-only laptop:
 
 ## 11. Possible improvements
 
-* Use a larger local model (4B–8B) on a machine with more RAM or a GPU — the pipeline is unchanged,
+* Use a larger local model (4B–8B) on a machine with more RAM or a GPU. The pipeline is unchanged and
   only `OLLAMA_MODEL` differs; quality of reasoning and narrative should improve markedly.
 * Run Comparison and Evaluation in parallel when a GPU / multiple model instances are available.
 * Embedding-based passage selection and claim-level verification of narrative sentences against source text.
 * Parse benchmark tables from model-card Markdown, and PDF parsing of arXiv papers.
 * A reviewer step that checks the report against the evidence (bounded to one pass).
 * Persist runs in SQLite and allow comparing reports over time.
-* Optional benchmark execution on a small local evaluation set — clearly separated from reported scores.
+* Optional benchmark execution on a small local evaluation set, kept clearly separate from reported scores.

@@ -42,7 +42,7 @@ def fake_tools(monkeypatch):
         return [Source(title="org/a", url="https://github.com/org/a", source_type="github", content="readme")]
 
     def hub(task, n):
-        return [Source(title="org/a — model card", url="https://huggingface.co/org/a",
+        return [Source(title="org/a (model card)", url="https://huggingface.co/org/a",
                        source_type="documentation", metadata={"license_hf": "apache-2.0"})]
 
     monkeypatch.setattr(ra, "search_web", web)

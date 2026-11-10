@@ -1,4 +1,4 @@
-"""Evaluation Agent tests — focus: fabricated benchmark numbers never survive."""
+"""Evaluation Agent tests. Focus: fabricated benchmark numbers never survive."""
 
 from agents import evaluation_agent as ea
 from schemas.evaluation import BenchmarkResult

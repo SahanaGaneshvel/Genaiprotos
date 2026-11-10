@@ -1,4 +1,4 @@
-# Project Brief — Multi-Agent AI Research Assistant
+# Project Brief: Multi-Agent AI Research Assistant
 
 > Saved verbatim (formatting only converted to Markdown) as the source of truth for this POC.
 > Context: Junior AI Engineer internship assessment.
@@ -235,12 +235,12 @@ Title: **Multi-Agent AI Research Assistant**
 
 - **Header:** project name, short description, local model currently configured.
 - **Input:** research topic text area; research depth selector (Basic / Detailed); Start Research button.
-- **Agent execution section:** four agent cards (Research, Comparison, Evaluation, Report) showing Pending / Running / Completed / Failed — actual execution states, not fake animations.
+- **Agent execution section:** four agent cards (Research, Comparison, Evaluation, Report) showing Pending / Running / Completed / Failed (actual execution states, not fake animations).
 - **Results tabs:**
-  - Tab 1 Research Findings — findings, source titles and clickable URLs.
-  - Tab 2 Model Comparison — comparison table, important differences.
-  - Tab 3 Evaluation — benchmarks, metrics, limitations, deployment considerations.
-  - Tab 4 Final Report — rendered Markdown report, download button.
+  - Tab 1 Research Findings: findings, source titles and clickable URLs.
+  - Tab 2 Model Comparison: comparison table, important differences.
+  - Tab 3 Evaluation: benchmarks, metrics, limitations, deployment considerations.
+  - Tab 4 Final Report: rendered Markdown report, download button.
 - Small section showing number of sources retrieved and total execution time.
 - Design: professional AI research dashboard, clean layout, minimal colours, good spacing, desktop-responsive, no unnecessary animations.
 
@@ -365,4 +365,4 @@ After each stage: run relevant tests, fix errors, explain what was implemented, 
 
 ## Additional instruction from the developer
 
-This project is mainly to check whether the developer understands the concepts. Every stage must be explained so the developer understands the process — not just the code.
+This project is mainly to check whether the developer understands the concepts. Every stage must be explained so the developer understands the process, not just the code.

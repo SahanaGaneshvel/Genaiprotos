@@ -84,7 +84,7 @@ def select_relevant_text(text: str, keywords: list[str], max_chars: int, chunk_c
     A tiny, transparent retrieval step (keyword scoring, no embeddings): split into chunks,
     score each by topic keywords + evidence signals (numbers, licences, VRAM, benchmarks),
     keep the best chunks within the budget, and return them in their original order.
-    Why: live runs showed page starts are bylines, menus and intros — the model lists come later.
+    Why: live runs showed page starts are bylines, menus and intros; the model lists come later.
     """
     text = " ".join((text or "").split())
     if len(text) <= max_chars:

@@ -1,4 +1,4 @@
-"""Citation registry helpers — the anti-fabrication layer.
+"""Citation registry helpers: the anti-fabrication layer.
 
 The LLM only ever writes citation IDs like [S3]. Code then:
   * drops IDs that do not exist in the source registry (fabricated citations),

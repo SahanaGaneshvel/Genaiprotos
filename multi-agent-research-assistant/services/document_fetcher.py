@@ -1,6 +1,6 @@
 """Fetch a public webpage and turn it into clean text with Requests + BeautifulSoup.
 
-Respects robots.txt, only reads HTML/plain text, and never raises on failure —
+Respects robots.txt, only reads HTML/plain text, and never raises on failure:
 it returns None so the caller can fall back to the search snippet.
 """
 

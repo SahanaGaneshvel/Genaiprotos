@@ -1,7 +1,7 @@
 """Tiny JSON file cache for retrieval results.
 
 Why: searching the same topic twice (common while demoing/debugging) should not
-hit DuckDuckGo/GitHub again — that is how you get rate-limited. One file per
+hit DuckDuckGo/GitHub again; that is how you get rate-limited. One file per
 (namespace, key), with a time-to-live from CACHE_TTL_HOURS.
 """
 

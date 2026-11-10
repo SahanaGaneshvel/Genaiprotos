@@ -1,11 +1,11 @@
-"""AGENT 1 — Research Agent.
+"""AGENT 1: Research Agent.
 
 Responsibility: turn a topic into real, citable evidence.
 
 Pipeline (code does the tool calls; the LLM does the reading):
   1. PLAN      LLM  -> SearchPlan (web / arXiv / GitHub queries + Hugging Face task)
   2. RETRIEVE  code -> DuckDuckGo, Hugging Face Hub model cards, arXiv, GitHub
-                       (queries are cleaned and, if empty, relaxed once — bounded, no loops)
+                       (queries are cleaned and, if empty, relaxed once; bounded, no loops)
   3. ENRICH    code -> fetch full page text for web/documentation hits
   4. REGISTER  code -> de-duplicate URLs, assign IDs S1..Sn  (the citation registry)
   5. EXTRACT   LLM  -> one FindingExtraction per source, using ONLY that source's text
@@ -181,7 +181,7 @@ def _source_text(src: Source, max_chars: int, keywords: list[str] | None = None)
 
 def _search(label: str, tool, queries: list[str], limit: int, errors: list[str], progress: Progress):
     """Try queries strict -> loose; stop at the first non-empty result.
-    A hard failure (offline, rate limit) stops this tool immediately — no hammering."""
+    A hard failure (offline, rate limit) stops this tool immediately (no hammering)."""
     for query in queries:
         progress(f"Searching {label}: {query}", step="search", tool=label, query=query)
         try:

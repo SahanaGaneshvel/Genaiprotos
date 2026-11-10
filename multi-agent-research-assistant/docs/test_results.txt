@@ -1,4 +1,4 @@
-# Test results — 2026-11-10 19:30
+# Test results: 2026-11-10 19:30
 # Python 3.12.9, pytest 9.2.0; all network and LLM calls mocked
 
 tests/test_api.py::test_health_reports_model_and_status PASSED

@@ -6,7 +6,7 @@
 
 Why Server-Sent Events? The workflow already emits live events (agent running /
 completed / progress messages). SSE pushes each one to the browser the moment it
-happens over one long-lived HTTP response — simpler than WebSockets, one direction only,
+happens over one long-lived HTTP response, simpler than WebSockets, one direction only,
 and the browser's EventSource reconnects automatically.
 
 The workflow is synchronous and CPU-bound, so it runs in a worker thread that puts

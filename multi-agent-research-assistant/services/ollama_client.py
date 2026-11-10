@@ -102,7 +102,7 @@ class OllamaClient:
         return [m.get("name", "") for m in resp.json().get("models", [])]
 
     def check_health(self) -> tuple[bool, str]:
-        """Returns (ok, human-readable message). Never raises — used by the UI."""
+        """Returns (ok, human-readable message). Never raises; used by the UI."""
         try:
             self._ensure_local_model()
             models = self.list_models()
@@ -148,7 +148,7 @@ class OllamaClient:
             payload["options"]["num_predict"] = max_tokens  # cap output length (CPU time)
 
         resp = self._post(payload)
-        # Some models reject the `think` flag entirely — retry once without it.
+        # Some models reject the `think` flag entirely: retry once without it.
         if resp.status_code == 400 and "think" in resp.text.lower():
             payload.pop("think")
             resp = self._post(payload)
@@ -182,7 +182,7 @@ class OllamaClient:
     ) -> T:
         """Ask for JSON matching `schema`, validate it with Pydantic.
 
-        On malformed/invalid output we retry, showing the model its own error —
+        On malformed/invalid output we retry, showing the model its own error:
         a cheap, bounded self-correction (max `retries` extra attempts, no loops).
         """
         json_schema = _inline_refs(schema.model_json_schema())
