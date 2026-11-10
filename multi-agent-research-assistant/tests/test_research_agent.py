@@ -131,12 +131,21 @@ def test_empty_github_query_is_relaxed_once(fake_tools, monkeypatch):
     assert seen == ["open vision language model", "open vision"]  # bounded: exactly 2 attempts
 
 
-def test_multimodal_topic_overrides_wrong_hub_task(fake_tools, monkeypatch):
+@pytest.mark.parametrize("wrong_task", ["text-generation", "text-to-image", "any"])  # real qwen3.5:2b mistakes
+def test_multimodal_topic_overrides_wrong_hub_task(fake_tools, monkeypatch, wrong_task):
     tasks = []
     monkeypatch.setattr(ra, "search_models", lambda task, n: tasks.append(task) or [])
-    plan = {**PLAN, "hub_task": "text-generation"}  # real mistake by qwen3.5:2b
+    plan = {**PLAN, "hub_task": wrong_task}
     ra.run("open multimodal models for on-prem use", llm=FakeLLM({"SearchPlan": plan, "FindingExtraction": _extraction}))
     assert tasks == ["image-text-to-text"]
+
+
+def test_image_generation_topic_keeps_text_to_image(fake_tools, monkeypatch):
+    tasks = []
+    monkeypatch.setattr(ra, "search_models", lambda task, n: tasks.append(task) or [])
+    plan = {**PLAN, "hub_task": "text-to-image"}
+    ra.run("compare open image generation diffusion models", llm=FakeLLM({"SearchPlan": plan, "FindingExtraction": _extraction}))
+    assert tasks == ["text-to-image"]
 
 
 def test_source_marked_irrelevant_but_with_findings_is_kept(fake_tools):

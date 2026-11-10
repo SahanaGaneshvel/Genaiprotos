@@ -105,6 +105,7 @@ def test_placeholder_values_become_not_documented_so_metadata_can_fill_them():
                            hardware_requirements="Not specified in source text")  # live-run phrasing
     assert row.parameter_sizes == row.licence == row.context_window == ca.NOT_DOCUMENTED
     assert row.hardware_requirements == ca.NOT_DOCUMENTED
+    assert ComparisonRowLLM(context_window="Not explicitly stated in the text").context_window == ca.NOT_DOCUMENTED
     assert ComparisonRowLLM(hardware_requirements="Min VRAM ~16GB").hardware_requirements == "Min VRAM ~16GB"
 
 

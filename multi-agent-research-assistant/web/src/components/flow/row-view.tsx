@@ -111,7 +111,9 @@ function Body({ row }: { row: Row }) {
       );
     case "row": {
       if (busy) return <p>Filling in <span className="font-medium text-ink">{d.model}</span> from {d.evidence_lines} lines of evidence…</p>;
-      const known = (v: unknown) => typeof v === "string" && v.trim() !== "" && !/^not (documented|specified|stated)/i.test(v);
+      const known = (v: unknown) =>
+        typeof v === "string" && v.trim() !== "" &&
+        !/^(not (explicitly |clearly )?(documented|specified|stated|mentioned|provided|available|given)|unknown)/i.test(v.trim());
       const facts = [
         known(d.parameters) && d.parameters,
         known(d.context) && `context ${d.context}`,

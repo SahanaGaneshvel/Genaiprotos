@@ -117,6 +117,21 @@ def test_rule_based_recommendations_use_licence_and_memory_estimate():
                     "candidate for a single-GPU on-prem pilot; measure VRAM and run your own evaluation first [S1]."]
 
 
+def test_memory_estimate_only_applies_to_exactly_that_model():
+    # live bug: "P-H3-Image-Comfy" was given the estimate of "P-H3-Image"
+    from schemas.comparison import ComparisonOutput, ModelComparison
+    from schemas.evaluation import MemoryEstimate
+
+    comparison = ComparisonOutput(models=[
+        ModelComparison(model_name="PrunaAI/P-H3-Image", source_ids=["S1"]),
+        ModelComparison(model_name="PrunaAI/P-H3-Image-Comfy", source_ids=["S2"]),
+    ])
+    evaluation = EVALUATION.model_copy(update={"memory_estimates": [MemoryEstimate(
+        model_name="PrunaAI/P-H3-Image", parameters="33.12B", source_id="S1", fp16_gb=79.5, int8_gb=39.7, int4_gb=19.9)]})
+    recs = rp.rule_based_recommendations(comparison, evaluation)
+    assert "19.9 GB" in recs[0] and "19.9 GB" not in recs[1]
+
+
 def test_recommendations_section_always_has_grounded_advice():
     out, _ = _report({**NARRATIVE, "recommendations": []})
     section = out.markdown.split("## 9. Recommendations")[1].split("## 10.")[0]

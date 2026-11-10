@@ -110,10 +110,15 @@ PLACEHOLDER_NAMES = {"", "none", "null", "n/a", "na", "unknown", "not specified"
 MULTIMODAL_TOPIC = re.compile(r"multimodal|multi-modal|vision|image|visual|vlm", re.I)
 
 
+GENERATION_TOPIC = re.compile(r"generat|text-to-image|diffusion|image synthesis", re.I)
+
+
 def guard_hub_task(topic: str, plan: SearchPlan) -> SearchPlan:
-    """Deterministic guard on one LLM decision: a live run picked 'text-generation' for a
-    multimodal topic and retrieved GPT-2. If the topic clearly names vision/multimodal, code wins."""
-    if MULTIMODAL_TOPIC.search(topic) and plan.hub_task in ("any", "text-generation"):
+    """Deterministic guard on one LLM decision. Live runs picked 'text-generation' (retrieved
+    GPT-2) and 'text-to-image' (retrieved image generators) for a question about multimodal
+    understanding models. If the topic names vision/multimodal and is not about generating
+    images, code chooses image-text-to-text."""
+    if MULTIMODAL_TOPIC.search(topic) and not GENERATION_TOPIC.search(topic):
         plan.hub_task = "image-text-to-text"
     return plan
 

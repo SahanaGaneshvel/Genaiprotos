@@ -187,8 +187,12 @@ SINGLE_GPU_GB = 24  # a common single workstation/server GPU size used as the pi
 
 
 def _memory_for(model_name: str, evaluation: EvaluationOutput):
-    return next((m for m in evaluation.memory_estimates
-                 if mentions(m.model_name, model_name) or mentions(model_name, m.model_name)), None)
+    """The estimate for exactly this model. Loose matching gave 'P-H3-Image-Comfy' the
+    estimate of 'P-H3-Image' in a live run."""
+    def key(name: str) -> str:
+        return re.sub(r"[^a-z0-9]", "", name.split("/")[-1].lower())
+
+    return next((m for m in evaluation.memory_estimates if key(m.model_name) == key(model_name)), None)
 
 
 def rule_based_recommendations(comparison: ComparisonOutput, evaluation: EvaluationOutput) -> list[str]:

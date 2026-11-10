@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
@@ -41,6 +42,8 @@ class ModelSelection(BaseModel):
 
 
 PLACEHOLDERS = {"", "none", "null", "n/a", "na", "unknown", "not specified", "not stated", "-", "—"}
+# "Not specified in source text", "Not explicitly stated in the text", "Unknown (not given)", ...
+NOTHING_KNOWN = re.compile(r"^(not (explicitly |clearly )?(specified|documented|stated|mentioned|provided|available|given)|unknown)")
 
 
 class ComparisonRowLLM(BaseModel):
@@ -64,7 +67,7 @@ class ComparisonRowLLM(BaseModel):
         # showed up as cell text. Every "nothing known" phrasing becomes the one standard value.
         text = (v or "").strip()
         low = text.lower().rstrip(".")
-        if low in PLACEHOLDERS or low.startswith(("not specified", "not documented", "not stated", "not mentioned", "not provided", "unknown")):
+        if low in PLACEHOLDERS or NOTHING_KNOWN.match(low):
             return NOT_DOCUMENTED
         return text
 
