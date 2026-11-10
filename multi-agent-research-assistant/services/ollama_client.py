@@ -86,7 +86,7 @@ class OllamaClient:
         if is_cloud_model(self.model):
             raise OllamaModelNotFoundError(
                 f"'{self.model}' is an Ollama cloud model (runs remotely). This app only uses "
-                "local models — set OLLAMA_MODEL to a pulled local model such as qwen3.5:4b."
+                "local models. Set OLLAMA_MODEL to a pulled local model such as qwen3.5:4b."
             )
 
     # ------------------------------------------------------------------ health

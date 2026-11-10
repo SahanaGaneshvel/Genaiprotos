@@ -113,7 +113,7 @@ def test_rule_based_recommendations_use_licence_and_memory_estimate():
     evaluation = EVALUATION.model_copy(update={"memory_estimates": [MemoryEstimate(
         model_name="org/Model-A", parameters="8.00B", source_id="S1", fp16_gb=19.2, int8_gb=9.6, int4_gb=4.8)]})
     recs = rp.rule_based_recommendations(COMPARISON, evaluation)
-    assert recs == ["**Model A** — OSI-approved licence (Apache-2.0) and ~4.8 GB of weights at 4-bit (estimate): "
+    assert recs == ["**Model A**: OSI-approved licence (Apache-2.0) and ~4.8 GB of weights at 4-bit (estimate): "
                     "candidate for a single-GPU on-prem pilot; measure VRAM and run your own evaluation first [S1]."]
 
 

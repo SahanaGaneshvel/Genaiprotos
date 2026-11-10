@@ -112,7 +112,7 @@ export function buildStages(events: FlowEvent[]): Stage[] {
 export type Who = "model" | "code" | "api";
 
 const TOOL_TEXT: Record<string, string> = {
-  web: "Free search engines, tried in a fixed order — DuckDuckGo, then Bing, then Brave — until one answers. Which engine answered is recorded.",
+  web: "Free search engines, tried in a fixed order (DuckDuckGo, then Bing, then Brave) until one answers. Which engine answered is recorded.",
   "Hugging Face model cards": "The Hugging Face Hub API. Licence, parameter count and dates come straight from the API, so the model never has to guess them.",
   arXiv: "arXiv's public paper API. Words like “on-premise” or “licence” are removed first; if nothing comes back, the query is shortened once.",
   GitHub: "GitHub's search API, sorted by stars, plus each repository's README. Shortened once if nothing comes back.",
@@ -127,13 +127,13 @@ export function explain(row: Row): { who: Who; whoLabel?: string; text: string }
     case "fetch":
       return { who: "code", text: "Downloads the page (only if robots.txt allows it), strips menus, scripts and footers, and keeps the readable text." };
     case "register":
-      return { who: "code", text: "Duplicate links are removed and every source gets an ID. From here on the model can only refer to sources by these IDs — it never writes a link itself, so it can't invent one." };
+      return { who: "code", text: "Duplicate links are removed and every source gets an ID. From here on the model can only refer to sources by these IDs. It never writes a link itself, so it can't invent one." };
     case "read":
       return { who: "model", text: "One call per source. Code first picks the most informative passages of the page; the model then pulls out facts from that text only. Sources with nothing useful are set aside." };
     case "candidates":
       return { who: "code", text: "Every model name the research mentioned, ranked by how many sources talk about it." };
     case "selected":
-      return { who: "model", text: "Models that have their own model card or repository are always included by code. The model picks the rest — and any name that isn't in the research is rejected." };
+      return { who: "model", text: "Models that have their own model card or repository are always included by code. The model picks the rest, and any name that isn't in the research is rejected." };
     case "row":
       return { who: "model", text: "The model fills in this model's row using only the evidence about it. Code then fills gaps from the API data, rejects anything that isn't really a licence, and decides whether the licence is truly open source." };
     case "row_dropped":
@@ -143,7 +143,7 @@ export function explain(row: Row): { who: Who; whoLabel?: string; text: string }
     case "evaluate":
       return { who: "model", text: "The model looks for reported benchmark scores, judges how practical each model is to run on your own hardware, and lists what's missing." };
     case "verify":
-      return { who: "code", text: "Every score the model reported must appear — the number and the benchmark name — in the text of the source it cites. Anything else is rejected. No benchmark is ever run by this app." };
+      return { who: "code", text: "Every score the model reported must appear in the text of the source it cites, both the number and the benchmark name. Anything else is rejected. No benchmark is ever run by this app." };
     case "memory":
       return { who: "code", text: "Memory for the weights = parameters × bytes per parameter (2 at FP16, 1 at 8-bit, 0.5 at 4-bit) × 1.2. An estimate, not a measurement." };
     case "narrative":

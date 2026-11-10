@@ -118,7 +118,7 @@ def methodology_section(
         "",
         "**Sources retrieved:** "
         + (", ".join(f"{n} {t}" for t, n in sorted(counts.items())) or "none")
-        + f" — {len(sources)} total, {len(research.findings)} judged relevant.",
+        + f" ({len(sources)} total, {len(research.findings)} judged relevant).",
     ]
     if research.retrieval_errors:
         parts += ["", "**Retrieval issues encountered:**", _bullets(research.retrieval_errors)]
@@ -134,7 +134,7 @@ def models_section(research: ResearchOutput, comparison: ComparisonOutput) -> st
     lines = []
     compared = {m.model_name.lower() for m in comparison.models}
     for m in comparison.models:
-        lines.append(f"- **{m.model_name}** — {m.developer}. " + "".join(f"[{s}]" for s in m.source_ids))
+        lines.append(f"- **{m.model_name}** (developer: {m.developer}). " + "".join(f"[{s}]" for s in m.source_ids))
     others = [m for m in research.models_identified if m.lower() not in compared]
     if others:
         lines.append(f"- Also mentioned in sources (not compared in detail): {', '.join(others[:15])}")
@@ -206,21 +206,21 @@ def rule_based_recommendations(comparison: ComparisonOutput, evaluation: Evaluat
         lic = row.licence.split(" (")[0]
         if row.licence_category.startswith("Open source"):
             if est and est.int4_gb <= SINGLE_GPU_GB:
-                recs.append(f"**{row.model_name}** — OSI-approved licence ({lic}) and ~{est.int4_gb} GB of weights "
+                recs.append(f"**{row.model_name}**: OSI-approved licence ({lic}) and ~{est.int4_gb} GB of weights "
                             f"at 4-bit (estimate): candidate for a single-GPU on-prem pilot; measure VRAM and run "
                             f"your own evaluation first {cites}.")
             elif est:
-                recs.append(f"**{row.model_name}** — OSI-approved licence ({lic}), but ~{est.int4_gb} GB at 4-bit "
+                recs.append(f"**{row.model_name}**: OSI-approved licence ({lic}), but ~{est.int4_gb} GB at 4-bit "
                             f"(estimate) needs multi-GPU / server hardware {cites}.")
             else:
-                recs.append(f"**{row.model_name}** — OSI-approved licence ({lic}); size/hardware not documented in "
-                            f"the retrieved sources — measure memory before committing {cites}.")
+                recs.append(f"**{row.model_name}**: OSI-approved licence ({lic}); size/hardware not documented in "
+                            f"the retrieved sources, so measure memory before committing {cites}.")
         elif row.licence_category.startswith("Open weights"):
-            recs.append(f"**{row.model_name}** — open weights under a custom licence ({lic}): review usage "
+            recs.append(f"**{row.model_name}**: open weights under a custom licence ({lic}): review usage "
                         f"restrictions before commercial on-prem use {cites}.")
         else:
             size = f"; ~{est.int4_gb} GB at 4-bit (estimate)" if est else ""
-            recs.append(f"**{row.model_name}** — licence not established from the retrieved sources{size}: "
+            recs.append(f"**{row.model_name}**: licence not established from the retrieved sources{size}: "
                         f"verify on the official model card before use {cites}.")
     return recs
 
@@ -361,7 +361,7 @@ def build_insufficient_evidence_report(
     else:
         result = "**The research could not be completed: no sources were retrieved.**"
         consulted = ""
-    md = f"""# Technical Research Report — Insufficient Evidence
+    md = f"""# Technical Research Report: Insufficient Evidence
 
 **Topic:** {topic}
 **Generated:** {datetime.now():%Y-%m-%d %H:%M} · **Local model:** `{model_name}`
@@ -411,7 +411,7 @@ def run(
                     for b in evaluation.benchmarks
                 ) or "(none verified)",
                 assessments="\n".join(
-                    f"- {a.model_name}: {a.onprem_suitability} — {a.rationale} memory: {a.memory_and_inference}"
+                    f"- {a.model_name}: {a.onprem_suitability}; {a.rationale} memory: {a.memory_and_inference}"
                     for a in evaluation.assessments
                 ) or "(none)",
                 memory="\n".join(

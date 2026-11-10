@@ -11,7 +11,7 @@ export const SPEEDS = [10, 30, 100] as const;
 /**
  * Drives the page in two modes that render identically:
  *  - replay: a recorded real run (public/recorded-run.json) played back with its real
- *            timing, sped up — this is what the deployed site shows;
+ *            timing, sped up. This is what the deployed site shows;
  *  - live:   a new run streamed from the local API (only offered when the page itself
  *            is served from localhost, so visitors never get a local-network prompt).
  */
@@ -58,8 +58,8 @@ export function useFlowRun() {
   const end = useMemo(() => recorded?.events?.at(-1)?.t ?? 0, [recorded]);
 
   // Replay clock: advances by real elapsed time × speed on every animation frame, but only
-  // re-renders when a new event becomes due or every 250 ms (for the time display) —
-  // re-rendering 60×/s kept restarting the entrance animations and wasted CPU.
+  // re-renders when a new event becomes due or every 250 ms (for the time display).
+  // Re-rendering 60×/s kept restarting the entrance animations and wasted CPU.
   useEffect(() => {
     if (mode !== "replay" || !playing) return;
     const times = (recorded?.events ?? []).map((e) => e.t);

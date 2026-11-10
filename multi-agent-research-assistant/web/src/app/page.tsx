@@ -50,7 +50,7 @@ export default function Page() {
         </h1>
         <p className="mt-6 max-w-xl text-[1.02rem] leading-relaxed text-ink-2">
           They search the web, papers, model cards and code, read what they find, compare the models, check the evidence
-          and write a report — using a small model running locally. Every step below is real. Tap any line to see how it
+          and write a report, using a small model running locally. Every step below is real. Tap any line to see how it
           works.
         </p>
       </section>

@@ -51,8 +51,8 @@ def _finding_text(f: ResearchFinding) -> str:
 
 
 def _identifier(title: str) -> str:
-    """'moonshotai/Kimi-K3.1-Pro — model card' -> 'kimik31pro'; 'org/moondream' -> 'moondream'."""
-    return _squash(title.split(" — ")[0].split("/")[-1])
+    """'moonshotai/Kimi-K3.1-Pro (model card)' -> 'kimik31pro'; 'org/moondream' -> 'moondream'."""
+    return _squash(re.split(r" \(model card\)| — ", title)[0].split("/")[-1])
 
 
 def is_own_source(name: str, finding: ResearchFinding) -> bool:

@@ -62,7 +62,7 @@ def md_table(headers: list[str], rows: list[list[str]]) -> str:
     """Render a Markdown table; escapes pipes/newlines so cell text cannot break the layout."""
 
     def cell(value) -> str:
-        return str(value if value not in (None, "") else "—").replace("|", "\\|").replace("\n", " ")
+        return str(value if value not in (None, "") else "-").replace("|", "\\|").replace("\n", " ")
 
     lines = ["| " + " | ".join(headers) + " |", "|" + "---|" * len(headers)]
     lines += ["| " + " | ".join(cell(v) for v in row) + " |" for row in rows]

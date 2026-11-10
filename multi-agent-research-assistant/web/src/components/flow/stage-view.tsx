@@ -23,7 +23,7 @@ function Status({ stage, now }: { stage: Stage; now: number }) {
     case "failed":
       return <span className="text-accent">failed</span>;
     case "skipped":
-      return <span className="text-muted">skipped — nothing to work with</span>;
+      return <span className="text-muted">skipped, nothing to work with</span>;
     default:
       return <span className="text-muted">waiting</span>;
   }

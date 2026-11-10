@@ -47,7 +47,7 @@ function Body({ row }: { row: Row }) {
             ...(d.web_queries ?? []).map((q: string) => <>Web <Q>{q}</Q></>),
             <>arXiv <Q>{d.arxiv_query}</Q></>,
             <>GitHub <Q>{d.github_query}</Q></>,
-            <>Hugging Face — trending <span className="font-mono text-[0.82em]">{d.hub_task}</span> models</>,
+            <>Hugging Face: trending <span className="font-mono text-[0.82em]">{d.hub_task}</span> models</>,
           ]} />
         </>
       );
@@ -58,8 +58,10 @@ function Body({ row }: { row: Row }) {
       return (
         <>
           <p>
-            Searched {name} for <Q>{d.query}</Q> —{" "}
-            {results.length ? `${results.length} result${results.length > 1 ? "s" : ""}` : <span className="text-muted">nothing came back{d.error ? ` (${d.error})` : ""}</span>}
+            Searched {name} for <Q>{d.query}</Q>
+            {results.length
+              ? `, found ${results.length} result${results.length > 1 ? "s" : ""}`
+              : <span className="text-muted">. Nothing came back{d.error ? ` (${d.error})` : ""}.</span>}
           </p>
           {results.length > 0 && (
             <List items={results.map((r) => (
@@ -76,7 +78,7 @@ function Body({ row }: { row: Row }) {
       return d.ok ? (
         <p>Read the page at {domain(d.url)} <span className="text-muted">· {Number(d.chars).toLocaleString()} characters kept</span></p>
       ) : (
-        <p>{domain(d.url)} wouldn&apos;t load <span className="text-muted">— keeping the search snippet instead</span></p>
+        <p>{domain(d.url)} wouldn&apos;t load, <span className="text-muted">so the search snippet is used instead</span></p>
       );
     case "register": {
       const sources: { id: string; title: string; url: string }[] = d.sources ?? [];
@@ -93,20 +95,20 @@ function Body({ row }: { row: Row }) {
     }
     case "read":
       if (busy) return <p>Reading <Id id={d.source_id} />{d.title}…</p>;
-      if (!d.kept) return <p className="text-muted"><Id id={d.source_id} /><span className="line-through">{d.title}</span> — set aside, nothing relevant</p>;
+      if (!d.kept) return <p className="text-muted"><Id id={d.source_id} /><span className="line-through">{d.title}</span> (set aside, nothing relevant)</p>;
       return (
         <>
-          <p><Id id={d.source_id} />{d.title} {d.fallback ? <span className="text-muted">— the model&apos;s answer was unusable, so the snippet was kept</span> : <span className="text-muted">— kept</span>}</p>
+          <p><Id id={d.source_id} />{d.title} {d.fallback ? <span className="text-muted">(the model&apos;s answer was unusable, so the snippet was kept)</span> : <span className="text-muted">(kept)</span>}</p>
           {(d.facts ?? []).length > 0 && <List items={d.facts} />}
         </>
       );
     case "candidates":
-      return <p>Found {(d.candidates ?? []).length} model names in the research <span className="text-muted">— {(d.candidates ?? []).slice(0, 8).join(", ")}</span></p>;
+      return <p>Found {(d.candidates ?? []).length} model names in the research: <span className="text-muted">{(d.candidates ?? []).slice(0, 8).join(", ")}</span></p>;
     case "selected":
       return (
         <p>
-          Comparing <span className="font-medium text-ink">{(d.models ?? []).join(", ")}</span>
-          {(d.guaranteed ?? []).length > 0 && <span className="text-muted"> — {(d.guaranteed as string[]).join(" and ")} {d.guaranteed.length > 1 ? "have" : "has"} an official model card, so {d.guaranteed.length > 1 ? "they're" : "it's"} always included</span>}
+          Comparing <span className="font-medium text-ink">{(d.models ?? []).join(", ")}</span>.
+          {(d.guaranteed ?? []).length > 0 && <span className="text-muted"> {(d.guaranteed as string[]).join(" and ")} {d.guaranteed.length > 1 ? "have" : "has"} an official model card, so {d.guaranteed.length > 1 ? "they're" : "it's"} always included.</span>}
         </p>
       );
     case "row": {
@@ -126,7 +128,7 @@ function Body({ row }: { row: Row }) {
           <span className="text-ink-2">
             {facts.join(" · ") || <span className="text-muted">size not documented</span>}
             <span className="block text-[0.8rem] text-muted">
-              licence: {known(d.licence) ? `${d.licence} — ${String(d.licence_category).toLowerCase()}` : "not documented"}{" "}
+              licence: {known(d.licence) ? `${d.licence} (${String(d.licence_category).toLowerCase()})` : "not documented"}{" "}
               <span className="font-mono">{(d.source_ids ?? []).map((s: string) => `[${s}]`).join("")}</span>
             </span>
           </span>
@@ -134,7 +136,7 @@ function Body({ row }: { row: Row }) {
       );
     }
     case "row_dropped":
-      return <p className="text-muted"><span className="line-through">{d.model}</span> — no source supports it, dropped</p>;
+      return <p className="text-muted"><span className="line-through">{d.model}</span> dropped, because no source supports it</p>;
     case "differences":
       if (busy) return <p>Writing down the key differences…</p>;
       return (
@@ -150,7 +152,7 @@ function Body({ row }: { row: Row }) {
       return (
         <>
           <p>
-            Checked every benchmark score against its source — {d.proposed} proposed, {(d.verified ?? []).length} confirmed
+            Checked every benchmark score against its source: {d.proposed} proposed, {(d.verified ?? []).length} confirmed
             {(d.rejected ?? []).length > 0 && `, ${(d.rejected ?? []).length} rejected`}.
           </p>
           {(d.verified ?? []).length > 0 && <List items={d.verified} />}
@@ -188,14 +190,14 @@ function Body({ row }: { row: Row }) {
     case "attribution":
       return (
         <>
-          <p>Checked each sentence against the sources it cites — {(d.removed ?? []).length ? `${d.removed.length} removed` : "nothing to remove"}.</p>
+          <p>Checked each sentence against the sources it cites: {(d.removed ?? []).length ? `${d.removed.length} removed` : "nothing to remove"}.</p>
           {(d.removed ?? []).length > 0 && <List items={d.removed} struck />}
         </>
       );
     case "assemble":
       return (
         <p>
-          Report put together — {d.sections} sections, {(d.cited ?? []).length} sources cited,{" "}
+          Report put together: {d.sections} sections, {(d.cited ?? []).length} sources cited,{" "}
           {(d.unknown ?? []).length} unknown citations.
         </p>
       );

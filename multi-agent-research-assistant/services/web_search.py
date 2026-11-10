@@ -47,7 +47,7 @@ def _ddgs_text(query: str, max_results: int) -> tuple[list[dict], str]:
             if raw:
                 return raw, backend
         except RatelimitException as exc:
-            last_error = RetrievalError("Web search rate limit reached — wait a minute and retry.")
+            last_error = RetrievalError("Web search rate limit reached. Wait a minute and retry.")
             last_error.__cause__ = exc
         except TimeoutException as exc:
             last_error = RetrievalError("Web search timed out (check internet connection).")

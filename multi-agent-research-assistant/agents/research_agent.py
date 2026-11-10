@@ -229,7 +229,7 @@ def enrich(sources: list[Source], max_pages: int, progress: Progress) -> None:
         progress(f"Fetching page {src.url}", step="fetch", url=src.url)
         page = fetch_page(src.url)
         fetched += 1
-        progress("Page fetched" if page else "Page unavailable — keeping the search snippet",
+        progress("Page fetched" if page else "Page unavailable, keeping the search snippet",
                  step="fetch_done", url=src.url, ok=page is not None, chars=len(page.text) if page else 0)
         if page:
             src.content = page.text

@@ -235,7 +235,7 @@ def run(
         evidence, ids = model_evidence(name, research, by_id)
         if not ids:
             dropped.append(name)
-            progress(f"{name}: no supporting evidence — dropped", step="row_dropped", model=name)
+            progress(f"{name}: no supporting evidence, dropped", step="row_dropped", model=name)
             continue
         progress(f"Filling the row for {name}", step="row", model=name, evidence_lines=len(evidence), source_ids=ids)
         fields = llm.chat_structured(

@@ -71,7 +71,7 @@ def search_models(
     except requests.RequestException as exc:
         raise RetrievalError(f"Hugging Face request failed (check internet connection): {exc}") from exc
     if resp.status_code == 429:
-        raise RetrievalError("Hugging Face API rate limit reached — retry in a minute.")
+        raise RetrievalError("Hugging Face API rate limit reached. Retry in a minute.")
     if resp.status_code != 200:
         raise RetrievalError(f"Hugging Face API returned HTTP {resp.status_code}.")
 
@@ -83,7 +83,7 @@ def search_models(
         licence = card.get("license") or card.get("license_name")
         sources.append(
             Source(
-                title=f"{model_id} — model card",
+                title=f"{model_id} (model card)",
                 url=f"https://huggingface.co/{model_id}",
                 source_type="documentation",
                 published=(info.get("createdAt") or "")[:10] or None,

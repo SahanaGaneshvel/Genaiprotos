@@ -65,7 +65,7 @@ def search_arxiv(keywords: str, max_results: int = 4) -> list[Source]:
     except requests.RequestException as exc:
         raise RetrievalError(f"arXiv request failed (check internet connection): {exc}") from exc
     if resp.status_code in (429, 503):
-        raise RetrievalError("arXiv is rate-limiting requests — retry in a few seconds.")
+        raise RetrievalError("arXiv is rate-limiting requests. Retry in a few seconds.")
     if resp.status_code != 200:
         raise RetrievalError(f"arXiv returned HTTP {resp.status_code}.")
 
