@@ -105,39 +105,36 @@
     },
     {
       "source_id": "S7",
-      "title": "Neywa-Labs/mlx-vlm",
-      "url": "https://github.com/Neywa-Labs/mlx-vlm",
+      "title": "showlab/ShowUI",
+      "url": "https://github.com/showlab/ShowUI",
       "source_type": "github",
-      "published": "2026-11-10",
-      "snippet": "MLX-VLM is a package for inference and fine-tuning of Vision Language Models (VLMs) on your Mac using MLX.",
-      "content": "<h1 align=\"center\">MLX-VLM</h1> [![Any input. Any output. All local. Runs locally on your Mac. Install with pip install -U mlx-vlm or try it in Nativ.](https://raw.githubusercontent.com/Neywa-Labs/mlx-vlm/b7fda105064b609fcc2ef243bd628c3dad317564/docs/assets/mlx-vlm-banner.png)](https://runnativ.ai) <p align=\"center\"> <strong>Run and fine-tune multimodal models on Apple Silicon.</strong> Text, images, video, and audio in — any out. Built on MLX. </p> <p align=\"center\"> <a href=\"#installation\"><strong>Installation</strong></a> &middot; <a href=\"https://neywa-labs.github.io/mlx-vlm/\">Documentation</a> &middot; <a href=\"https://github.com/Neywa-Labs/mlx-vlm/releases\">Releases</a> </p> <p align=\"center\"> macOS &middot; Apple silicon </p> <p align=\"center\"> Built by <a href=\"https://www.neywalabs.ai\">Neywa Labs</a>, the local AI company behind <a href=\"https://runnativ.ai\">Nativ</a>. </p> <p align=\"center\"> <a href=\"https://github.com/Neywa-Labs/mlx-vlm/actions/workflows/python-publish.yml\"><img src=\"https://github.com/Neywa-Labs/mlx-vlm/actions/workflows/python-publish.yml/badge.svg\" alt=\"Upload Python Package\"></a> <a href=\"https://pypi.org/project/mlx-vlm/\"><img src=\"https://img.shields.io/pypi/v/mlx-vlm\" alt=\"PyPI version\"></a> <a href=\"https://pypi.org/project/mlx-vlm/\"><img src=\"https://img.shields.io/badge/python-3.10%2B-blue\" alt=\"Python 3.10+\"></a> <a href=\"https://github.com/Neywa-Labs/mlx-vlm/blob/main/LICENSE\"><img src=\"https://img.shields.io/github/license/Neywa-Labs/mlx-vlm\" alt=\"MIT license\"></a> </p> ## Table of Contents - [Installation](#installation) - [Usage](#usage) - [Command Line Interface (CLI)](#command-line-interface-cli) - [Thinking Budget](#thinking-budget) - [Speculative Decoding](#speculative-decoding) - [DFlash, DFlash2, and DSpark](#dflash-dflash2-and-dspark) - [Gemma 4 MTP](#gemma-4-mtp) - [Gemma 4 EAGLE-3](#gemma-4-eagle-3) - [MiniMax M3 EAGLE-3](#minimax-m3-eagle-3) - [Chat UI with Gradio](#chat-ui-with-gradio) - [Python Script](#python-script) - [Server (FastAPI)](#server-fastapi) - [Continuous Batching](#continuous-batching) - [Automatic Prefix Caching (APC)](#automatic-prefix-caching-apc) - [KV Cache Quantization](#kv-cache-quantization) - [1-bit Affine Inference](#1-bit-affine-inference) - [Activation Quantization (CUDA)](#activation-quantization-cuda) - [Multi-Image Chat Support](#multi-image-chat-support) - [Supported Models](#supported-models) - [Usage Examples](#usage-examples) - [Model-Specific Documentation](#model-specific-documentation) - [Vision Feature Caching](#vision-feature-caching) - [TurboQuant KV Cache](#turboquant-kv-cache) - [Distributed Inference](#distributed-inference) - [Fine-tuning](#fine-tuning) ## Model-Specific Documentation Some models have detailed documentation with prompt formats, examples, and best practices: | Model | Documentation | |-------|---------------| | LFM3 / LFM3-VL | [Docs](mlx_vlm/models/lfm3/README.md) | | LFM3-Audio | [Docs](mlx_vlm/models/lfm3_audio/README.md) | | LFM3-Omni | [Docs](mlx_vlm/models/lfm3_omni/README.md) | | DeepSeek-OCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/deepseekocr/README.md) | | DeepSeek-OCR-2 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/deepseekocr_2/README.md) | | Unlimited-OCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/unlimited_ocr/README.md) | | DOTS-OCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/dots_ocr/README.md) | | DOTS-MOCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/dots_ocr/README.md) | | ERNIE 4.5 VL | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/ernie4_5_moe_vl/README.md) | | GLM-OCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/glm_ocr/README.md) | | Phi-4 Reasoning Vision | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/phi4_siglip/README.md) | | MiniCPM-o | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/minicpmo/README.md) | | PaddleOCR-VL | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/paddleocr_vl/README.md) | | OXR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/oxr/README.md) | | Phi-4 Multimodal | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/phi4mm/README.md) | | MolmoPoint | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/molmo_point/README.md) | | LocateAnything | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/locateanything/README.md) | | Moondream2 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/moondream2/README.md) | | Moondream3 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/moondream3/README.md) | | EmbeddingGemma 2 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/embedding_gemma2/README.md) | | Gemma 4 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/gemma4/README.md) | | Muse Spark Open | [Docs](mlx_vlm/models/muse_spark/README.md) | | MiniMax M3 / M3.1 Flash | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/minimax_m3_vl/README.md) | | Falcon-OCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/falcon_ocr/README.md) | | IndicOCR | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/indic_ocr/README.md) | | PP-DocLayoutV3 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/pp_doclayout_v3/README.md) | | Granite Vision 3.2 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/granite_vision/README.md) | | Granite Vision (4.0, 4.1) | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/granite4_vision/README.md) | | MiniCPM-OCR 1.0 | [Docs](mlx_vlm/models/minicpm_ocr/README.md) | | MiniCPM-OCR Jev | [Docs](mlx_vlm/models/minicpm_ocr_jev/README.md) | | MiniCPM-V 4.7 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/minicpmv4_7/README.md) | | MiniCPM-V 4.6 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/minicpmv4_6/README.md) | | GLiNER2.5 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/gliner2_5/README.md) | | BERT | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/bert/README.md) | | LLaVA-OneVision | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/llava_onevision/README.md) | | K2-Horizon | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/k2_horizon/README.md) | | Z1T-0 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/z1t/README.md) | | Spark-X2.5 | [Docs](https://github.com/Neywa-Labs/mlx-vlm/blob/main/mlx_vlm/models/spark2_5/README.md) | | Ternary Bonsai 2 | [Docs](mlx_vlm/models/prism_hadamard_qwen35/README.md) | | Flint | [Docs](mlx_vlm/models/flint/README.md) | | Nemotron 3.5 Super VL / Bolt / Nano Omni | [Docs](mlx_vlm/models/nemotron_h_nano_omni/README.md) | | Idol (image to 3D Gaussian splats) | [Docs](mlx_vlm/models/idol/README.md) | ## Installation The easiest way to get started is to install the `mlx-vlm` package using pip: ```sh pip install -U mlx-vlm ``` The [Gradio chat UI](#chat-ui-with-gradio) needs an extra dependency that is not part of the base install: ```sh pip install -U 'mlx-vlm[ui]' ``` Quote the package name so that shells which expand square brackets, such as `zsh`, do not treat `[ui]` as a glob pattern. ## Agent Skills This repo ships an agent-skills bundle under `skills/` for common MLX-VLM workflows — usage, conversion, development, and support. Skills load into a coding agent (Claude Code, Codex, Gemini) so it follows the right project conventions instead of guessing. | Skill | Description | |-------|-------------| | `cli-inference` | Run and debug command-line inference (`mlx_vlm.generate`) — text/image/audio inputs and image-generation flags. | | `server-inference` | Run and debug the local server across the models, chat, responses, messages, audio, image, cache, and metrics endpoints. | | `convert-quantize` | Convert and quantize Hugging Face models to MLX (`mlx_vlm.convert`) — bits/group size, quant modes, RTN/AWQ, mixed recipes. | | `add-new-model` | Port a new architecture into `mlx_vlm/models` — config, weight-name mapping, reuse a similar model, add a test class. | | `benchmarking` | Produce credible, reproducible perf numbers and fork-vs-main A/B tables for PRs. | | `contributing` | Shape a change to pass review — code/config/test placement, pre-commit hooks, and PR expectations. | | `hf-cache-models` | List cached, custom, and loaded models through the server's model discovery endpoint. | | `reproducible-github-issues` | Turn CLI or server failures into concise, reproducible GitHub issues. | Validate the bundle at any time: ```sh python3 skills/scripts/validate_skills.py ``` Install from a local checkout: ```sh # Claude Code /plugin marketplace add /path/to/mlx-vlm /plugin install mlx-vlm-skills@mlx-vlm # Codex CLI codex plugin marketplace add /path/to/mlx-vlm codex plugin add mlx-vlm-skills@mlx-vlm # Gemini CLI gemini extensions install /path/to/mlx-vlm/skills ``` ## Usage ### Command Line Interface (CLI) Generate output from a model using the CLI: ```sh # Text generation mlx_vlm.generate --model mlx-community/Qwen2-VL-2B-Instruct-4bit --max-tokens 100 --prompt \"Hello, how are you?\" # Image generation mlx_vlm.generate --model mlx-community/Qwen2-VL-2B-Instruct-4bit --max-tokens 100 --temperature 0.0 --image http://images.cocodataset.org/val2017/000000039769.jpg # Audio understanding mlx_vlm.generate --model mlx-community/gemma-3n-E2B-it-4bit --max-tokens 100 --prompt \"Describe what you hear\" --audio /path/to/audio.wav # Multi-modal understanding (Image + Audio) mlx_vlm.generate --model mlx-community/gemma-3n-E2B-it-4bit --max-tokens 100 --prompt \"Describe what you see and hear\" --image /path/to/image.jpg --audio /path/to/audio.wav # Speech generation mlx_vlm.generate --model openbmb/MiniCPM-o-4_5 --output-modality audio --prompt \"Say hello.\" --ref-audio /path/to/voice.wav --output speech.wav --max-tokens 256 # Image to 3D Gaussian splats mlx_vlm.generate --model speridlabs/idol --output-modality 3d --image object.png --output object.ply ``` #### Thinking Budget For thinking models (e.g., Qwen3.5), you can limit the number of tokens spent in the thinking block: ```sh mlx_vlm.generate --model mlx-community/Qwen3.5-2B-4bit \\ --thinking-budget 50 \\ --thinking-start-token \"<think>\" \\ --thinking-end-token \"</think>\" \\ --enable-thinking \\ --prompt \"Solve 2+2\" ``` | Flag | Description | |------|-------------| | `--enable-thinking` | Activate thinking mode in the chat template | | `--thinking-budget` | Max tokens allowed inside the thinking block | | `--thinking-start-token` | Token that opens a thinking block (default: `<think>`) | | `--thinking-end-token` | Token that closes a thinking block (default: `</think>`) | When the budget is exceeded, the model is forced to emit `\\n</think>` and transition to the answer. If `--enable-thinking` is passed but the model's chat template does not support it, the budget is applied only if the model generates the start token on its own. On the server, thinking mode is disabled by default. Start the server with `--enable-thinking` to make thinking mode the default for requests that do not specify it: ```sh mlx_vlm.server --model Qwen/Qwen3.5-4B --enable-thinking ``` You can also set server defaults for the thinking budget and delimiter tokens: ```sh mlx_vlm.server --model Qwen/Qwen3.5-4B \\ --enable-thinking \\ --thinking-budget 512 \\ --thinking-start-token \"<think>\" \\ --thinking-end-token \"</think>\" ``` Requests can override the server defaults with `enable_thinking`, `thinking_budget`, `thinking_start_token`, or `thinking_end_token`. `chat_template_kwargs.enable_thinking` is also accepted; an explicit top-level `enable_thinking` takes precedence. ### …",
+      "published": "2026-04-24",
+      "snippet": "[CVPR 2025] Open-source, End-to-end, Vision-Language-Action model for GUI Agent & Computer Use.",
+      "content": "# ShowUI Open-source, End-to-end, Lightweight, Vision-Language-Action model for GUI Agent & Computer Use. ShowUI 是一款开源的、端到端、轻量级的视觉-语言-动作模型，专为 GUI 智能体设计。 <p align=\"center\"> <img src=\"assets/showui.jpg\" alt=\"ShowUI\" width=\"480\"> <p> <p align=\"center\"> &nbsp&nbsp 📑 <a href=\"https://arxiv.org/abs/2411.17465\">Paper</a> &nbsp&nbsp | 🤗 <a href=\"https://huggingface.co/showlab/ShowUI-2B\">Hugging Models</a>&nbsp&nbsp | &nbsp&nbsp 🤗 <a href=\"https://huggingface.co/spaces/showlab/ShowUI\">Spaces Demo</a> &nbsp&nbsp | &nbsp&nbsp 📝 <a href=\"./assets/slide.pdf\">Slides</a> &nbsp&nbsp | &nbsp&nbsp 🕹️ <a href=\"https://openbayes.com/console/public/tutorials/I8euxlahBAm\">OpenBayes贝式计算 Demo</a> <br> 🤗 <a href=\"https://huggingface.co/datasets/showlab/ShowUI-desktop-8K\">Datasets</a>&nbsp&nbsp | &nbsp&nbsp💬 <a href=\"https://x.com/_akhaliq/status/1864387028856537400\">X (Twitter)</a>&nbsp&nbsp | &nbsp&nbsp 🖥️ <a href=\"https://github.com/showlab/computer_use_ootb\">Computer Use</a> &nbsp&nbsp </a> | &nbsp&nbsp 📖 <a href=\"https://github.com/showlab/Awesome-GUI-Agent\">GUI Paper List</a> &nbsp&nbsp </a> | &nbsp&nbsp 🤖 <a href=\"https://www.modelscope.cn/models/AI-ModelScope/ShowUI-2B\">ModelScope</a> </p> <!-- [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fshowlab%2FShowUI&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com) --> > [**ShowUI: One Vision-Language-Action Model for GUI Visual Agent**](https://arxiv.org/abs/2411.17465)<br> > [Kevin Qinghong Lin](https://qinghonglin.github.io/), [Linjie Li](https://scholar.google.com/citations?user=WR875gYAAAAJ&hl=en), [Difei Gao](https://scholar.google.com/citations?user=No9OsocAAAAJ&hl=en), [Zhengyuan Yang](https://zyang-ur.github.io/), [Shiwei Wu](https://scholar.google.com/citations?user=qWOFgUcAAAAJ), [Zechen Bai](https://www.baizechen.site/), [Weixian Lei](), [Lijuan Wang](https://scholar.google.com/citations?user=cDcWXuIAAAAJ&hl=en), [Mike Zheng Shou](https://scholar.google.com/citations?user=h1-3lSoAAAAJ&hl=en) > <br>Show Lab @ National University of Singapore, Microsoft<br> ## 🔥 Update - [x] [2026.2.21] [ShowUI-pi](https://github.com/showlab/showui-pi) has been accepted to **CVPR 2026**. - [x] [2025.12.31] We released [**ShowUI-Aloha**](https://github.com/showlab/ShowUI-Aloha) for human demonstration workflow. - [x] [2025.12.31] We released [**ShowUI-π**](https://github.com/showlab/showui-pi) for GUI dragging. - [x] [2025.3.2] Support fine-tuning and inference of the lastest base model **Qwen2.5-VL**. - [x] [2025.2.27] ShowUI has been accepted to **CVPR 2025**. - [x] [2025.2.13] Support **vllm** inference. - [x] [2025.1.20] Support Navigation tasks: Mind2Web, AITW, Miniwob training and evaluator. - [x] [2025.1.17] Support **API Calling** via Gradio Client, simply run `python3 api.py`. - [x] [2025.1.5] Release the [`ShowUI-web`](https://huggingface.co/datasets/showlab/ShowUI-web) dataset. - [x] [2024.12.28] Update GPT-4o annotation recaptioning scripts. - [x] [2024.12.27] Update training codes and instructions. - [x] [2024.12.23] Update `showui` for UI-guided token selection implementation. - [x] [2024.12.15] ShowUI received **Outstanding Paper Award** at [NeurIPS2024 Open-World Agents workshop](https://sites.google.com/view/open-world-agents/schedule). - [x] [2024.12.9] Support int8 Quantization. - [x] [2024.12.5] **Major Update: ShowUI is integrated into [OOTB](https://github.com/showlab/computer_use_ootb?tab=readme-ov-file) for local run!** - [x] [2024.12.1] We support iterative refinement to improve grounding accuracy. Try it at [HF Spaces demo](https://huggingface.co/spaces/showlab/ShowUI). - [x] [2024.11.27] We release the [arXiv paper](https://arxiv.org/abs/2411.17465), [HF Spaces demo](https://huggingface.co/spaces/showlab/ShowUI) and [`ShowUI-desktop`](https://huggingface.co/datasets/showlab/ShowUI-desktop). - [x] [2024.11.16] [`showlab/ShowUI-2B`](https://huggingface.co/showlab/ShowUI-2B) is available at huggingface. ## 🤖 vllm Inference See [inference_vllm.ipynb](inference_vllm.ipynb) for vllm inference. > To leverage multiple GPUs for faster inference, you can adjust the gpu_num parameter ## ⚡ API Calling Run `python3 api.py` by providing a screenshot and a query. > Since we are based on huggingface gradio client, you don't need a GPU to deploy the model locally 🤗 ## 🖥️ Computer Use See [Computer Use OOTB](https://github.com/showlab/computer_use_ootb?tab=readme-ov-file) for using ShowUI to control your PC. https://github.com/user-attachments/assets/f50b7611-2350-4712-af9e-3d31e30020ee ## ⭐ Quick Start See [Quick Start](QUICK_START.md) for local model usage. ## 🤗 Local Gradio See [Gradio](GRADIO.md) for installation. ## 🚀 Training Our Training codebases supports: - [x] Grounding and Navigation training: Mind2Web, AITW, Miniwob - [x] Self-customized model: ShowUI, Qwen2VL, Qwen2.5VL - [x] Efficient Training: DeepSpeed, BF16, QLoRA, SDPA / FlashAttention2, Liger-Kernel - [x] Multiple datasets mixed training - [x] Interleaved data streaming - [x] Image randomly resize (crop, pad) - [x] Wandb training monitor - [x] Multi-GPUs, Multi-nodes training See [Train](TRAIN.md) for training set up. ## 🕹️ UI-Guided Token Selection Try [`test.ipynb`](test.ipynb), which seamless support for Qwen2VL models. <div style=\"display: flex; justify-content: space-between;\"> <img src=\"examples/chrome.png\" alt=\"(a) Screenshot patch number: 1296\" style=\"width: 48%;\"/> <img src=\"examples/demo.png\" alt=\"(b) By applying UI-graph, UI Component number: 167\" style=\"width: 48%;\"/> </div> ## ✍️ Annotate your own data Try [`recaption.ipynb`](recaption.ipynb), where we provide instructions on how to recaption the original annotations using GPT-4o. ## ❤ Acknowledgement We extend our gratitude to [SeeClick](https://github.com/njucckevin/SeeClick) for providing their codes and datasets. Special thanks to [Siyuan](https://x.com/who_s_yuan) for assistance with the Gradio demo and OOTB support. ## 🎓 BibTeX If you find our work helpful, please kindly consider citing our paper. ``` @misc{lin2024showui, title={ShowUI: One Vision-Language-Action Model for GUI Visual Agent}, author={Kevin Qinghong Lin and Linjie Li and Difei Gao and Zhengyuan Yang and Shiwei Wu and Zechen Bai and Weixian Lei and Lijuan Wang and Mike Zheng Shou}, year={2024}, eprint={2411.17465}, archivePrefix={arXiv}, primaryClass={cs.CV}, url={https://arxiv.org/abs/2411.17465}, } ``` If you like our project, please give us a star ⭐ on GitHub for the latest update. [![Star History Chart](https://api.star-history.com/svg?repos=showlab/ShowUI&type=Timeline&width=600&height=300)](https://star-history.com/#showlab/ShowUI&Timeline)",
       "metadata": {
-        "stars": 5830,
-        "license_spdx": "MIT",
+        "stars": 1929,
+        "license_spdx": "Apache-2.0",
         "topics": [
-          "apple-silicon",
-          "florence2",
-          "idefics",
-          "llava",
-          "llm",
-          "local-ai",
-          "mlx",
-          "molmo"
+          "agent",
+          "computer-use",
+          "gui-agent",
+          "vision-language-action",
+          "vision-language-model"
         ],
         "date_kind": "last updated"
       }
     },
     {
       "source_id": "S8",
-      "title": "jonyzhang2023/awesome-embodied-vla-va-vln",
-      "url": "https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln",
+      "title": "allenzren/open-pi-zero",
+      "url": "https://github.com/allenzren/open-pi-zero",
       "source_type": "github",
-      "published": "2026-09-15",
-      "snippet": "A curated list of state-of-the-art research in embodied AI, focusing on vision-language-action (VLA) models, vision-language navigation (VLN), and related multimodal learning approaches. ",
-      "content": "<div align=\"center\"> # 🤖 Awesome Embodied VLA / VA / VLN **A Curated Collection of Cutting-Edge Research in Embodied AI** [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome) [![Papers](https://img.shields.io/badge/Papers-700%2B-0984e3?style=for-the-badge&logo=google-scholar&logoColor=white)](README.md) [![Last Commit](https://img.shields.io/github/last-commit/jonyzhang2023/awesome-embodied-vla-va-vln?style=for-the-badge&color=00b894)](https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln/commits) [![Stars](https://img.shields.io/github/stars/jonyzhang2023/awesome-embodied-vla-va-vln?style=for-the-badge&color=fdcb6e&logo=github)](https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln/stargazers) [![Forks](https://img.shields.io/github/forks/jonyzhang2023/awesome-embodied-vla-va-vln?style=for-the-badge&color=e17055&logo=github)](https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln/network/members) <br> *Organizing and showcasing state-of-the-art technologies in robot learning —* *Vision-Language-Action (VLA), World-Action-Model (WAM), Vision-Language-Navigation (VLN), Vision-Action (VA),* *and MLLM-based Embodied Learning.* **We believe robotics will experience its own \"LLM moment.\"** <br> --- </div> ## 📋 Table of Contents | | Section | Description | |:---:|:---|:---| | 📚 | [Survey](#-survey) | Comprehensive surveys and reviews | | 💥 | [VLA & WAM Models](#-vision-language-action-vla-models--world-action-models-wam) | Vision-Language-Action & World Action Models | | 🚶 | [VLN Models](#-vision-language-navigation-vln-models) | Vision-Language Navigation Models | | 🎬 | [VA Models](#-vision-action-va-models) | Vision-Action Models & Diffusion Policies | | 🧠 | [MLLM-based Embodied Learning](#-other-multimodal-large-language-model-mllm-basedrelated-embodied-learning) | LLM/VLM-driven robotic reasoning & planning | | ⚡ | [Physics-aware Policy](#physics-aware-policy) | Physics-informed policy learning | | 🔄 | [Sim-to-Real Transfer](#sim-to-real-transfer) | Bridging simulation and reality | | 📊 | [Benchmark](#benchmark) | Evaluation benchmarks & datasets | | 🎮 | [Simulator](#simulator) | Simulation platforms & engines | | 🔗 | [Related Works](#related-works) | Other awesome lists & resources | <br> > [!NOTE] > **Paper Ordering** — Within each year, papers are generally listed in reverse chronological order (newer papers appear lower). Particularly influential or representative works may be highlighted at the top regardless of date. > [!TIP] > **Contributing** — This repository is continuously updated! If you have papers, projects, or resources not yet included, please submit a **Pull Request** or open an **Issue**. Let's build a comprehensive resource for the robotics and AI community! <br> --- ## 📚 Survey > *Comprehensive surveys and review papers covering the landscape of embodied AI.* - [2026] World Model for Robot Learning: A Comprehensive Survey [[paper](https://arxiv.org/pdf/2605.00080)] - [2025] [**Science Robotics**] A Review of Learning-based Dynamics Models for Robotic Manipulation [[paper](https://albertboai.com/assets/pdf/2025_scirobotics.adt1497.pdf)] - [2025] An Anatomy of Vision-Language-Action Models: From Modules to Milestones and Challenges [[paper](https://arxiv.org/pdf/2512.11362)] [[project](https://suyuz1.github.io/Survery/)] - [2025] A Comprehensive Survey on World Models for Embodied AI [[paper](https://www.arxiv.org/pdf/2510.16732)] [[project](https://github.com/Li-Zn-H/AwesomeWorldModels)] - [2025] State of VLA Research at ICLR 2026 [[blog](https://mbreuss.github.io/blog_post_iclr_26_vla.html)] - [2025] Vision-Language-Action Models for Robotics: A Review Towards Real-World Applications [[paper](https://arxiv.org/pdf/2510.07077)] - [2025] Pure Vision Language Action (VLA) Models: A Comprehensive Survey [[paper](https://arxiv.org/pdf/2509.19012)] - [2025] Large VLM-based Vision-Language-Action Models for Robotic Manipulation: A Survey [[paper](https://arxiv.org/pdf/2508.13073)] [[project](https://github.com/JiuTian-VL/Large-VLM-based-VLA-for-Robotic-Manipulation)] - [2025] Large Model Empowered Embodied AI: A Survey on Decision-Making and Embodied Learning [[paper](https://arxiv.org/pdf/2508.10399)] - [2025] Foundation Model Driven Robotics: A Comprehensive Review [[paper](https://arxiv.org/pdf/2507.10087)] - [2025] [**PKU-PsiBot**] A Survey on Vision-Language-Action Models: An Action Tokenization Perspective [[paper](https://arxiv.org/pdf/2507.01925)] - [2025] A Survey on Vision-Language-Action Models for Autonomous Driving [[paper](https://arxiv.org/pdf/2506.24044)] [[project](https://github.com/JohnsonJiang1996/Awesome-VLA4AD)] - [2025] Parallels Between VLA Model Post-Training and Human Motor Learning: Progress, Challenges, and Trends [[paper](https://arxiv.org/pdf/2506.20966)] [[project](https://github.com/AoqunJin/Awesome-VLA-Post-Training)] - [2025] [**IJRR 25**] Foundation Models in Robotics: Applications, Challenges, and the Future [[paper](https://arxiv.org/pdf/2312.07843)] [[project](https://github.com/robotics-survey/Awesome-Robotics-Foundation-Models)] - [2025] Deep Reinforcement Learning for Robotics: A Survey of Real-World Successes [[paper](https://www.arxiv.org/abs/2408.03539)] - [2025] A Survey on Diffusion Policy for Robotic Manipulation: Taxonomy, Analysis, and Future Directions [[paper](https://doi.org/10.36227/techrxiv.174378343.39356214/v1)] [[project](https://github.com/HITSZ-Robotics/DiffusionPolicy-Robotics)] - [2025] Embodied Intelligent Industrial Robotics: Concepts and Techniques [[paper](https://arxiv.org/pdf/2505.09305)] [[project](https://github.com/jackeyzengl/Embodied_Intelligent_Industrial_Robotics_Paper_List)] - [2025] Neural Brain: A Neuroscience-inspired Framework for Embodied Agents [[paper](https://arxiv.org/pdf/2505.07634)] [[project](https://github.com/CNJianLiu/Neural-Brain-for-Embodied-Agents)] - [2025] Vision-Language-Action Models: Concepts, Progress, Applications and Challenges [[paper](https://arxiv.org/pdf/2505.04769v1)] - [2025] A Survey of Robotic Navigation and Manipulation with Physics Simulators in the Era of Embodied AI [[paper](https://arxiv.org/pdf/2505.01458)] - [2025] Multimodal Perception for Goal-oriented Navigation: A Survey [[paper](https://arxiv.org/pdf/2504.15643)] - [2025] Diffusion Models for Robotic Manipulation: A Survey [[paper](https://arxiv.org/pdf/2504.08438)] - [2025] Dexterous Manipulation through Imitation Learning: A Survey [[paper](https://arxiv.org/pdf/2504.03515)] - [2025] Multimodal Fusion and Vision-Language Models: A Survey for Robot Vision [[paper](https://arxiv.org/pdf/2504.02477)] [[project](https://github.com/Xiaofeng-Han-Res/MF-RV)] - [2025] SE(3)-Equivariant Robot Learning and Control: A Tutorial Survey [[paper](https://arxiv.org/pdf/2503.09829)] - [2025] Generative Artificial Intelligence in Robotic Manipulation: A Survey [[paper](https://arxiv.org/pdf/2503.03464)] [[project](https://github.com/GAI4Manipulation/AwesomeGAIManipulation)] - [2025] Development Report of Embodied Intelligence (Chinese) [[paper](https://www.caict.ac.cn/kxyj/qwfb/bps/202408/P020240830312499650772.pdf)] - [2025] Survey on Vision-Language-Action Models [[paper](https://arxiv.org/pdf/2502.06851)] - [2025] Exploring Embodied Multimodal Large Models: Development, Datasets, and Future Directions [[paper](https://arxiv.org/pdf/2502.15336)] - [2024] Embodied-AI with large models: research and challenges [[paper](https://www.sciengine.com/SSI/doi/10.1360/SSI-2024-0076)] - [2024] A Survey on Vision-Language-Action Models for Embodied AI [[paper](https://arxiv.org/abs/2405.14093)] - [2024] A Survey of Embodied Learning for Object-Centric Robotic Manipulation [[paper](https://arxiv.org/pdf/2408.11537)] - [2024] Aligning Cyber Space with Physical World: A Comprehensive Survey on Embodied AI [[paper](https://arxiv.org/pdf/2407.06886)] - [2024] Vision-language navigation: a survey and taxonomy [[paper](https://arxiv.org/pdf/2108.11544)] ## 💥 Vision Language Action (VLA) Models & World Action Models (WAM) ### 2026 - [2026] [**Tencent**] Hy-Embodied-0.5-VLA: From Vision-Language-Action Models to a Real-World Robot Learning Stack [[paper](https://arxiv.org/pdf/2606.14409v1)] [[blog](https://tairos.tencent.com/openSourceModels/hy-embodied-0.5-vla)] [[code](https://github.com/Tencent-Hunyuan/Hy-Embodied-0.5-VLA)] - [2026] [**Science Robotics**] A careful examination of large behavior models for multitask dexterous manipulation [[paper](https://arxiv.org/pdf/2507.05331)] - [2026] [**QWen**] Qwen-VLA: Unifying Vision-Language-Action Modeling across Tasks, Environments, and Robot Embodiments [[paper](https://arxiv.org/pdf/2605.30280)] [[code](https://github.com/QwenLM/Qwen-VLA)] - [2026] [**Nvidia**] GROOT 1.7 [[blog](https://huggingface.co/nvidia/GR00T-N1.7-3B)] [[code](https://github.com/NVIDIA/Isaac-GR00T)] - [2026] [**Genesis**] GENE-26.5: Advancing Robotic Manipulation to Human Level [[blog](https://www.genesis.ai/blog/gene-26-5-advancing-robotic-manipulation-to-human-level)] - [2026] [**Generalist**] GEN-1: Scaling Embodied Foundation Models to Mastery [[blog](https://generalistai.com/blog/apr-02-2026-GEN-1)] - [2026] [**Physical Intelligence**] MEM: Multi-Scale Embodied Memory for Vision Language Action Models [[paper](https://www.pi.website/download/Mem.pdf)] [[blog](https://www.pi.website/research/memory)] - [2026] [**Physical Intelligence**] [**ICLR 26**] MemER: Scaling Up Memory for Robot Control via Experience Retrieval [[paper](https://arxiv.org/pdf/2510.20328)] [[project](https://jen-pan.github.io/memer/)] - [2026] [**AMap Group**] ABot-M0: VLA Foundation Model for Robotic Manipulation with Action Manifold Learning [[paper](https://arxiv.org/pdf/2602.11236)] [[project](https://amap-cvlab.github.io/ABot-Manipulation/)] [[code](https://github.com/amap-cvlab/ABot-Manipulation)] - [2026] [**NVIDIA**] DreamZero: World Action Models Are Zero-Shot Policies [[paper](https://dreamzero0.github.io/DreamZero.pdf)] [[project](https://dreamzero0.github.io/)] [[code](https://github.com/dreamzero0/dreamzero)] - [2026] [**Ant Group**] Causal World Modeling for Robot Control [[paper](https://arxiv.org/pdf/2601.21998)] [[project](https://technology.robbyant.com/lingbot-va)] [[code](https://github.com/Robbyant/lingbot-va)] - [2026] [**Ant Group**] A Pragmatic VLA Foundation Model [[paper](https://arxiv.org/pdf/2601.18692)] [[project](https://technology.robbyant.com/lingbot-vla/)] [[code](https://github.com/robbyant/lingbot-vla)] - [2026] [**Qwen**] VLM4VLA: Revisiting Vision-Language Models in Vision-Language-Action Models [[paper](https://arxiv.org/pdf/2601.03309)] [[project](https://cladernyjorn.github.io/VLM4VLA.github.io/)] [[code](https://github.com/CladernyJorn/VLM4VLA)] - [2026] Being-H0.5: Scaling Human-Centric Robot Learning for Cross-Embodiment Generalization [[paper](https://arxiv.org/pdf/2601.12993)] [[project](https://research.beingbeyond.com/being-h05)] [[code](https://github.com/BeingBeyond/Being-H)] - [2026] [**Nvidia**] Cosmos Policy: Fine-Tuning Video Models for Visuomotor Control and Planning [[paper](https://arxiv.org/pdf/2601.16163#page=14.12)] [[project](https://research.nvidia.com/labs/dir/cosmos-policy/)]] - [2026] TwinBrainVLA: Unleashing the Potential of Generalist VLMs for Embodied Tasks via Asymmetric Mixture-of-Transformers [[paper](https://arxiv.org/pdf/2601.14133)] [[code](https://github.com/ZGC-EmbodyAI/TwinBrainVLA)] - [2026] LangForce: Bayesian Decomposition of Vision Language Action Models via Latent Action Queries [[paper](https://arxiv.org/pdf/2601.15197)] [[code](https://github.com/ZGC-EmbodyAI/LangForce)] - [2026] RDT2: Exploring the Scaling Limit of UMI Data Towards Zero-Shot Cross-Embodiment Generalization [[paper](https://arxiv.org/pdf/2602.03310)] [[project](https://rdt-robotics.github.io/rdt2/)] [[code](https://github.com/thu-ml/RDT2)] - [2026] …",
+      "published": "2025-01-31",
+      "snippet": "Re-implementation of pi0 vision-language-action (VLA) model from Physical Intelligence ",
+      "content": "# open-pi-zero This repo implements the [pi0](https://www.physicalintelligence.company/download/pi0.pdf) model from Physical Intelligence (Pi) based on my knowledge of the paper. The model adopts a MoE-like architecture (or the recent [MoT](https://arxiv.org/abs/2411.04996), each expert has its own set of parameters and only interacts through attention), and uses a pre-trained 3B PaliGemma VLM (2.291B to be fine-tuned) and a new set of action expert parameters (0.315B). Block-wise causal masking is used such that VLM block attends to itself, proprioception (sharing weights with action) attends to itself and VLM, and action attends to all; each block is fully bidirectional within. The model is trained with flow matching loss on the action chunk output from the action expert. If you find a bug or think I may have misunderstood part of the architecture based on the paper, please raise an issue or email me. <img src=\"media/open-pi-zero-overview.png\" alt=\"open-pi-zero-overview\" width=\"70%\"/> ## Installation 1. Clone this repository at your directory. If running Simpler eval or trying out trained checkpoints, clone my Simpler fork (added proprio support) to the same directory: ```console git clone https://github.com/allenzren/open-pi-zero git clone https://github.com/allenzren/SimplerEnv --recurse-submodules ``` 2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and run the following in the repo directory: ```console uv sync uv pip install -e ../SimplerEnv uv pip install -e ../SimplerEnv/ManiSkill2_real2sim ``` Or you may use venv or conda env instead of uv and run `pip install -e .` in all three directories. 3. Set environment variables `VLA_DATA_DIR` (if downloading datasets for training), `VLA_LOG_DIR`, and `VLA_WANDB_ENTITY` by running: ```console source scripts/set_path.sh ``` 4. Download PaliGemma weights at `TRANSFORMERS_CACHE`: ```console cd $TRANSFORMERS_CACHE git clone https://huggingface.co/google/paligemma-3b-pt-224 ``` ### Test text generation with pre-trained weights ```console uv run src/model/vla/pizero.py --text_only --load_pretrained_weights --use_bf16 ``` <!-- Note: Current implementation will be fully bfloat16 if `--use_bf16` is set. Pre-trained PaliGemma may lose some accuracy [issue](https://github.com/huggingface/transformers/pull/29402) but I assume it is okay if being used as the VLA backbone. --> <!-- VLA with dummy img/text, proprio, and action, output dummy flow matching action ```console uv run src/model/vla/pizero.py ``` --> ## Try checkpoints I have only trained with either fractal or bridge dataset (unlabeled skipped) so far (training with mixed OXE data soon). Links to the models: [Bridge-Uniform](https://huggingface.co/allenzren/open-pi-zero/blob/main/bridge_uniform_step19296_2024-12-26_22-31_42.pt) | [Bridge-Beta](https://huggingface.co/allenzren/open-pi-zero/blob/main/bridge_beta_step19296_2024-12-26_22-30_42.pt) | [Fractal-Uniform](https://huggingface.co/allenzren/open-pi-zero/blob/main/fractal_uniform_step29576_2024-12-31_22-26_42.pt) | [Fractal-Beta](https://huggingface.co/allenzren/open-pi-zero/blob/main/fractal_beta_step29576_2024-12-29_13-10_42.pt) Uniform and Beta denotes the mode for sampling flow matching timesteps during training: Uniform samples uniformly between 0 and 1, and Beta, proposed by Pi0, samples with higher density at earlier timesteps. Run an trial in Simpler after downloading a checkpoint (see the list of tasks in the script) ```console uv run scripts/try_checkpoint_in_simpler.py \\ --task google_robot_pick_horizontal_coke_can \\ --checkpoint_path ...fractal_beta.pt \\ --recording \\ --use_bf16 \\ --use_torch_compile # first batch will be slow ``` ### Training details The models were trained with learning rate 5e-5, global batch size 1024, and roughly 19k gradient steps with bridge (~12 epochs) and 30k with fractal (~8 epochs). Input to the model includes single image (256 tokens, no history), max 20 text tokens, 1 proprio token (no history), and 4 action tokens (chunk size 4). It takes roughly 1.5-2 days on one L40 node (per-GPU bsz 16 and thus gradient accumulation step 8), or 8-12 hours with H100s (bsz 32). torch.compile, bfloat16, and 8-bit optimizer were used to reduce VRAM usage (peak 40GB with bsz 16). Action and proprioception data were normalized in [-1, 1]. ### Inference speed and VRAM usage Inference involves one forward pass through PaliGemma (saving KV cache), and then 10 flow matching steps through the action expert. With RTX 4090: | Setup | Time | Peak VRAM | |:------:|:---------:| :---------:| | float32 | 237ms | 13.6GB | | bf16 | 245ms | 6.7GB | | float32 + torch.compile | 89ms | 13.6GB | | bf16 + torch.compile | 75ms | 6.7GB | | Pi0 paper | 73ms* | - | torch.compile mode is set to `default`. I also tried to use torch_tensorrt but compilation fails silently right now. *From Table I of the paper. Note that my numbers are with single image input and action chunk size 4, while Pi uses three images and chunk size 50 according to the paper appendix. ### Eval results For both set of environments I tried running all entire action chunk (size 4) or the first 2 steps only. Bridge policies work better with running all, while fractal policies work better with running 2 out 4. Note that bridge data is 5Hz and fractal data is 3Hz. Success rates in **visual matching** setting in Simpler (results in visual aggregation setting coming soon) | Policy | Dtype | Carrot on plate | Eggplant in basket | Spoon on towel | Stack cube | |:------:|:-----:|:---------------:|:------------------:|:--------------:|:----------:| | [Bridge-Uniform](https://huggingface.co/allenzren/open-pi-zero/blob/main/bridge_uniform_step19296_2024-12-26_22-31_42.pt) | float32 | 58.8% | 79.2% | 63.3% | 21.3% | | ^ | bf16 | 58.8% | 81.3% | 61.7% | 23.8% | | [Bridge-Beta](https://huggingface.co/allenzren/open-pi-zero/blob/main/bridge_beta_step19296_2024-12-26_22-30_42.pt) | float32 | 55.8% | 85.4% | 84.6% | 47.9% | | ^ | bf16 | 52.5% | 87.9% | 83.8% | 52.5% | <!-- uniform 58.8, 79.2, 63.3, 21.3 --> <!-- uniform bf16 58.8, 81.3, 61.7, 23.8 --> <!-- beta 55.8, 85.4, 84.6, 47.9 --> <!-- beta bf16 52.5, 87.9, 83.8, 52.5 --> | Policy | Dtype | Pick up Coke | Move Near | Close Drawer | Open Drawer | Open Top Drawer and Put Apple In | |:------:|:-----:|:------------:|:---------:|:------------:|:-----------:|:--------------------------------:| | [Fractal-Uniform](https://huggingface.co/allenzren/open-pi-zero/blob/main/fractal_uniform_step29576_2024-12-31_22-26_42.pt) | float32 | 88.0% | 80.3% | 66.7% | 45.2% | 52.2% | | ^ | bf16 | 88.9% | 80.5% | 65.4% | 45.3% | 53.0% | | [Fractal-Beta](https://huggingface.co/allenzren/open-pi-zero/blob/main/fractal_beta_step29576_2024-12-29_13-10_42.pt) | float32 | 97.9% | 78.7% | 75.0% | 49.5% | 46.6% | | ^ | bf16 | 97.8% | 78.4% | 74.7% | 51.7% | 46.1% | <!-- uniform 88.0, 80.3, 66.7, 45.2, 52.2 --> <!-- uniform bf16 88.9, 80.5, 65.4, 45.3, 53.0 --> <!-- beta 97.9, 78.7, 75.0, 49.5, 46.6 --> <!-- beta bf16 97.8, 78.4, 74.7, 51.7, 46.1 --> All numbers are averaged over 10 trials on top of prepackaged variations (robot/obj locations, URDFs, rgb_overlays) of each task in Simpler (total 240-2400 trials per task --- I see significant variations with <=3 seeds). Also note that these numbers may vary significantly among different checkpoints that are both mostly converged but from different epochs --- training with mixed datasets or using EMA might help. Reason on evaluating with both bf16 and float32: While the model is trained with bf16, mixed precision, and no KV caching, during inference KV cache of VLM/Proprio is used. This leads to a distribution shift of the policy output when bf16 is used [(discussion)](https://github.com/huggingface/transformers/issues/25420#issuecomment-1775317535) compared to not using KV cache, estimated around 5e-4 to 2.5e-3 (out of the [-1, 1] normalization range) in avg L1 distance; difference is negligible when float32 is used in inference. Disclaimer: Please do not associate the results here with possible results from Pi. ## Run training ### Download data Download fractal data (following [OXE](https://github.com/google-deepmind/open_x_embodiment?tab=readme-ov-file)) ```console uv run gsutil -m cp -r gs://gresearch/robotics/fractal20220817_data/0.1.0 # at $VLA_DATA_DIR ``` Download bridge data (`bridge_dataset` folder) from [RAIL link](https://rail.eecs.berkeley.edu/datasets/bridge_release/data/tfds/) as suggested by OXE. ### Data pre-processing Run [slurm/modify_rlds.sh](slurm/modify_rlds.sh) (taken from [rlds_dataset_mod](https://github.com/kpertsch/rlds_dataset_mod/tree/main)), which resizes the images to 224x224 for PaliGemma. Data shall be saved at `$VLA_DATA_DIR/resize_224`. It takes about 1 hour or so. [Possible error](doc/error.md#5) | [Conventions on proprio / gripper actions](doc/convention.md) ### Training scripts See examples in the [slurm](slurm/) folder. TFDS dataloading takes a growing amount of CPU RAM and roughly peaks at about 300-400GB in a node as each DDP process spawns a dataloader. For further reducing VRAM usage, you may use (Q)LoRA by setting (`quantize=True` and) `lora=True`. However, the training performance may be affected. Or try [optimizer offloading](https://github.com/allenzren/open-pi-zero/blob/87b0f7acda9de6119c034fbfbde1d1867b1e57a4/src/agent/train.py#L170). [Discussion on RAM](https://github.com/openvla/openvla/issues/4) | [Possible error if running quantization](doc/error.md#9) | [Observations / lessons from training](doc/notes.md) ## Run evaluation ### Simpler See examples in the [slurm](slurm/) folder. Currently they use the dataset [statistics](config/bridge_statistics.json) generated by my training; you may update `env.adapter.dataset_statistics_path` in the config to the dataset statistics json file generated in your training, located in the dataset folder. Note that while the provided checkpoints use `time_max_period=10000` and `action_expert_rope_theta=10000`, the updated training configs use `time_max_period=100` and `action_expert_rope_theta=1000` instead. Please update these values in the eval config if you evaluate newly trained checkpoints. ## File structure / naming I implemented the model in a fairly modular way, so it is straightforward to add or remove any of the mixture models. `PiZero` class follows the original Pi0 architecture, while the underlying `JointModel` and `Mixture` classes form a general instantiation of the MoE + block-attention architecture. ``` src ├── agent │ ├── train.py # training workspace │ ├── eval.py # eval workspace (with Simpler) │ └── env_adapter │ ├── base.py │ └── simpler.py # env obs pre-processing and action post-processing ├── data # training data pre-processing, mostly from Octo and dlimp └── model ├── paligemma # mostly from open-source paligemma │ ├── siglip.py # SigLIP and projector │ └── modules.py # RoPE, MLP, RMSNorm └── vla ├── pizero.py # PiZero: `joint_model` (Gemma and action expert), SigLIP, en/decoders ├── joint_model.py # mixture of experts, run each expert and global attention ├── mixture.py # individual `expert` following PaliGemma layout ├── modules.py # action encoder, time embedding └── processing.py # text tokenization and image normalization for PaliGemma ``` ## Things to implement / try Multi-image (history) as input. Switch to GPU Simpler. Fine-tuning by adding a new expert (e.g., second camera view into pre-trained DINO/SigLIP) and gradual unmasking. Co-training with (self-)supervision on modalities other than action. Set up PaliGemma 2. ## Acknowledgement PaliGemma setup is largely adopted from [Open-source PaliGemma](https://github.com/hkproj/pytorch-paligemma/tree/main). Dataset loading is adopted from [Octo](https://octo-models.github.io/) and [dlimp](https://github.com/kvablack/dlimp). Dataset pre-processing is adopted from [rlds_dataset_mod](https://github.com/kpertsch/rlds_dataset_mod/tree/main). Other references: …",
       "metadata": {
-        "stars": 3625,
-        "license_spdx": null,
+        "stars": 1538,
+        "license_spdx": "MIT",
         "topics": [],
         "date_kind": "last updated"
       }
@@ -148,53 +145,50 @@
       {
         "source_id": "S1",
         "title": "Best Open-Source Multimodal AI Models 2026: - yuzec.com",
-        "summary": "The source identifies InternVL2 as the most capable open-source VLM family for 2026, noting it is superseded by newer models and outperforms LLaVA-1.6-34B on benchmarks while requiring half the compute. It also lists other models like Min VRAM, LLaVA-1.6, Qwen2-VL, and InternVL2 variants.",
+        "summary": "The source identifies InternVL2 as the most capable open-source VLM family for 2026, noting it is superseded by newer models and outperforms LLaVA-1.6-34B on benchmarks while requiring half the compute. It also highlights Min VRAM requirements of ~16GB for InternVL2 and lists other models like LLaVA-1.6, Qwen2-VL, and InternVL2 variants.",
         "source_url": "https://yuzec.com/blog/open-source-multimodal-ai-2026",
         "source_type": "web",
         "published": "2026-06-22",
         "key_findings": [
           "InternVL2 is the most capable open-source VLM family in 2026.",
-          "InternVL2 8B variant outperforms LLaVA-1.6-34B on most standard benchmarks.",
-          "InternVL2 26B version reaches near-GPT-4V performance on complex document understanding tasks.",
-          "InternVL2 uses a native architecture (superseded by newer models).",
-          "Min VRAM: ~16GB for InternVL2.",
-          "LLaVA-1.6 supports VQA, Captioning, Chat, and OCR with 8GB / 12GB Min VRAM.",
-          "Qwen2-VL supports VQA, Multilingual OCR, Video apps, Chart & Report, and OCRBench tasks.",
-          "InternVL2 supports Tasks: VQA, OCR, Captioning, Chart (81.7 MMBench, 91.2 VQA, 82.3 OCR, 794 Tasks Supported)."
+          "InternVL2 has 8B and 26B variants.",
+          "InternVL2 uses Apache 2.0 license (commercial OK).",
+          "InternVL2 supports MMBench, VQAv2, OCRBench tasks.",
+          "InternVL2 Min VRAM: ~16GB for 8B model.",
+          "InternVL2 Min VRAM: 28GB for 26B model.",
+          "LLaVA-1.6 supports MMBench (76.0), VQAv2 (80.0), OCRBench (81.6).",
+          "LLaVA-1.6 Min VRAM: 8GB for 7B model, 12GB for 13B model. Deploy difficulty: Easy (Ollama). Supported modalities: VQA, Captioning, Chat, OCR, Multilingual OCR, Video apps."
         ],
         "limitations": [
           "InternVL2 is superseded by newer models.",
           "LLaVA-1.6-7B is fast enough for real-time use on upload but costs are low.",
-          "The source mentions 'Visual Search & Content Moderation' capabilities but does not provide specific benchmark numbers or details for these tasks.",
-          "The source mentions 'Chart & Report' as a supported task for Qwen2-VL but does not list the specific benchmark scores (e.g., MMBench, VQAv2) for this category."
+          "The source mentions InternVL2 uses a native ... (incomplete sentence regarding architecture)."
         ],
         "models_mentioned": [
           "InternVL2",
           "LLaVA-1.6",
-          "Min VRAM",
           "Qwen2-VL"
         ]
       },
       {
         "source_id": "S2",
         "title": "Best Open-Source Multimodal AI Models for Production (2026)",
-        "summary": "The source discusses open-source multimodal AI models suitable for production, highlighting that while some stand out for specific use cases like document extraction or agent automation, others offer lower costs and unified architectures. It notes that benchmark scores do not reflect real-world production performance and mentions challenges with audio understanding in production pipelines.",
+        "summary": "The source identifies several open-source multimodal models including Qwen3-VL, Kimi K3 Visual agents, Gemma 4, and MiMo-V2.5, highlighting their specific strengths in document extraction, OCR, GUI automation, image understanding, and omni-pipeline support respectively. It notes that while benchmarks like DocVQA and MMMU exist, they do not reflect real-world production performance.",
         "source_url": "https://deepinfra.com/blog/multi-modal-open-source",
         "source_type": "web",
         "published": null,
         "key_findings": [
-          "Qwen3-VL is best for document extraction and OCR with 30B parameters, supports 32 languages, uses DeepStack ViT fusion, and has a context of 1M tokens priced at $0.15/1M.",
-          "Kimi K3 Visual agents and GUI automation support text, image, video, and audio with 1M tokens, costs $3.00/1M, and features native multimodal MoE with an agent swarm.",
-          "Gemma 4 supports high-volume image understanding with 26B parameters, a context of 262K tokens, and is priced at $0.07/1M (lowest cost among listed models).",
-          "MiMo-V2.5 offers full omni pipelines for text, image, video, and audio with 1M tokens, costs $0.40/1M, and uses a unified omni architecture.",
-          "Benchmark scores like DocVQA and MMMU measure specific tasks but do not reflect production pipeline performance.",
-          "Audio understanding in production pipelines is noted as having additional complexity beyond clean inputs.",
-          "Open-source models have closed the gap with proprietary models on benchmarks, usually providing better performance at a lower cost."
+          "Qwen3-VL: Best for modalities Document extraction and OCR; Input 30B parameters; Context 1M tokens; Price $0.15/1M tokens; Strengths include 32-language OCR and DeepStack ViT fusion.",
+          "Kimi K3 Visual agents and GUI automation: Supports Text, image, video; Input 1M tokens; Price $3.00/1M tokens; Native multimodal MoE with Agent Swarm architecture.",
+          "Gemma 4: High-volume image understanding; Input 262K tokens; Price $0.07/1M tokens; Strengths include Lowest cost (3.8B active params) and Unified omni architecture.",
+          "MiMo-V2.5: Full omni pipelines supporting Text, image, video, audio; Input 1M tokens; Price $0.40/1M tokens; Features Unified omni architecture with one inference call.",
+          "Benchmarking: DocVQA evaluates document question answering on curated business documents; MMMU measures reasoning across academic images from multiple disciplines.",
+          "Limitations: Audio understanding in production pipelines is complex due to background noise and overlapping audio, though current omni models perform well on clean inputs."
         ],
         "limitations": [
-          "Benchmark scores measure a narrow slice of model behavior and do not reflect how models perform in production pipelines.",
-          "Current omni models perform well on clean audio inputs but real-world audio introduces additional complexity with background noise and overlapping content.",
-          "The source does not provide specific hardware requirements (VRAM) or quantisation details for any of the mentioned models."
+          "Audio understanding in production pipelines introduces complexity with background noise and overlapping audio, despite current omni models performing well on clean inputs.",
+          "Benchmark scores measure a narrow slice of model behavior and do not reflect how models perform in actual production pipelines.",
+          "The source does not provide specific hardware requirements (VRAM) or quantisation details for any of the listed models."
         ],
         "models_mentioned": [
           "Qwen3-VL",
@@ -206,49 +200,54 @@
       {
         "source_id": "S3",
         "title": "moonshotai/Kimi-K3.1-Pro — model card",
-        "summary": "The source describes Kimi K3.1-Pro as a multimodal model supporting text and image modalities with a 160K context length and 2.78 trillion parameters. It highlights its use of Gated DeepSeek Sparse Attention for efficient long-context modeling compared to previous versions, and specifies that it requires the vLLM inference engine.",
+        "summary": "The source describes Kimi K3.1-Pro as a multimodal model supporting text and image modalities with a 2780.11B parameter count, utilizing MoonViT-V2 vision encoders and SiTU-GLU activation functions. It features a 160K context length (1048576 tokens) and uses Gated DeepSeek Sparse Attention for efficient long-context modeling.",
         "source_url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
         "source_type": "documentation",
         "published": "2026-11-02",
         "key_findings": [
           "Model Name: Kimi K3.1-Pro",
           "Modalities: Text, Image",
-          "Parameters: 2780.11B",
+          "Parameter Count: 2780.11B",
+          "Vision Encoder: MoonViT-V2",
           "Context Length: 160K (1048576 tokens)",
-          "Attention Mechanism: Gated DSA (DeepSeek Sparse Attention)",
-          "Quantization: MXFP4 weights / MXFP8 activations",
-          "Licence: other",
-          "Benchmark Results: Not reported for Kimi K3.1 Pro in this source (indicated by dash) or compared against Claude Fable 5.1, GPT-6, Astra, Claude Opus 5.5, DeepSeek-V4.1-Flash-1017, GLM-5.3 without specific scores for Kimi K3.1 Pro itself in the provided text snippet (only mentions it is recommended to run on vLLM). Note: The source explicitly states 'Unless otherwise specified, all Kimi K3.1 Pro results use ... reasoning effort max', implying benchmark data exists but this specific comparison table does not list scores for Kimi K3.1 Pro itself in the visible snippet."
+          "Attention Mechanism: KDA & Gated DSA",
+          "Activation Function: SiTU-GLU",
+          "Quantization: MXFP4 weights / MXFP8 activations (quantization-aware training)"
         ],
         "limitations": [
-          "Benchmark results are not explicitly reported for Kimi K3.1-Pro in this source (indicated by dash in the provided text), though it is recommended to run on vLLM.",
-          "The source does not provide specific hardware requirements beyond inference engine recommendations (vLLM, SGLang, TokenSpeed).",
-          "No specific VRAM or GPU model requirements are listed in this source text."
+          "No specific benchmark scores are reported for Kimi K3.1-Pro in this source.",
+          "Benchmark comparisons are only provided against other models like Claude Fable 5.1, GPT-6, etc., but not Kimi's own performance metrics.",
+          "Hardware requirements (VRAM) are not explicitly detailed in the text."
         ],
         "models_mentioned": [
-          "Kimi K3.1-Pro"
+          "Kimi K3.1-Pro",
+          "MoonViT-V2",
+          "SiTU-GLU",
+          "Gated DSA",
+          "DeepSeek Sparse Attention"
         ]
       },
       {
         "source_id": "S4",
         "title": "Qwen/Qwen3.8-27B — model card",
-        "summary": "The source describes Qwen/Qwen3.8-27B as a causal language model with vision encoder capabilities supporting image and video understanding from STEM diagrams to hour-scale videos. It is trained via pre-training and post-training stages.",
+        "summary": "The provided source document is a model card for Qwen/Qwen3.8-27B, a causal language model with vision encoder capabilities designed for on-premise deployment. It specifies the model has 27B parameters and supports long-horizon office work benchmarks.",
         "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
         "source_type": "documentation",
         "published": "2026-08-05",
         "key_findings": [
           "Model Name: Qwen/Qwen3.8-27B",
-          "Parameter Size: 27.78B",
           "Type: Causal Language Model with Vision Encoder",
+          "Number of Parameters: 27.78B",
+          "Hidden Dimension: 5120",
+          "Token Embedding: 248,320 (Padded)",
+          "Number of Layers: 64",
           "Vision Support: Native support for image and video understanding from STEM diagrams to hour-scale videos",
-          "Context Window: Not explicitly stated in the provided text",
-          "Hardware/VRAM Needs: Not explicitly stated in the provided text",
-          "Quantisation: Not explicitly stated in the provided text",
-          "Licence: apache-2.0 (from Hugging Face model card metadata)"
+          "Benchmark Name: Long-horizon office work (Agent)"
         ],
         "limitations": [
-          "Benchmark results for specific capabilities like 'Long-horizon office work' are not detailed in the provided text snippet",
-          "Context window size is not mentioned in the source text"
+          "No specific hardware requirements or VRAM needs are mentioned in the text.",
+          "No benchmark scores or numerical results are provided for the model's performance.",
+          "The source text contains only CSS styling and partial HTML table data, with no readable English content describing capabilities beyond 'Long-horizon office work'."
         ],
         "models_mentioned": [
           "Qwen/Qwen3.8-27B"
@@ -264,11 +263,11 @@
         "key_findings": [
           "Model name: AuK",
           "Modalities: Speech generation, content editing, enhancement, separation, paralinguistic editing, acoustic editing",
-          "Training data: Approximately 3.03 billion instruction--audio instances and 1.95 million hours of effective supervision",
+          "Data scale: Approximately 3.03 billion instruction-audio instances and 1.95 million hours of effective supervision",
           "Architecture components: Multimodal large language model for semantic conditioning, VAE for acoustic conditioning, hybrid rectified-flow Transformer with dual-stream MMDiT blocks followed by unified single-stream DiT blocks",
-          "Training strategy: Generation-only warm-up followed by joint generation--editing pre-training, then human-feedback preference optimization and reward-based reinforcement restoration tasks",
-          "License: Open-source (source code and model weights released)",
-          "Benchmark results: Not reported in the source text"
+          "Training strategy: Generation-only warm-up followed by joint generation-editing pre-training, then human-feedback preference optimization and reward-based reinforcement restoration tasks",
+          "Licensing: Open-source (source code and model weights released)",
+          "Benchmark results: None reported in the source text"
         ],
         "limitations": [
           "No benchmark results are reported for AuK in this source.",
@@ -283,24 +282,20 @@
       {
         "source_id": "S6",
         "title": "COSINT-Agent: A Knowledge-Driven Multimodal Agent for Chinese Open Source Intelligence",
-        "summary": "The source describes COSINT-Agent as a knowledge-driven multimodal agent designed for Chinese Open Source Intelligence (OSINT). It integrates fine-tuned MLLMs with an Entity-Event-Scene Knowledge Graph to extract and reason over unstructured data.",
+        "summary": "The source describes COSINT-Agent as a knowledge-driven multimodal agent designed for Chinese Open Source Intelligence (OSINT). It integrates fine-tuned MLLMs with an Entity-Event-Scene Knowledge Graph to extract and reason over unstructured data. The system uses an EES-Match framework to bridge these components, enabling precise entity recognition, event interpretation, and context retrieval.",
         "source_url": "https://arxiv.org/abs/2503.03215v2",
         "source_type": "arxiv",
         "published": "2025-03-05",
         "key_findings": [
-          "Model name: COSINT-Agent",
-          "Architecture: Integrates fine-tuned MLLMs with the Entity-Event-Scene Knowledge Graph (EES-KG)",
-          "Framework: Uses an innovative EES-Match framework for systematic extraction and reasoning",
-          "Capabilities: Enables precise entity recognition, event interpretation, and context retrieval",
-          "Hardware/VRAM needs: Not specified in the source text",
-          "Quantisation: Not specified in the source text",
-          "Licence: Not specified in the source text",
-          "Benchmark results: Not specified in the source text"
+          "The model is tailored for Chinese OSINT tasks.",
+          "It integrates fine-tuned MLLMs with structured reasoning via an Entity-Event-Scene Knowledge Graph (EES-KG).",
+          "The system uses an EES-Match framework to bridge the MLLM and EES-KG.",
+          "It facilitates precise entity recognition, event interpretation, and context retrieval.",
+          "No specific parameter sizes, context window, VRAM needs, or quantisation details are mentioned.",
+          "No benchmark results with numbers are reported in this source."
         ],
         "limitations": [
-          "The source does not mention specific hardware requirements (VRAM) or quantisation methods.",
-          "No benchmark scores are reported for COSINT-Agent in this text.",
-          "The source focuses on Chinese domain OSINT and does not provide general limitations applicable to other domains."
+          "The source does not mention any limitations regarding hardware requirements (e.g., VRAM)."
         ],
         "models_mentioned": [
           "COSINT-Agent",
@@ -309,85 +304,92 @@
       },
       {
         "source_id": "S7",
-        "title": "Neywa-Labs/mlx-vlm",
-        "summary": "The provided source describes Neywa-Labs/mlx-vlm, a multimodal model available via PyPI with Python 3.10+ support and an MIT license. It highlights features like APC caching, KV cache quantization, 1-bit affine inference, activation quantization, multi-image chat support, and vision feature caching.",
-        "source_url": "https://github.com/Neywa-Labs/mlx-vlm",
+        "title": "showlab/ShowUI",
+        "summary": "The source describes a tool called ShowUI from showlab/ShowUI which is an open-source multimodal model released under Apache-2.0 license. It supports vLLM inference and can be deployed locally without requiring a GPU if using the HF Spaces demo.",
+        "source_url": "https://github.com/showlab/ShowUI",
         "source_type": "github",
-        "published": "2026-11-10",
+        "published": "2026-04-24",
         "key_findings": [
-          "Model Name: mlx-vlm",
-          "License: MIT",
-          "Python Version Requirement: 3.10+",
-          "Feature: Multi-Image Chat Support",
-          "Feature: Vision Feature Caching",
-          "Hardware/VRAM Needs: Not specified in source text",
-          "Benchmark Results: Not specified in source text"
+          "Model name: showlab/ShowUI",
+          "License: Apache-2.0",
+          "Parameter size: 2B (referring to ShowUI-2B)",
+          "Hardware requirement: No GPU needed for local deployment via HF Spaces demo",
+          "Capability: Supports vLLM inference",
+          "Context window: Not specified in source text",
+          "Benchmark results: Not specified in source text"
         ],
         "limitations": [
-          "No benchmark results are reported in the source text.",
-          "Hardware requirements (specific VRAM needs) are not mentioned."
+          "No benchmark results are reported in the source text",
+          "Hardware requirements for local deployment without GPU are not detailed beyond the demo note",
+          "Specific context window size is not mentioned",
+          "Quantisation details are not provided"
         ],
         "models_mentioned": [
-          "mlx-vlm"
+          "showlab/ShowUI",
+          "showlab/ShowUI-2B",
+          "vllm"
         ]
       },
       {
         "source_id": "S8",
-        "title": "jonyzhang2023/awesome-embodied-vla-va-vln",
-        "summary": "The source is a survey titled 'awesome-embodied-vla-va-vln' published on GitHub in September 2026, which categorizes and discusses various embodied multimodal models including Vision-Language-Action (VLA), World-Action-Model (WAM), Vision-Language-Navigation (VLN), Vision-Action (VA), and LLM-based Embodied Learning.",
-        "source_url": "https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln",
+        "title": "allenzren/open-pi-zero",
+        "summary": "The source describes 'open-pi-zero', a multimodal model based on the Physical Intelligence pi0 architecture. It utilizes a pre-trained 3B PaliGemma VLM and action expert parameters totaling 0.625B, employing MoE-like attention mechanisms. The model uses block-wise causal masking and is optimized for inference with specific hardware configurations.",
+        "source_url": "https://github.com/allenzren/open-pi-zero",
         "source_type": "github",
-        "published": "2026-09-15",
+        "published": "2025-01-31",
         "key_findings": [
-          "The source lists 'Vision-Language-Action (VLA)' as a category of models.",
-          "It mentions 'World-Action-Model (WAM)' and 'Vision-Language-Navigation (VLN)' as distinct model types.",
-          "It includes 'Vision-Action (VA)' models and 'MLLM-based Embodied Learning' approaches.",
-          "The source references a paper titled 'LangForce: Bayesian Decomposition of Vision Language Action Models via Latent Action Queries' published in 2026.",
-          "The source references a paper titled 'RDT2: Exploring the Scaling Limit of UMI Data Towards Zero-Shot Cross-Embodiment Generalization' from 2026.",
-          "The source references a project titled 'rdt-robotics' with code available at 'https://github.com/thu-ml/RDT2' (2026).",
-          "No specific benchmark scores, parameter sizes, hardware requirements, or licensing details are provided in this text."
+          "Model name: open-pi-zero",
+          "Architecture: MoE-like (expert-based) based on Physical Intelligence pi0",
+          "Pre-trained VLM: PaliGemma VLM (3B parameters)",
+          "Action expert parameters: 0.315B",
+          "Context window: Block-wise causal masking",
+          "Hardware requirements: Peak VRAM of 40GB with bsz 16 on H100s; 8-12 hours inference time on H100s (bsz 32)",
+          "Quantisation: torch.compile, bfloat16, and 8-bit optimizer used",
+          "Licence: MIT"
         ],
         "limitations": [
-          "The source does not provide specific benchmark results for the models discussed.",
-          "The source does not specify hardware requirements (e.g., VRAM) or quantisation methods.",
-          "The source does not state the licensing terms for the models mentioned.",
-          "The source lacks detailed information on model capabilities beyond their classification categories."
+          "Inference speed varies by hardware; RTX 4090 not explicitly listed in the provided table snippet (only H100s mentioned with specific times)",
+          "Dataset pre-processing is adopted from an external repository (rlds_dataset_mod) rather than being detailed within this source",
+          "No benchmark scores or performance metrics are reported for this model in the text"
         ],
         "models_mentioned": [
-          "Vision-Language-Action (VLA)",
-          "World-Action-Model (WAM)",
-          "Vision-Language-Navigation (VLN)",
-          "Vision-Action (VA)",
-          "MLLM-based Embodied Learning",
-          "LangForce",
-          "RDT2",
-          "rdt-robotics"
+          "open-pi-zero",
+          "PaliGemma VLM",
+          "pi0 (Physical Intelligence)",
+          "MoE-like architecture",
+          "Octo",
+          "dlimp",
+          "rlds_dataset_mod"
         ]
       }
     ],
     "models_identified": [
       "InternVL2",
       "LLaVA-1.6",
-      "Min VRAM",
       "Qwen2-VL",
       "Qwen3-VL",
       "Kimi K3 Visual agents",
       "Gemma 4",
       "MiMo-V2.5",
       "Kimi K3.1-Pro",
+      "MoonViT-V2",
+      "SiTU-GLU",
+      "Gated DSA",
+      "DeepSeek Sparse Attention",
       "Qwen/Qwen3.8-27B",
       "AuK",
       "COSINT-Agent",
       "MLLMs",
-      "mlx-vlm",
-      "Vision-Language-Action (VLA)",
-      "World-Action-Model (WAM)",
-      "Vision-Language-Navigation (VLN)",
-      "Vision-Action (VA)",
-      "MLLM-based Embodied Learning",
-      "LangForce",
-      "RDT2",
-      "rdt-robotics"
+      "showlab/ShowUI",
+      "showlab/ShowUI-2B",
+      "vllm",
+      "open-pi-zero",
+      "PaliGemma VLM",
+      "pi0 (Physical Intelligence)",
+      "MoE-like architecture",
+      "Octo",
+      "dlimp",
+      "rlds_dataset_mod"
     ],
     "search_plan": {
       "web_queries": [
@@ -395,9 +397,13 @@
         "on-premise vision language model benchmarks"
       ],
       "arxiv_query": "multimodal transformer open source",
-      "github_query": "vision language model on premise",
+      "github_query": "vision language model open weights",
       "hub_task": "image-text-to-text",
-      "focus_points": []
+      "focus_points": [
+        "licensing",
+        "hardware requirements",
+        "capabilities"
+      ]
     },
     "retrieval_errors": []
   },
@@ -412,12 +418,10 @@
         ],
         "parameter_sizes": "2780.11B",
         "context_window": "160K (1048576 tokens)",
-        "deployment_methods": [
-          "vLLM"
-        ],
+        "deployment_methods": [],
         "hardware_requirements": "Not documented in retrieved sources",
         "licence": "other",
-        "usage_restrictions": "reasoning effort max",
+        "usage_restrictions": "Not documented in retrieved sources",
         "source_ids": [
           "S3"
         ],
@@ -431,31 +435,32 @@
           "image",
           "video"
         ],
-        "parameter_sizes": "27.78B (Hugging Face weight files [S4])",
-        "context_window": "Not documented in retrieved sources",
-        "deployment_methods": [],
-        "hardware_requirements": "Not documented in retrieved sources",
+        "parameter_sizes": "[27.78B]",
+        "context_window": "[Not documented in retrieved sources]",
+        "deployment_methods": [
+          ""
+        ],
+        "hardware_requirements": "[Not documented in retrieved sources]",
         "licence": "apache-2.0",
-        "usage_restrictions": "Not documented in retrieved sources",
+        "usage_restrictions": "[Not documented in retrieved sources]",
         "source_ids": [
           "S4"
         ],
         "licence_category": "Open source (OSI-approved licence)"
       },
       {
-        "model_name": "mlx-vlm",
-        "developer": "Not documented in retrieved sources",
+        "model_name": "showlab/ShowUI",
+        "developer": "showlab",
         "modalities": [
-          "text",
-          "image"
+          "text"
         ],
-        "parameter_sizes": "Not specified in source text",
-        "context_window": "Not specified in source text",
+        "parameter_sizes": "2B",
+        "context_window": "Not documented in retrieved sources",
         "deployment_methods": [
-          "Not specified in source text"
+          "vLLM"
         ],
-        "hardware_requirements": "Not specified in source text",
-        "licence": "MIT",
+        "hardware_requirements": "No GPU needed for local deployment via HF Spaces demo",
+        "licence": "Apache-2.0",
         "usage_restrictions": "Not documented in retrieved sources",
         "source_ids": [
           "S7"
@@ -463,32 +468,28 @@
         "licence_category": "Open source (OSI-approved licence)"
       },
       {
-        "model_name": "InternVL2",
+        "model_name": "open-pi-zero",
         "developer": "Not documented in retrieved sources",
         "modalities": [
           "text",
           "image"
         ],
-        "parameter_sizes": "Not documented in retrieved sources",
-        "context_window": "Not documented in retrieved sources",
-        "deployment_methods": [
-          "Ollama",
-          "vLLM",
-          "llama.cpp",
-          "transformers"
-        ],
-        "hardware_requirements": "Min VRAM: ~16GB for InternVL2.",
-        "licence": "Not documented in retrieved sources",
+        "parameter_sizes": "[3B parameters]",
+        "context_window": "Block-wise causal masking",
+        "deployment_methods": [],
+        "hardware_requirements": "Peak VRAM of 40GB with bsz 16 on H100s; 8-12 hours inference time on H100s (bsz 32)",
+        "licence": "MIT",
         "usage_restrictions": "Not documented in retrieved sources",
         "source_ids": [
-          "S1"
+          "S8"
         ],
-        "licence_category": "Unknown"
+        "licence_category": "Open source (OSI-approved licence)"
       }
     ],
     "key_differences": [
-      "Kimi K3.1-Pro offers the largest parameter count (27.8T) but lacks documented hardware requirements and video capabilities, whereas Qwen/Qwen3.8-27B supports multimodal inputs including video with an Apache-2.0 license [S4][S7].",
-      "InternVL2 is constrained to approximately 16GB of VRAM for inference while Kimi K3.1-Pro's hardware needs remain undocumented, and InternVL2 does not support video processing unlike Qwen/Qwen3.8-27B [S1][S4]."
+      "Kimi K3.1-Pro is the largest model in the list at 27.8 trillion parameters but lacks documented hardware requirements and video support, whereas Qwen/Qwen3.8-27B offers multimodal capabilities including video with an Apache-2.0 license [S3][S4].",
+      "Qwen/Qwen3.8-27B is significantly smaller than Kimi K3.1-Pro at 27.8 billion parameters and requires no GPU documentation, while open-pi-zero demonstrates high performance on H100s with a MIT license but has specific peak VRAM constraints [S3][S4][S8].",
+      "showlab/ShowUI stands out for its extremely low resource footprint requiring no GPU hardware at all, contrasting sharply with the heavy computational needs of Kimi K3.1-Pro and open-pi-zero [S3][S7][S8]."
     ],
     "dropped_models": [],
     "warnings": []
@@ -500,29 +501,27 @@
       {
         "model_name": "Kimi K3.1-Pro",
         "onprem_suitability": "insufficient evidence",
-        "rationale": "The source explicitly states that benchmark results are not reported for Kimi K3.1 Pro itself in the provided text snippet, despite mentioning it is recommended to run on vLLM. While context length (160K) and parameter count (2.78T) are provided, there is no quantitative data on VRAM requirements or inference speed.",
+        "rationale": "The source text provides parameter count (2780B), context length (160K), and quantization details, but does not specify VRAM requirements or inference time on specific hardware configurations.",
         "memory_and_inference": "Not documented in retrieved sources",
         "quantisation_options": [],
         "limitations": [
-          "No benchmark scores available",
-          "No explicit VRAM requirement stated"
+          "No explicit VRAM footprint provided"
         ],
         "source_ids": [
           "S3",
           "S4",
-          "S5"
+          "S8"
         ],
         "assessment_type": "qualitative"
       },
       {
         "model_name": "Qwen/Qwen3.8-27B",
         "onprem_suitability": "insufficient evidence",
-        "rationale": "The findings state that hardware/VRAM needs are not explicitly stated in the provided text, even though it is a 27B parameter model with vision capabilities.",
+        "rationale": "While the model card specifies architecture and parameters, it does not provide specific VRAM requirements or inference time estimates for on-premise deployment.",
         "memory_and_inference": "Not documented in retrieved sources",
         "quantisation_options": [],
         "limitations": [
-          "No explicit VRAM requirement stated",
-          "No quantization options listed"
+          "No explicit VRAM footprint provided"
         ],
         "source_ids": [
           "S4"
@@ -530,31 +529,27 @@
         "assessment_type": "qualitative"
       },
       {
-        "model_name": "mlx-vlm",
+        "model_name": "InternVL2",
         "onprem_suitability": "insufficient evidence",
-        "rationale": "The source text does not specify hardware/VRAM needs, nor does it provide benchmark results or quantization options.",
+        "rationale": "The source provides Min VRAM estimates (~16GB for 8B, ~28GB for 26B) but does not provide specific inference time figures or detailed hardware requirements beyond the minimum.",
         "memory_and_inference": "Not documented in retrieved sources",
         "quantisation_options": [],
         "limitations": [
-          "No explicit VRAM requirement stated",
-          "No benchmark scores provided",
-          "No quantization options listed"
+          "No explicit inference time provided"
         ],
         "source_ids": [
-          "S7"
+          "S1"
         ],
         "assessment_type": "qualitative"
       },
       {
-        "model_name": "InternVL2",
+        "model_name": "LLaVA-1.6",
         "onprem_suitability": "insufficient evidence",
-        "rationale": "While the source mentions a minimum VRAM requirement (~16GB), it does not provide specific inference speed benchmarks, quantization options, or detailed memory footprint data required for comprehensive on-premise suitability assessment.",
+        "rationale": "The source provides Min VRAM estimates (8GB for 7B, 12GB for 13B) and mentions Ollama support, but does not provide specific inference time figures or detailed hardware requirements.",
         "memory_and_inference": "Not documented in retrieved sources",
         "quantisation_options": [],
         "limitations": [
-          "No benchmark scores provided",
-          "No quantization options listed",
-          "No inference speed metrics"
+          "No explicit inference time provided"
         ],
         "source_ids": [
           "S1"
@@ -588,13 +583,10 @@
     "disclaimer": "No benchmarks were executed by this application. All scores below are as reported by the cited sources and were only checked to appear verbatim in the retrieved source text."
   },
   "report": {
-    "markdown": "# Technical Research Report\n\n**Topic:** Research the latest open-source multimodal models suitable for on-premise deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations.\n**Generated:** 2026-11-10 18:47 · **Local model:** `qwen3.5:2b` · **Sources:** 8\n\n## 1. Executive Summary\nThis report evaluates open-source multimodal models suitable for on-premise deployment as of late 2026. The analysis identifies Kimi K3.1-Pro, Qwen/Qwen3.8-27B, and InternVL2 as primary candidates, with distinct trade-offs between parameter count, context length, licensing, and hardware requirements.\n\n## 2. Research Objective\nResearch the latest open-source multimodal models suitable for on-premise deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations.\n\n\n\n## 3. Research Methodology\nThis report was produced automatically by four cooperating agents orchestrated with LangGraph, using the local model `qwen3.5:2b` via Ollama (research depth: **basic**).\n\n1. **Research Agent** planned search queries, retrieved sources from web search, the Hugging Face Hub API (model cards), arXiv and GitHub, selected the most informative passages of each page, and extracted findings per source.\n2. **Comparison Agent** selected the models, gathered the evidence about each one, and filled one table row per model; licence and parameter gaps were filled from API metadata.\n3. **Evaluation Agent** extracted reported benchmark scores (each checked to appear in the cited source's text), assessed on-premise suitability, and computed memory estimates from parameter counts.\n4. **Report Agent** consolidated the outputs; tables, references and rule-based recommendations were generated by code, and narrative sentences were checked for correct model-to-source attribution.\n\n**Queries executed:**\n- Web: “open source multimodal model comparison”\n- Web: “on-premise vision language model benchmarks”\n- Hugging Face Hub API: trending models for task “image-text-to-text”\n- arXiv: “multimodal transformer open source” (relaxed to fewer keywords if empty)\n- GitHub: “vision language model on premise” (relaxed to fewer keywords if empty)\n\n**Sources retrieved:** 2 arxiv, 2 documentation, 2 github, 2 web — 8 total, 8 judged relevant.\n\n**Legend:** statements with [S#] are taken from the cited source; text marked *Assessment* is a qualitative judgement by the agents; *Recommendations* are advice, not measured facts.\n\n## 4. Models and Technologies Identified\n- **Kimi K3.1-Pro** — Not documented in retrieved sources. [S3]\n- **Qwen/Qwen3.8-27B** — Qwen. [S4]\n- **mlx-vlm** — Not documented in retrieved sources. [S7]\n- **InternVL2** — Not documented in retrieved sources. [S1]\n- Also mentioned in sources (not compared in detail): LLaVA-1.6, Min VRAM, Qwen2-VL, Qwen3-VL, Kimi K3 Visual agents, Gemma 4, MiMo-V2.5, AuK, COSINT-Agent, MLLMs, Vision-Language-Action (VLA), World-Action-Model (WAM), Vision-Language-Navigation (VLN), Vision-Action (VA), MLLM-based Embodied Learning\n\n## 5. Comparative Analysis\n| Model | Modalities | Parameters | Context | Deployment | Hardware | Licence | Licence type | Sources |\n|---|---|---|---|---|---|---|---|---|\n| Kimi K3.1-Pro | text, image | 2780.11B | 160K (1048576 tokens) | vLLM | Not documented in retrieved sources | other | Unknown | [S3] |\n| Qwen/Qwen3.8-27B | text, image, video | 27.78B (Hugging Face weight files [S4]) | Not documented in retrieved sources | — | Not documented in retrieved sources | apache-2.0 | Open source (OSI-approved licence) | [S4] |\n| mlx-vlm | text, image | Not specified in source text | Not specified in source text | Not specified in source text | Not specified in source text | MIT | Open source (OSI-approved licence) | [S7] |\n| InternVL2 | text, image | Not documented in retrieved sources | Not documented in retrieved sources | Ollama, vLLM, llama.cpp, transformers | Min VRAM: ~16GB for InternVL2. | Not documented in retrieved sources | Unknown | [S1] |\n\n**Key differences**\n- Kimi K3.1-Pro offers the largest parameter count (27.8T) but lacks documented hardware requirements and video capabilities, whereas Qwen/Qwen3.8-27B supports multimodal inputs including video with an Apache-2.0 license [S4][S7].\n- InternVL2 is constrained to approximately 16GB of VRAM for inference while Kimi K3.1-Pro's hardware needs remain undocumented, and InternVL2 does not support video processing unlike Qwen/Qwen3.8-27B [S1][S4].\n\nKimi K3.1-Pro stands out for its massive parameter count (2.78 trillion) and extended context window (160K tokens), making it highly effective for complex document understanding [S3]. However, its specific hardware requirements remain undocumented in the provided sources, creating a significant uncertainty regarding inference speed and VRAM sufficiency [S3]. In contrast, Qwen/Qwen3.8-27B offers robust multimodal capabilities including native support for video from hour-scale videos to STEM diagrams [S4], supported by an OSI-approved Apache-2.0 license [S4][S7]. While its parameter count (27.78 billion) is significantly lower than Kimi's, it provides a more transparent hardware profile and supports a wider range of modalities including text, image, and video [S4]. InternVL2 presents a different constraint profile; while it claims to outperform LLaVA-1.6-34B on benchmarks and requires only approximately 16GB of VRAM for inference [S1], its specific benchmark scores and detailed hardware footprint are not explicitly documented in the available sources [S1].\n\n## 6. Benchmark Evaluation\n> No benchmarks were executed by this application. All scores below are as reported by the cited sources and were only checked to appear verbatim in the retrieved source text.\n\n_No benchmark scores could be verified in the retrieved sources._\n\nThe provided evidence does not support any quantitative verification of benchmark scores. All reported performance metrics, such as those for InternVL2 reaching near-GPT-4V performance on complex tasks or Kimi K3.1-Pro's context length, are attributed to the model cards or external sources rather than direct testing by this research team [S1][S3]. Consequently, no specific numerical scores can be verified or compared directly between models.\n\n\n\n## 7. On-Premise Deployment Considerations\n| Model | On-prem suitability (assessment) | Memory / inference | Quantisation | Sources |\n|---|---|---|---|---|\n| Kimi K3.1-Pro | insufficient evidence | Not documented in retrieved sources | — | [S3][S4][S5] |\n| Qwen/Qwen3.8-27B | insufficient evidence | Not documented in retrieved sources | — | [S4] |\n| mlx-vlm | insufficient evidence | Not documented in retrieved sources | — | [S7] |\n| InternVL2 | insufficient evidence | Not documented in retrieved sources | — | [S1] |\n\n**Estimated weight memory**\n\n| Model | Parameters | FP16 (GB) | 8-bit (GB) | 4-bit (GB) | Source of param count |\n|---|---|---|---|---|---|\n| moonshotai/Kimi-K3.1-Pro | 2780.11B | 6672.3 | 3336.1 | 1668.1 | [S3] |\n| Qwen/Qwen3.8-27B | 27.78B | 66.7 | 33.3 | 16.7 | [S4] |\n\n_Estimate (computed, not measured): weight memory = parameters × bytes per parameter (FP16/BF16 = 2 bytes, 8-bit = 1 byte, 4-bit ≈ 0.5 bytes) × 1.2 overhead. Excludes the KV cache, which grows with context length, and any vision encoder loaded separately._\n\n- Licensing: Qwen/Qwen3.8-27B is available under an OSI-approved Apache-2.0 license, facilitating easier commercial and open-source deployment [S4][S7].\n- Hardware Requirements: Kimi K3.1-Pro requires significant memory (estimated ~6.7 TB at FP16 based on parameters), which may be prohibitive for many on-premise setups [S3]. InternVL2 is constrained to approximately 16GB of VRAM, which may limit its utility on high-end hardware but offers a cost-effective alternative for resource-constrained environments [S1].\n- Limitations: All evaluated models lack explicit documentation regarding their specific inference speeds or quantization options. While Kimi K3.1-Pro is noted to use Gated DeepSeek Sparse Attention and MXFP4 weights, the actual performance impact on latency remains unverified in the source text [S3]. InternVL2's architecture superseded by newer models suggests potential obsolescence or lack of detailed technical documentation regarding its current state [S1].\n\n## 8. Limitations and Risks\n- No benchmark scores could be verified in the retrieved sources.\n- 2 narrative sentence(s) were removed because they attributed a model to a source that does not mention it.\n\n- This report is limited to the 8 sources retrieved automatically; it is not a systematic review.\n- Findings were extracted by a small local LLM and may contain extraction errors; verify critical facts in the cited sources.\n\n## 9. Recommendations\n_Recommendations are judgements based on the evidence above, not measured results._\n\n**Rule-based (computed by code from licence category and memory estimates):**\n- **Kimi K3.1-Pro** — licence not established from the retrieved sources; ~1668.1 GB at 4-bit (estimate): verify on the official model card before use [S3].\n- **Qwen/Qwen3.8-27B** — OSI-approved licence (apache-2.0) and ~16.7 GB of weights at 4-bit (estimate): candidate for a single-GPU on-prem pilot; measure VRAM and run your own evaluation first [S4].\n- **mlx-vlm** — OSI-approved licence (MIT); size/hardware not documented in the retrieved sources — measure memory before committing [S7].\n- **InternVL2** — licence not established from the retrieved sources: verify on the official model card before use [S1].\n\n**Agent recommendations:**\n- None reported.\n\n## 10. References\n- **[S1]** Best Open-Source Multimodal AI Models 2026: - yuzec.com (2026-06-22). *web*. <https://yuzec.com/blog/open-source-multimodal-ai-2026>\n- **[S3]** moonshotai/Kimi-K3.1-Pro — model card (2026-11-02). *documentation*. <https://huggingface.co/moonshotai/Kimi-K3.1-Pro>\n- **[S4]** Qwen/Qwen3.8-27B — model card (2026-08-05). *documentation*. <https://huggingface.co/Qwen/Qwen3.8-27B>\n- **[S5]** AuK Technical Report: An Open-Source Foundational Model for Speech Generation and Editing (2026-09-08). *arxiv*. <https://arxiv.org/abs/2609.08936v1>\n- **[S7]** Neywa-Labs/mlx-vlm (2026-11-10). *github*. <https://github.com/Neywa-Labs/mlx-vlm>\n\n**Other retrieved sources (consulted, not cited):**\n- **[S2]** Best Open-Source Multimodal AI Models for Production (2026) (date not available). *web*. <https://deepinfra.com/blog/multi-modal-open-source>\n- **[S6]** COSINT-Agent: A Knowledge-Driven Multimodal Agent for Chinese Open Source Intelligence (2025-03-05). *arxiv*. <https://arxiv.org/abs/2503.03215v2>\n- **[S8]** jonyzhang2023/awesome-embodied-vla-va-vln (2026-09-15). *github*. <https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln>\n",
+    "markdown": "# Technical Research Report\n\n**Topic:** Research the latest open-source multimodal models suitable for on-premise deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations.\n**Generated:** 2026-11-10 19:26 · **Local model:** `qwen3.5:2b` · **Sources:** 8\n\n## 1. Executive Summary\nThis report evaluates open-source multimodal models suitable for on-premise deployment as of 2026. The analysis identifies InternVL2 as the most capable family, with Kimi K3.1-Pro and Qwen/Qwen3.8-27B offering strong alternative options with varying trade-offs between parameter count, licensing, and hardware requirements.\n\n## 2. Research Objective\nResearch the latest open-source multimodal models suitable for on-premise deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations.\n\n**Focus points:** licensing; hardware requirements; capabilities\n\n## 3. Research Methodology\nThis report was produced automatically by four cooperating agents orchestrated with LangGraph, using the local model `qwen3.5:2b` via Ollama (research depth: **basic**).\n\n1. **Research Agent** planned search queries, retrieved sources from web search, the Hugging Face Hub API (model cards), arXiv and GitHub, selected the most informative passages of each page, and extracted findings per source.\n2. **Comparison Agent** selected the models, gathered the evidence about each one, and filled one table row per model; licence and parameter gaps were filled from API metadata.\n3. **Evaluation Agent** extracted reported benchmark scores (each checked to appear in the cited source's text), assessed on-premise suitability, and computed memory estimates from parameter counts.\n4. **Report Agent** consolidated the outputs; tables, references and rule-based recommendations were generated by code, and narrative sentences were checked for correct model-to-source attribution.\n\n**Queries executed:**\n- Web: “open source multimodal model comparison”\n- Web: “on-premise vision language model benchmarks”\n- Hugging Face Hub API: trending models for task “image-text-to-text”\n- arXiv: “multimodal transformer open source” (relaxed to fewer keywords if empty)\n- GitHub: “vision language model open weights” (relaxed to fewer keywords if empty)\n\n**Sources retrieved:** 2 arxiv, 2 documentation, 2 github, 2 web — 8 total, 8 judged relevant.\n\n**Legend:** statements with [S#] are taken from the cited source; text marked *Assessment* is a qualitative judgement by the agents; *Recommendations* are advice, not measured facts.\n\n## 4. Models and Technologies Identified\n- **Kimi K3.1-Pro** — Not documented in retrieved sources. [S3]\n- **Qwen/Qwen3.8-27B** — Qwen. [S4]\n- **showlab/ShowUI** — showlab. [S7]\n- **open-pi-zero** — Not documented in retrieved sources. [S8]\n- Also mentioned in sources (not compared in detail): InternVL2, LLaVA-1.6, Qwen2-VL, Qwen3-VL, Kimi K3 Visual agents, Gemma 4, MiMo-V2.5, MoonViT-V2, SiTU-GLU, Gated DSA, DeepSeek Sparse Attention, AuK, COSINT-Agent, MLLMs, showlab/ShowUI-2B\n\n## 5. Comparative Analysis\n| Model | Modalities | Parameters | Context | Deployment | Hardware | Licence | Licence type | Sources |\n|---|---|---|---|---|---|---|---|---|\n| Kimi K3.1-Pro | text, image | 2780.11B | 160K (1048576 tokens) | — | Not documented in retrieved sources | other | Unknown | [S3] |\n| Qwen/Qwen3.8-27B | text, image, video | [27.78B] | [Not documented in retrieved sources] | — | [Not documented in retrieved sources] | apache-2.0 | Open source (OSI-approved licence) | [S4] |\n| showlab/ShowUI | text | 2B | Not documented in retrieved sources | vLLM | No GPU needed for local deployment via HF Spaces demo | Apache-2.0 | Open source (OSI-approved licence) | [S7] |\n| open-pi-zero | text, image | [3B parameters] | Block-wise causal masking | — | Peak VRAM of 40GB with bsz 16 on H100s; 8-12 hours inference time on H100s (bsz 32) | MIT | Open source (OSI-approved licence) | [S8] |\n\n**Key differences**\n- Kimi K3.1-Pro is the largest model in the list at 27.8 trillion parameters but lacks documented hardware requirements and video support, whereas Qwen/Qwen3.8-27B offers multimodal capabilities including video with an Apache-2.0 license [S3][S4].\n- Qwen/Qwen3.8-27B is significantly smaller than Kimi K3.1-Pro at 27.8 billion parameters and requires no GPU documentation, while open-pi-zero demonstrates high performance on H100s with a MIT license but has specific peak VRAM constraints [S3][S4][S8].\n- showlab/ShowUI stands out for its extremely low resource footprint requiring no GPU hardware at all, contrasting sharply with the heavy computational needs of Kimi K3.1-Pro and open-pi-zero [S3][S7][S8].\n\nInternVL2 is identified as the most capable open-source VLM family in 2026, superseding LLaVA-1.6-34B on benchmarks while requiring half the compute [S1]. It offers 8B and 26B variants with an Apache 2.0 license (commercial OK) and supports MMBench, VQAv2, and OCRBench tasks [S1]. InternVL2 requires approximately 16GB VRAM for the 8B model and 28GB for the 26B model [S1]. In contrast, Kimi K3.1-Pro is a large-scale multimodal model with 2780.11B parameters utilizing MoonViT-V2 vision encoders and SiTU-GLU activation functions [S3]. It supports text and image modalities with a context length of 160K tokens (1048576) and features quantization-aware training using MXFP4 weights and MXFP8 activations [S3]. However, its specific hardware requirements and inference times are not documented in the provided sources. Qwen/Qwen3.8-27B is a causal language model with vision encoder capabilities designed for on-premise deployment, featuring 27.78B parameters, 64 layers, and native support for STEM diagrams to hour-scale videos [S4]. It utilizes an Apache 2.0 license (OSI-approved) [S4]. showlab/ShowUI stands out as a lightweight alternative with only 2B parameters under the Apache-2.0 license, capable of local deployment via HF Spaces without GPU requirements [S7]. open-pi-zero is based on the Physical Intelligence pi0 architecture, utilizing a pre-trained 3B PaliGemma VLM and action expert parameters totaling 0.625B with MoE-like structures [S8]. It requires peak VRAM of 40GB on H100s for inference and has an MIT license [S8].\n\n## 6. Benchmark Evaluation\n> No benchmarks were executed by this application. All scores below are as reported by the cited sources and were only checked to appear verbatim in the retrieved source text.\n\n_No benchmark scores could be verified in the retrieved sources._\n\nNo benchmark scores were verified in the retrieved sources. The provided information relies entirely on model cards, technical reports, and source citations without independent validation or run results.\n\n\n\n## 7. On-Premise Deployment Considerations\n| Model | On-prem suitability (assessment) | Memory / inference | Quantisation | Sources |\n|---|---|---|---|---|\n| Kimi K3.1-Pro | insufficient evidence | Not documented in retrieved sources | — | [S3][S4][S8] |\n| Qwen/Qwen3.8-27B | insufficient evidence | Not documented in retrieved sources | — | [S4] |\n| InternVL2 | insufficient evidence | Not documented in retrieved sources | — | [S1] |\n| LLaVA-1.6 | insufficient evidence | Not documented in retrieved sources | — | [S1] |\n\n**Estimated weight memory**\n\n| Model | Parameters | FP16 (GB) | 8-bit (GB) | 4-bit (GB) | Source of param count |\n|---|---|---|---|---|---|\n| moonshotai/Kimi-K3.1-Pro | 2780.11B | 6672.3 | 3336.1 | 1668.1 | [S3] |\n| Qwen/Qwen3.8-27B | 27.78B | 66.7 | 33.3 | 16.7 | [S4] |\n\n_Estimate (computed, not measured): weight memory = parameters × bytes per parameter (FP16/BF16 = 2 bytes, 8-bit = 1 byte, 4-bit ≈ 0.5 bytes) × 1.2 overhead. Excludes the KV cache, which grows with context length, and any vision encoder loaded separately._\n\n- None reported.\n\n## 8. Limitations and Risks\n- No benchmark scores could be verified in the retrieved sources.\n\n- This report is limited to the 8 sources retrieved automatically; it is not a systematic review.\n- Findings were extracted by a small local LLM and may contain extraction errors; verify critical facts in the cited sources.\n\n## 9. Recommendations\n_Recommendations are judgements based on the evidence above, not measured results._\n\n**Rule-based (computed by code from licence category and memory estimates):**\n- **Kimi K3.1-Pro** — licence not established from the retrieved sources; ~1668.1 GB at 4-bit (estimate): verify on the official model card before use [S3].\n- **Qwen/Qwen3.8-27B** — OSI-approved licence (apache-2.0) and ~16.7 GB of weights at 4-bit (estimate): candidate for a single-GPU on-prem pilot; measure VRAM and run your own evaluation first [S4].\n- **showlab/ShowUI** — OSI-approved licence (Apache-2.0); size/hardware not documented in the retrieved sources — measure memory before committing [S7].\n- **open-pi-zero** — OSI-approved licence (MIT); size/hardware not documented in the retrieved sources — measure memory before committing [S8].\n\n**Agent recommendations:**\n- None reported.\n\n## 10. References\n- **[S1]** Best Open-Source Multimodal AI Models 2026: - yuzec.com (2026-06-22). *web*. <https://yuzec.com/blog/open-source-multimodal-ai-2026>\n- **[S3]** moonshotai/Kimi-K3.1-Pro — model card (2026-11-02). *documentation*. <https://huggingface.co/moonshotai/Kimi-K3.1-Pro>\n- **[S4]** Qwen/Qwen3.8-27B — model card (2026-08-05). *documentation*. <https://huggingface.co/Qwen/Qwen3.8-27B>\n- **[S7]** showlab/ShowUI (2026-04-24). *github*. <https://github.com/showlab/ShowUI>\n- **[S8]** allenzren/open-pi-zero (2025-01-31). *github*. <https://github.com/allenzren/open-pi-zero>\n\n**Other retrieved sources (consulted, not cited):**\n- **[S2]** Best Open-Source Multimodal AI Models for Production (2026) (date not available). *web*. <https://deepinfra.com/blog/multi-modal-open-source>\n- **[S5]** AuK Technical Report: An Open-Source Foundational Model for Speech Generation and Editing (2026-09-08). *arxiv*. <https://arxiv.org/abs/2609.08936v1>\n- **[S6]** COSINT-Agent: A Knowledge-Driven Multimodal Agent for Chinese Open Source Intelligence (2025-03-05). *arxiv*. <https://arxiv.org/abs/2503.03215v2>\n",
     "narrative_generated": true,
     "removed_citations": [],
-    "removed_claims": [
-      "InternVL2's licensing status is unknown in the provided text, while mlx-vlm is MIT licensed [S7].",
-      "Qwen/Qwen3.8-27B has a much lower estimated footprint (~67 GB at FP16) and supports video processing, addressing a key limitation of larger models like Kimi K3.1-Pro [S4]."
-    ],
+    "removed_claims": [],
     "citation_check": {
       "cited": [
         "S1",
@@ -618,11 +610,11 @@
     "report": "completed"
   },
   "timings": {
-    "research": 849.99,
-    "comparison": 168.17,
-    "evaluation": 111.49,
-    "report": 119.76,
-    "total": 1251.74
+    "research": 519.24,
+    "comparison": 199.49,
+    "evaluation": 174.85,
+    "report": 176.38,
+    "total": 1072.77
   },
   "errors": [],
   "execution_order": [
@@ -634,18 +626,18 @@
   ],
   "events": [
     {
-      "t": 2.15,
+      "t": 2.09,
       "agent": "research",
       "status": "running"
     },
     {
-      "t": 2.15,
+      "t": 2.09,
       "agent": "research",
       "message": "Planning search queries",
       "step": "plan"
     },
     {
-      "t": 30.19,
+      "t": 29.43,
       "agent": "research",
       "message": "Search plan ready",
       "step": "plan_done",
@@ -655,13 +647,13 @@
           "on-premise vision language model benchmarks"
         ],
         "arxiv_query": "multimodal transformer open source",
-        "github_query": "vision language model on premise",
+        "github_query": "vision language model open weights",
         "hub_task": "image-text-to-text",
         "fallback": false
       }
     },
     {
-      "t": 30.19,
+      "t": 29.44,
       "agent": "research",
       "message": "Searching web: open source multimodal model comparison",
       "step": "search",
@@ -671,7 +663,7 @@
       }
     },
     {
-      "t": 41.83,
+      "t": 29.47,
       "agent": "research",
       "message": "web: 2 result(s)",
       "step": "search_done",
@@ -691,7 +683,7 @@
       }
     },
     {
-      "t": 41.83,
+      "t": 29.47,
       "agent": "research",
       "message": "Searching Hugging Face model cards: image-text-to-text",
       "step": "search",
@@ -701,7 +693,7 @@
       }
     },
     {
-      "t": 45.35,
+      "t": 29.49,
       "agent": "research",
       "message": "Hugging Face model cards: 2 result(s)",
       "step": "search_done",
@@ -721,7 +713,7 @@
       }
     },
     {
-      "t": 45.35,
+      "t": 29.49,
       "agent": "research",
       "message": "Searching arXiv: multimodal transformer open source",
       "step": "search",
@@ -731,7 +723,7 @@
       }
     },
     {
-      "t": 47.92,
+      "t": 29.51,
       "agent": "research",
       "message": "arXiv: 2 result(s)",
       "step": "search_done",
@@ -751,37 +743,37 @@
       }
     },
     {
-      "t": 47.92,
+      "t": 29.51,
       "agent": "research",
-      "message": "Searching GitHub: vision language model on",
+      "message": "Searching GitHub: vision language model open",
       "step": "search",
       "data": {
         "tool": "GitHub",
-        "query": "vision language model on"
+        "query": "vision language model open"
       }
     },
     {
-      "t": 51.39,
+      "t": 31.61,
       "agent": "research",
       "message": "GitHub: 2 result(s)",
       "step": "search_done",
       "data": {
         "tool": "GitHub",
-        "query": "vision language model on",
+        "query": "vision language model open",
         "results": [
           {
-            "title": "Neywa-Labs/mlx-vlm",
-            "url": "https://github.com/Neywa-Labs/mlx-vlm"
+            "title": "showlab/ShowUI",
+            "url": "https://github.com/showlab/ShowUI"
           },
           {
-            "title": "jonyzhang2023/awesome-embodied-vla-va-vln",
-            "url": "https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln"
+            "title": "allenzren/open-pi-zero",
+            "url": "https://github.com/allenzren/open-pi-zero"
           }
         ]
       }
     },
     {
-      "t": 51.39,
+      "t": 31.61,
       "agent": "research",
       "message": "Registered 8 unique sources",
       "step": "register",
@@ -825,21 +817,21 @@
           },
           {
             "id": "S7",
-            "title": "Neywa-Labs/mlx-vlm",
-            "url": "https://github.com/Neywa-Labs/mlx-vlm",
+            "title": "showlab/ShowUI",
+            "url": "https://github.com/showlab/ShowUI",
             "type": "github"
           },
           {
             "id": "S8",
-            "title": "jonyzhang2023/awesome-embodied-vla-va-vln",
-            "url": "https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln",
+            "title": "allenzren/open-pi-zero",
+            "url": "https://github.com/allenzren/open-pi-zero",
             "type": "github"
           }
         ]
       }
     },
     {
-      "t": 51.39,
+      "t": 31.61,
       "agent": "research",
       "message": "Fetching page https://yuzec.com/blog/open-source-multimodal-ai-2026",
       "step": "fetch",
@@ -848,7 +840,7 @@
       }
     },
     {
-      "t": 54.46,
+      "t": 31.63,
       "agent": "research",
       "message": "Page fetched",
       "step": "fetch_done",
@@ -859,7 +851,7 @@
       }
     },
     {
-      "t": 54.46,
+      "t": 31.63,
       "agent": "research",
       "message": "Fetching page https://deepinfra.com/blog/multi-modal-open-source",
       "step": "fetch",
@@ -868,7 +860,7 @@
       }
     },
     {
-      "t": 56.06,
+      "t": 31.64,
       "agent": "research",
       "message": "Page fetched",
       "step": "fetch_done",
@@ -879,7 +871,7 @@
       }
     },
     {
-      "t": 56.06,
+      "t": 31.64,
       "agent": "research",
       "message": "Fetching page https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
       "step": "fetch",
@@ -888,7 +880,7 @@
       }
     },
     {
-      "t": 58.84,
+      "t": 31.66,
       "agent": "research",
       "message": "Page fetched",
       "step": "fetch_done",
@@ -899,7 +891,7 @@
       }
     },
     {
-      "t": 58.85,
+      "t": 31.66,
       "agent": "research",
       "message": "Reading source 1/8: Best Open-Source Multimodal AI Models 2026: - yuzec.com",
       "step": "read",
@@ -909,7 +901,7 @@
       }
     },
     {
-      "t": 219.84,
+      "t": 87.12,
       "agent": "research",
       "message": "Source kept",
       "step": "read_done",
@@ -918,14 +910,14 @@
         "kept": true,
         "facts": [
           "InternVL2 is the most capable open-source VLM family in 2026.",
-          "InternVL2 8B variant outperforms LLaVA-1.6-34B on most standard benchmarks.",
-          "InternVL2 26B version reaches near-GPT-4V performance on complex document understanding tasks."
+          "InternVL2 has 8B and 26B variants.",
+          "InternVL2 uses Apache 2.0 license (commercial OK)."
         ],
         "fallback": false
       }
     },
     {
-      "t": 219.84,
+      "t": 87.12,
       "agent": "research",
       "message": "Reading source 2/8: Best Open-Source Multimodal AI Models for Production (2026)",
       "step": "read",
@@ -935,7 +927,7 @@
       }
     },
     {
-      "t": 310.22,
+      "t": 146.28,
       "agent": "research",
       "message": "Source kept",
       "step": "read_done",
@@ -943,15 +935,15 @@
         "source_id": "S2",
         "kept": true,
         "facts": [
-          "Qwen3-VL is best for document extraction and OCR with 30B parameters, supports 32 languages, uses DeepStack ViT fusion, and has a context of 1M tokens priced at $0.15/1M.",
-          "Kimi K3 Visual agents and GUI automation support text, image, video, and audio with 1M tokens, costs $3.00/1M, and features native multimodal MoE with an agent swarm.",
-          "Gemma 4 supports high-volume image understanding with 26B parameters, a context of 262K tokens, and is priced at $0.07/1M (lowest cost among listed models)."
+          "Qwen3-VL: Best for modalities Document extraction and OCR; Input 30B parameters; Context 1M tokens; Price $0.15/1M tokens; Strengths include 32-language OCR and DeepStack ViT fusion.",
+          "Kimi K3 Visual agents and GUI automation: Supports Text, image, video; Input 1M tokens; Price $3.00/1M tokens; Native multimodal MoE with Agent Swarm architecture.",
+          "Gemma 4: High-volume image understanding; Input 262K tokens; Price $0.07/1M tokens; Strengths include Lowest cost (3.8B active params) and Unified omni architecture."
         ],
         "fallback": false
       }
     },
     {
-      "t": 310.25,
+      "t": 146.28,
       "agent": "research",
       "message": "Reading source 3/8: moonshotai/Kimi-K3.1-Pro — model card",
       "step": "read",
@@ -961,7 +953,7 @@
       }
     },
     {
-      "t": 412.54,
+      "t": 198.07,
       "agent": "research",
       "message": "Source kept",
       "step": "read_done",
@@ -971,13 +963,13 @@
         "facts": [
           "Model Name: Kimi K3.1-Pro",
           "Modalities: Text, Image",
-          "Parameters: 2780.11B"
+          "Parameter Count: 2780.11B"
         ],
         "fallback": false
       }
     },
     {
-      "t": 412.55,
+      "t": 198.07,
       "agent": "research",
       "message": "Reading source 4/8: Qwen/Qwen3.8-27B — model card",
       "step": "read",
@@ -987,7 +979,7 @@
       }
     },
     {
-      "t": 482.15,
+      "t": 259.54,
       "agent": "research",
       "message": "Source kept",
       "step": "read_done",
@@ -996,14 +988,14 @@
         "kept": true,
         "facts": [
           "Model Name: Qwen/Qwen3.8-27B",
-          "Parameter Size: 27.78B",
-          "Type: Causal Language Model with Vision Encoder"
+          "Type: Causal Language Model with Vision Encoder",
+          "Number of Parameters: 27.78B"
         ],
         "fallback": false
       }
     },
     {
-      "t": 482.15,
+      "t": 259.55,
       "agent": "research",
       "message": "Reading source 5/8: AuK Technical Report: An Open-Source Foundational Model for ",
       "step": "read",
@@ -1013,7 +1005,7 @@
       }
     },
     {
-      "t": 571.02,
+      "t": 304.2,
       "agent": "research",
       "message": "Source kept",
       "step": "read_done",
@@ -1023,13 +1015,13 @@
         "facts": [
           "Model name: AuK",
           "Modalities: Speech generation, content editing, enhancement, separation, paralinguistic editing, acoustic editing",
-          "Training data: Approximately 3.03 billion instruction--audio instances and 1.95 million hours of effective supervision"
+          "Data scale: Approximately 3.03 billion instruction-audio instances and 1.95 million hours of effective supervision"
         ],
         "fallback": false
       }
     },
     {
-      "t": 571.02,
+      "t": 304.21,
       "agent": "research",
       "message": "Reading source 6/8: COSINT-Agent: A Knowledge-Driven Multimodal Agent for Chines",
       "step": "read",
@@ -1039,7 +1031,7 @@
       }
     },
     {
-      "t": 651.79,
+      "t": 346.21,
       "agent": "research",
       "message": "Source kept",
       "step": "read_done",
@@ -1047,25 +1039,25 @@
         "source_id": "S6",
         "kept": true,
         "facts": [
-          "Model name: COSINT-Agent",
-          "Architecture: Integrates fine-tuned MLLMs with the Entity-Event-Scene Knowledge Graph (EES-KG)",
-          "Framework: Uses an innovative EES-Match framework for systematic extraction and reasoning"
+          "The model is tailored for Chinese OSINT tasks.",
+          "It integrates fine-tuned MLLMs with structured reasoning via an Entity-Event-Scene Knowledge Graph (EES-KG).",
+          "The system uses an EES-Match framework to bridge the MLLM and EES-KG."
         ],
         "fallback": false
       }
     },
     {
-      "t": 651.8,
+      "t": 346.21,
       "agent": "research",
-      "message": "Reading source 7/8: Neywa-Labs/mlx-vlm",
+      "message": "Reading source 7/8: showlab/ShowUI",
       "step": "read",
       "data": {
         "source_id": "S7",
-        "title": "Neywa-Labs/mlx-vlm"
+        "title": "showlab/ShowUI"
       }
     },
     {
-      "t": 729.15,
+      "t": 425.81,
       "agent": "research",
       "message": "Source kept",
       "step": "read_done",
@@ -1073,25 +1065,25 @@
         "source_id": "S7",
         "kept": true,
         "facts": [
-          "Model Name: mlx-vlm",
-          "License: MIT",
-          "Python Version Requirement: 3.10+"
+          "Model name: showlab/ShowUI",
+          "License: Apache-2.0",
+          "Parameter size: 2B (referring to ShowUI-2B)"
         ],
         "fallback": false
       }
     },
     {
-      "t": 729.19,
+      "t": 425.81,
       "agent": "research",
-      "message": "Reading source 8/8: jonyzhang2023/awesome-embodied-vla-va-vln",
+      "message": "Reading source 8/8: allenzren/open-pi-zero",
       "step": "read",
       "data": {
         "source_id": "S8",
-        "title": "jonyzhang2023/awesome-embodied-vla-va-vln"
+        "title": "allenzren/open-pi-zero"
       }
     },
     {
-      "t": 852.17,
+      "t": 521.42,
       "agent": "research",
       "message": "Source kept",
       "step": "read_done",
@@ -1099,53 +1091,54 @@
         "source_id": "S8",
         "kept": true,
         "facts": [
-          "The source lists 'Vision-Language-Action (VLA)' as a category of models.",
-          "It mentions 'World-Action-Model (WAM)' and 'Vision-Language-Navigation (VLN)' as distinct model types.",
-          "It includes 'Vision-Action (VA)' models and 'MLLM-based Embodied Learning' approaches."
+          "Model name: open-pi-zero",
+          "Architecture: MoE-like (expert-based) based on Physical Intelligence pi0",
+          "Pre-trained VLM: PaliGemma VLM (3B parameters)"
         ],
         "fallback": false
       }
     },
     {
-      "t": 852.17,
+      "t": 521.44,
       "agent": "research",
       "status": "completed",
-      "seconds": 849.99
+      "seconds": 519.24
     },
     {
-      "t": 852.3,
+      "t": 521.93,
       "agent": "comparison",
       "status": "running"
     },
     {
-      "t": 852.3,
+      "t": 522.2,
       "agent": "comparison",
-      "message": "22 candidate names ranked by evidence",
+      "message": "26 candidate names ranked by evidence",
       "step": "candidates",
       "data": {
         "candidates": [
           "Kimi K3.1-Pro",
           "Qwen/Qwen3.8-27B",
-          "mlx-vlm",
+          "showlab/ShowUI",
+          "open-pi-zero",
           "InternVL2",
           "LLaVA-1.6",
-          "Min VRAM",
           "Qwen2-VL",
           "Qwen3-VL",
           "Kimi K3 Visual agents",
           "Gemma 4",
           "MiMo-V2.5",
-          "AuK"
+          "MoonViT-V2"
         ],
         "with_cards": [
           "Kimi K3.1-Pro",
           "Qwen/Qwen3.8-27B",
-          "mlx-vlm"
+          "showlab/ShowUI",
+          "open-pi-zero"
         ]
       }
     },
     {
-      "t": 870.67,
+      "t": 522.2,
       "agent": "comparison",
       "message": "Selected 4 models",
       "step": "selected",
@@ -1153,18 +1146,19 @@
         "models": [
           "Kimi K3.1-Pro",
           "Qwen/Qwen3.8-27B",
-          "mlx-vlm",
-          "InternVL2"
+          "showlab/ShowUI",
+          "open-pi-zero"
         ],
         "guaranteed": [
           "Kimi K3.1-Pro",
           "Qwen/Qwen3.8-27B",
-          "mlx-vlm"
+          "showlab/ShowUI",
+          "open-pi-zero"
         ]
       }
     },
     {
-      "t": 870.71,
+      "t": 522.2,
       "agent": "comparison",
       "message": "Filling the row for Kimi K3.1-Pro",
       "step": "row",
@@ -1177,7 +1171,7 @@
       }
     },
     {
-      "t": 909.45,
+      "t": 560.6,
       "agent": "comparison",
       "message": "Row ready: Kimi K3.1-Pro",
       "step": "row_done",
@@ -1197,7 +1191,7 @@
       }
     },
     {
-      "t": 909.45,
+      "t": 560.61,
       "agent": "comparison",
       "message": "Filling the row for Qwen/Qwen3.8-27B",
       "step": "row",
@@ -1210,14 +1204,14 @@
       }
     },
     {
-      "t": 941.38,
+      "t": 590.27,
       "agent": "comparison",
       "message": "Row ready: Qwen/Qwen3.8-27B",
       "step": "row_done",
       "data": {
         "model": "Qwen/Qwen3.8-27B",
-        "parameters": "27.78B (Hugging Face weight files [S4])",
-        "context": "Not documented in retrieved sources",
+        "parameters": "[27.78B]",
+        "context": "[Not documented in retrieved sources]",
         "modalities": [
           "text",
           "image",
@@ -1231,12 +1225,12 @@
       }
     },
     {
-      "t": 941.39,
+      "t": 590.27,
       "agent": "comparison",
-      "message": "Filling the row for mlx-vlm",
+      "message": "Filling the row for showlab/ShowUI",
       "step": "row",
       "data": {
-        "model": "mlx-vlm",
+        "model": "showlab/ShowUI",
         "evidence_lines": 8,
         "source_ids": [
           "S7"
@@ -1244,19 +1238,18 @@
       }
     },
     {
-      "t": 967.98,
+      "t": 622.2,
       "agent": "comparison",
-      "message": "Row ready: mlx-vlm",
+      "message": "Row ready: showlab/ShowUI",
       "step": "row_done",
       "data": {
-        "model": "mlx-vlm",
-        "parameters": "Not specified in source text",
-        "context": "Not specified in source text",
+        "model": "showlab/ShowUI",
+        "parameters": "2B",
+        "context": "Not documented in retrieved sources",
         "modalities": [
-          "text",
-          "image"
+          "text"
         ],
-        "licence": "MIT",
+        "licence": "Apache-2.0",
         "licence_category": "Open source (OSI-approved licence)",
         "source_ids": [
           "S7"
@@ -1264,69 +1257,70 @@
       }
     },
     {
-      "t": 967.99,
+      "t": 622.21,
       "agent": "comparison",
-      "message": "Filling the row for InternVL2",
+      "message": "Filling the row for open-pi-zero",
       "step": "row",
       "data": {
-        "model": "InternVL2",
-        "evidence_lines": 4,
+        "model": "open-pi-zero",
+        "evidence_lines": 9,
         "source_ids": [
-          "S1"
+          "S8"
         ]
       }
     },
     {
-      "t": 996.39,
+      "t": 662.32,
       "agent": "comparison",
-      "message": "Row ready: InternVL2",
+      "message": "Row ready: open-pi-zero",
       "step": "row_done",
       "data": {
-        "model": "InternVL2",
-        "parameters": "Not documented in retrieved sources",
-        "context": "Not documented in retrieved sources",
+        "model": "open-pi-zero",
+        "parameters": "[3B parameters]",
+        "context": "Block-wise causal masking",
         "modalities": [
           "text",
           "image"
         ],
-        "licence": "Not documented in retrieved sources",
-        "licence_category": "Unknown",
+        "licence": "MIT",
+        "licence_category": "Open source (OSI-approved licence)",
         "source_ids": [
-          "S1"
+          "S8"
         ]
       }
     },
     {
-      "t": 996.4,
+      "t": 662.32,
       "agent": "comparison",
       "message": "Explaining the differences",
       "step": "differences"
     },
     {
-      "t": 1020.44,
+      "t": 721.42,
       "agent": "comparison",
-      "message": "2 cited differences",
+      "message": "3 cited differences",
       "step": "differences_done",
       "data": {
         "sentences": [
-          "Kimi K3.1-Pro offers the largest parameter count (27.8T) but lacks documented hardware requirements and video capabilities, whereas Qwen/Qwen3.8-27B supports multimodal inputs including video with an Apache-2.0 license [S4][S7].",
-          "InternVL2 is constrained to approximately 16GB of VRAM for inference while Kimi K3.1-Pro's hardware needs remain undocumented, and InternVL2 does not support video processing unlike Qwen/Qwen3.8-27B [S1][S4]."
+          "Kimi K3.1-Pro is the largest model in the list at 27.8 trillion parameters but lacks documented hardware requirements and video support, whereas Qwen/Qwen3.8-27B offers multimodal capabilities including video with an Apache-2.0 license [S3][S4].",
+          "Qwen/Qwen3.8-27B is significantly smaller than Kimi K3.1-Pro at 27.8 billion parameters and requires no GPU documentation, while open-pi-zero demonstrates high performance on H100s with a MIT license but has specific peak VRAM constraints [S3][S4][S8].",
+          "showlab/ShowUI stands out for its extremely low resource footprint requiring no GPU hardware at all, contrasting sharply with the heavy computational needs of Kimi K3.1-Pro and open-pi-zero [S3][S7][S8]."
         ]
       }
     },
     {
-      "t": 1020.44,
+      "t": 721.42,
       "agent": "comparison",
       "status": "completed",
-      "seconds": 168.17
+      "seconds": 199.49
     },
     {
-      "t": 1020.5,
+      "t": 721.51,
       "agent": "evaluation",
       "status": "running"
     },
     {
-      "t": 1020.51,
+      "t": 721.63,
       "agent": "evaluation",
       "message": "Evaluating evidence for 6 models",
       "step": "evaluate",
@@ -1334,15 +1328,15 @@
         "models": [
           "Kimi K3.1-Pro",
           "Qwen/Qwen3.8-27B",
-          "mlx-vlm",
+          "showlab/ShowUI",
+          "open-pi-zero",
           "InternVL2",
-          "LLaVA-1.6",
-          "Min VRAM"
+          "LLaVA-1.6"
         ]
       }
     },
     {
-      "t": 1131.95,
+      "t": 896.35,
       "agent": "evaluation",
       "message": "Benchmark check: 0 verified, 0 rejected",
       "step": "verify",
@@ -1353,7 +1347,7 @@
       }
     },
     {
-      "t": 1131.95,
+      "t": 896.36,
       "agent": "evaluation",
       "message": "2 memory estimates computed",
       "step": "memory",
@@ -1382,48 +1376,45 @@
             "suitability": "insufficient evidence"
           },
           {
-            "model": "mlx-vlm",
+            "model": "InternVL2",
             "suitability": "insufficient evidence"
           },
           {
-            "model": "InternVL2",
+            "model": "LLaVA-1.6",
             "suitability": "insufficient evidence"
           }
         ]
       }
     },
     {
-      "t": 1131.95,
+      "t": 896.36,
       "agent": "evaluation",
       "status": "completed",
-      "seconds": 111.49
+      "seconds": 174.85
     },
     {
-      "t": 1131.97,
+      "t": 896.39,
       "agent": "report",
       "status": "running"
     },
     {
-      "t": 1131.97,
+      "t": 896.39,
       "agent": "report",
       "message": "Writing the narrative",
       "step": "narrative"
     },
     {
-      "t": 1251.73,
+      "t": 1072.76,
       "agent": "report",
-      "message": "Attribution check removed 2 sentence(s)",
+      "message": "Attribution check removed 0 sentence(s)",
       "step": "attribution",
       "data": {
         "generated": true,
-        "removed": [
-          "InternVL2's licensing status is unknown in the provided text, while mlx-vlm is MIT licensed [S7].",
-          "Qwen/Qwen3.8-27B has a much lower estimated footprint (~67 GB at FP16) and supports video processing, addressing a key limitation of larger models like Kimi K3.1-Pro [S4]."
-        ]
+        "removed": []
       }
     },
     {
-      "t": 1251.73,
+      "t": 1072.76,
       "agent": "report",
       "message": "Report assembled and citations audited",
       "step": "assemble",
@@ -1444,10 +1435,10 @@
       }
     },
     {
-      "t": 1251.73,
+      "t": 1072.76,
       "agent": "report",
       "status": "completed",
-      "seconds": 119.76
+      "seconds": 176.38
     }
   ]
 }

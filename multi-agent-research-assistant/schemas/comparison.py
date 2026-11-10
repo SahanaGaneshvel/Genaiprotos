@@ -65,7 +65,7 @@ class ComparisonRowLLM(BaseModel):
     def _placeholder_means_not_documented(cls, v: str) -> str:
         # live runs: "" blocked filling 27.78B from API metadata; "Not specified in source text"
         # showed up as cell text. Every "nothing known" phrasing becomes the one standard value.
-        text = (v or "").strip()
+        text = (v or "").strip().strip("[]").strip()  # a live run wrapped values in brackets: "[27.78B]"
         low = text.lower().rstrip(".")
         if low in PLACEHOLDERS or NOTHING_KNOWN.match(low):
             return NOT_DOCUMENTED

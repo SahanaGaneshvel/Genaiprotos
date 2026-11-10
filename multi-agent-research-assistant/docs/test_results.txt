@@ -1,4 +1,4 @@
-# Test results — 2026-11-09 18:41
+# Test results — 2026-11-10 19:30
 # Python 3.12.9, pytest 9.2.0; all network and LLM calls mocked
 
 tests/test_api.py::test_health_reports_model_and_status PASSED
@@ -31,7 +31,8 @@ tests/test_comparison_agent.py::test_selection_keeps_only_names_from_the_researc
 tests/test_comparison_agent.py::test_each_row_prompt_contains_only_that_models_evidence PASSED
 tests/test_comparison_agent.py::test_source_ids_are_set_by_code_from_evidence PASSED
 tests/test_comparison_agent.py::test_undocumented_licence_filled_from_api_metadata_with_label PASSED
-tests/test_comparison_agent.py::test_differences_deduplicated_and_uncited_claims_dropped PASSED
+tests/test_comparison_agent.py::test_differences_deduplicated_and_unsupported_claims_dropped PASSED
+tests/test_comparison_agent.py::test_wrong_citations_from_the_model_are_replaced_by_code PASSED
 tests/test_comparison_agent.py::test_code_attaches_citations_from_the_models_a_sentence_names PASSED
 tests/test_comparison_agent.py::test_models_with_their_own_card_are_always_compared PASSED
 tests/test_comparison_agent.py::test_placeholder_values_become_not_documented_so_metadata_can_fill_them PASSED
@@ -73,6 +74,7 @@ tests/test_report_agent.py::test_narrative_failure_falls_back_to_code_only_repor
 tests/test_report_agent.py::test_misattributed_narrative_sentence_is_removed PASSED
 tests/test_report_agent.py::test_attribution_check_is_strict_for_versions_lenient_for_descriptive_names PASSED
 tests/test_report_agent.py::test_rule_based_recommendations_use_licence_and_memory_estimate PASSED
+tests/test_report_agent.py::test_memory_estimate_only_applies_to_exactly_that_model PASSED
 tests/test_report_agent.py::test_recommendations_section_always_has_grounded_advice PASSED
 tests/test_report_agent.py::test_insufficient_evidence_report_makes_no_claims PASSED
 tests/test_report_agent.py::test_insufficient_report_lists_irrelevant_sources_honestly PASSED
@@ -85,7 +87,10 @@ tests/test_research_agent.py::test_register_sources_dedupes_urls_and_arxiv_versi
 tests/test_research_agent.py::test_hub_metadata_is_given_to_the_llm_as_labelled_fact PASSED
 tests/test_research_agent.py::test_keyword_variants_drop_generic_terms_and_relax PASSED
 tests/test_research_agent.py::test_empty_github_query_is_relaxed_once PASSED
-tests/test_research_agent.py::test_multimodal_topic_overrides_wrong_hub_task PASSED
+tests/test_research_agent.py::test_multimodal_topic_overrides_wrong_hub_task[text-generation] PASSED
+tests/test_research_agent.py::test_multimodal_topic_overrides_wrong_hub_task[text-to-image] PASSED
+tests/test_research_agent.py::test_multimodal_topic_overrides_wrong_hub_task[any] PASSED
+tests/test_research_agent.py::test_image_generation_topic_keeps_text_to_image PASSED
 tests/test_research_agent.py::test_source_marked_irrelevant_but_with_findings_is_kept PASSED
 tests/test_research_agent.py::test_extract_prompt_contains_only_that_source PASSED
 tests/test_retrieval.py::test_arxiv_query_builder PASSED
@@ -128,10 +133,11 @@ tests/test_schemas.py::test_select_relevant_text_skips_boilerplate_and_keeps_ord
 tests/test_schemas.py::test_md_table_escapes_pipes PASSED
 tests/test_workflow.py::test_agents_execute_in_fixed_order_and_share_state PASSED
 tests/test_workflow.py::test_live_status_events_are_real_transitions PASSED
+tests/test_workflow.py::test_behind_the_scenes_events_carry_real_data_and_are_recorded PASSED
 tests/test_workflow.py::test_missing_model_stops_before_any_agent PASSED
 tests/test_workflow.py::test_invalid_topic_is_rejected PASSED
 tests/test_workflow.py::test_no_sources_produces_honest_insufficient_report PASSED
 tests/test_workflow.py::test_sources_but_no_relevant_findings_also_gives_insufficient_report PASSED
 tests/test_workflow.py::test_one_failing_agent_does_not_stop_the_pipeline PASSED
 tests/test_workflow.py::test_reducer_merges_instead_of_overwriting PASSED
-============================ 133 passed in 14.73s =============================
+============================= 139 passed in 6.80s =============================

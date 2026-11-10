@@ -111,12 +111,13 @@ function Body({ row }: { row: Row }) {
       );
     case "row": {
       if (busy) return <p>Filling in <span className="font-medium text-ink">{d.model}</span> from {d.evidence_lines} lines of evidence…</p>;
+      const clean = (v: unknown) => (typeof v === "string" ? v.trim().replace(/^\[(.*)\]$/, "$1").trim() : "");
       const known = (v: unknown) =>
-        typeof v === "string" && v.trim() !== "" &&
-        !/^(not (explicitly |clearly )?(documented|specified|stated|mentioned|provided|available|given)|unknown)/i.test(v.trim());
+        clean(v) !== "" &&
+        !/^(not (explicitly |clearly )?(documented|specified|stated|mentioned|provided|available|given)|unknown)/i.test(clean(v));
       const facts = [
-        known(d.parameters) && d.parameters,
-        known(d.context) && `context ${d.context}`,
+        known(d.parameters) && clean(d.parameters),
+        known(d.context) && `context ${clean(d.context)}`,
         (d.modalities ?? []).join(" + "),
       ].filter(Boolean);
       return (

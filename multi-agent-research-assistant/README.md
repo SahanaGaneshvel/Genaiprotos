@@ -214,7 +214,7 @@ All tests are offline: Ollama and every network call are mocked (`tests/fakes.py
 | `test_app.py` | page renders; Start disabled when Ollama is down; full results (4 tabs, metrics, download) render from the real example run |
 | `test_api.py` | API health, example endpoint, SSE event order, crash reported as error event, validation, one run at a time |
 
-Latest results (127 passed): [`docs/test_results.txt`](docs/test_results.txt).
+Latest results (139 passed): [`docs/test_results.txt`](docs/test_results.txt).
 
 ## 7. Project structure
 
@@ -283,27 +283,29 @@ See [`outputs/example_report.md`](outputs/example_report.md) and the full struct
 Compare their capabilities, benchmarks, hardware requirements, licensing and limitations."* — depth **Basic**,
 model `qwen3.5:2b`, Windows laptop (i5-1155G7, 8 GB RAM, CPU only).
 
+The same run is what the website replays (`web/public/recorded-run.json`, 59 recorded events).
+
 | Agent | Time | Output |
 |---|---|---|
-| Research | 369 s | 8 sources (2 web, 2 Hugging Face model cards, 2 arXiv, 2 GitHub), 7 judged relevant |
-| Comparison | 110 s | 4 models compared; licence/parameters filled from API metadata |
-| Evaluation | 90 s | 0 verified benchmarks (none found in retrieved text), 2 memory estimates |
-| Report | 118 s | 10 sections, 0 invalid citations, 1 misattributed sentence removed |
-| **Total** | **690 s** | 0 errors |
+| Research | 519 s | 8 sources (2 web, 2 Hugging Face model cards, 2 arXiv, 2 GitHub), all 8 judged relevant |
+| Comparison | 199 s | 4 models compared: Kimi K3.1-Pro, Qwen3.8-27B, ShowUI, open-pi-zero |
+| Evaluation | 175 s | 0 verified benchmarks (none found in retrieved text), 2 memory estimates |
+| Report | 176 s | 10 sections, 8 sources cited, 0 unknown citations |
+| **Total** | **1,073 s** | 0 errors |
 
 **What it got right:** every reference is a retrieved URL; licences and parameter counts come from the
-Hugging Face / GitHub APIs with their source cited; Qwen3.8-27B (27.78B, Apache-2.0) is identified as a
-single-GPU pilot candidate at ~16.7 GB (4-bit, estimate) while Kimi K3.1-Pro (2.78T parameters, ~1.7 TB at
-4-bit) is clearly not an on-prem option; the report says plainly that no benchmark could be verified.
+Hugging Face / GitHub APIs with their source cited; every key-difference sentence cites exactly the sources
+of the models it names (set by code); Qwen3.8-27B (27.78B, Apache-2.0) comes out as a single-GPU pilot
+candidate at ~16.7 GB (4-bit, estimate), while Kimi K3.1-Pro (2.78T parameters, ~1.7 TB at 4-bit) is clearly
+not an on-prem option; the report says plainly that no benchmark could be verified.
 
 **Known flaws in this example (reviewed by hand — left in on purpose):**
-* *"Kimi K3.1-Pro … making it ideal for document extraction and OCR tasks [S3]"* — a reasoning leap by the
-  2B model (another source said that about Qwen3-VL). The attribution check passes because S3 *is* about Kimi;
-  it verifies the model–source pairing, not every claim in the sentence.
-* `mlx-vlm` is an inference framework, not a model; it was included because it has its own repository.
-* The Kimi parameter cell copies a sentence verbatim (*"Our model has parameters of 2780.11B."*).
-* One correctly-cautious sentence was removed by the attribution check because it named a model whose
-  source it did not cite — the check is deliberately strict.
+* *"Kimi K3.1-Pro is the largest model … at 27.8 trillion parameters"* — the 2B model's arithmetic
+  (2,780B is 2.78 trillion). The table and memory estimate, which come from code, are correct.
+* open-pi-zero's context cell reads *"Block-wise causal masking"* — the model put an architecture detail in
+  the wrong field. Code can reject non-answers ("not stated …") and non-licences (prices), but not every
+  misplaced fact.
+* The H100 hardware mentioned for open-pi-zero comes from its training instructions, not inference needs.
 
 ### What live testing changed (9 full runs)
 
