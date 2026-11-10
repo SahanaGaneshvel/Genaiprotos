@@ -99,8 +99,10 @@ def run(
     sources: list[Source],
     llm: OllamaClient | None = None,
     max_models: int = 5,
+    progress=None,
 ) -> EvaluationOutput:
     llm = llm or OllamaClient()
+    progress = progress or (lambda *args, **kwargs: None)
     if not research.findings:
         return EvaluationOutput(missing_evidence=["No research findings were available to evaluate."])
 
@@ -112,6 +114,7 @@ def run(
         lines, _ = model_evidence(name, research, by_id)
         if lines:
             by_model.append(f"## {name}\n" + "\n".join(lines[:12]))
+    progress(f"Evaluating evidence for {len(by_model)} models", step="evaluate", models=top)
     raw = llm.chat_structured(
         SYSTEM_PROMPT,
         USER_PROMPT.format(
@@ -159,11 +162,24 @@ def run(
     if not assessments:
         missing.append("No model-level on-premise assessment could be derived from the findings.")
 
+    progress(
+        f"Benchmark check: {len(verified)} verified, {len(rejected)} rejected", step="verify",
+        proposed=len(raw.benchmarks), verified=[f"{b.model_name} · {b.benchmark} {b.score}" for b in verified],
+        rejected=[f"{b.model_name} · {b.benchmark} {b.score} [{b.source_id}]" for b in rejected],
+    )
+    estimates = memory_estimates(sources)
+    progress(
+        f"{len(estimates)} memory estimates computed", step="memory",
+        estimates=[{"model": m.model_name, "parameters": m.parameters, "int4_gb": m.int4_gb, "fp16_gb": m.fp16_gb}
+                   for m in estimates],
+        assessments=[{"model": a.model_name, "suitability": a.onprem_suitability} for a in assessments],
+    )
+
     return EvaluationOutput(
         benchmarks=verified,
         rejected_benchmarks=rejected,
         assessments=assessments,
-        memory_estimates=memory_estimates(sources),
+        memory_estimates=estimates,
         trade_offs=clean(raw.trade_offs),
         missing_evidence=missing,
         recommendations=clean(raw.recommendations),

@@ -128,6 +128,8 @@ export interface RunState {
   errors: string[];
   execution_order: string[];
   saved?: Record<string, string>;
+  events?: FlowEvent[];
+  recorded_at?: string; // set when a run is exported for replay
 }
 
 export interface Health {
@@ -136,10 +138,17 @@ export interface Health {
   model: string;
 }
 
-/** One live event from the workflow (orchestration/workflow.py `_emit`). */
-export interface AgentEvent {
+/**
+ * One event from the workflow (orchestration/workflow.py). `t` = seconds since the run
+ * started. `step` + `data` describe what an agent is doing behind the scenes, with real data.
+ */
+export interface FlowEvent {
+  t: number;
   agent: AgentName;
   status?: AgentStatus;
-  message?: string;
   seconds?: number;
+  message?: string;
+  step?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: Record<string, any>;
 }

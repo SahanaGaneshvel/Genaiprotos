@@ -164,15 +164,22 @@ cd web
 npm install
 npm run build && npx next start -p 3000      # or: npm run dev
 ```
-Open http://localhost:3000. **Load example run** shows the saved real run instantly; **Start research**
-runs the live pipeline with animated agent cards. The run state lives in a provider in the root layout,
-so a run keeps streaming while you browse the Architecture page — which then highlights the running agent.
+Open http://localhost:3000. It is a single page that shows the run **behind the scenes**: the
+queries the model writes, every source each API returns, each source being read (and the facts kept),
+citation IDs being assigned, table rows filling in, benchmark checks, removed sentences, and the
+final report. Tap any line to see what it does and whether the model, plain code or an API did it.
 
-| Page | What it shows |
-|---|---|
-| `/` Dashboard | topic + depth, live animated pipeline, activity log, metrics, 4 result tabs, Markdown download |
-| `/architecture` | animated, clickable flow diagram; per-step detail (LLM / code / external API, output schema, token limit, guard); shared-state keys; all 30 steps in order |
-| `/about` | what the project does, each agent's job (what the model does vs what code does), the 9 guards, stack, limitations |
+* **Replay** (works anywhere, including the deployed site): plays back a real recorded run
+  (`web/public/recorded-run.json`) with its real timings, sped up 10–100×.
+* **Live** (only offered when the page runs on localhost and the API is up): streams a new run.
+
+Every agent reports structured progress events (`progress("…", step="read_done", facts=[…])`), and
+`run_workflow` records them with time offsets in the saved run, so a run can be replayed exactly.
+To refresh the replay with a newer run:
+```bash
+python -m orchestration.workflow                         # records outputs/run_<timestamp>.json
+python scripts/export_replay.py outputs/run_<timestamp>.json
+```
 
 **Command line** (same workflow, prints live events):
 ```bash
@@ -215,11 +222,13 @@ Latest results (127 passed): [`docs/test_results.txt`](docs/test_results.txt).
 multi-agent-research-assistant/
 ├── app.py                     Streamlit UI
 ├── api/server.py              FastAPI: /api/health, /api/example, /api/research/stream (SSE)
-├── web/                       Next.js 16 + Tailwind v4 + Motion frontend
+├── scripts/export_replay.py   saved run -> web/public/recorded-run.json
+├── web/                       Next.js 16 + Tailwind v4 + Motion frontend (one page)
+│   ├── public/recorded-run.json   the real run the deployed site replays
 │   └── src/
-│       ├── app/               pages: / (dashboard), /about, /architecture
-│       ├── components/        run-provider (live run state), dashboard/, architecture/, about/
-│       └── lib/pipeline.ts    step-by-step description of the pipeline (mirrors the Python code)
+│       ├── app/page.tsx       the behind-the-scenes flow
+│       ├── components/flow/   stage, row (one per step kind) and report views
+│       └── lib/               flow.ts (events -> steps + explanations), use-flow-run.ts (replay / live)
 ├── config.py                  all settings (env / .env)
 ├── agents/                    one file per agent, each with its own SYSTEM_PROMPT
 │   ├── research_agent.py

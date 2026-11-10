@@ -52,7 +52,7 @@ Do NOT build a full-fledged enterprise platform. Keep the project small, clean, 
 - Default: `qwen3.5:4b`
 - Allow changing the model through: `OLLAMA_MODEL=qwen3.5:4b`
 - Do not use: OpenAI API, Anthropic API, Gemini API, Groq API, paid model endpoints, any service requiring paid credits.
-- Claude Code is being used only to develop this application. The application itself must use Ollama.
+- The application itself must use Ollama.
 - If the default model is unsuitable for the available hardware, document how to select a smaller compatible model. Never silently use a paid API.
 - Clearly distinguish open-weight models from models with fully open-source licences when researching them.
 

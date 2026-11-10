@@ -60,8 +60,13 @@ class ComparisonRowLLM(BaseModel):
     )
     @classmethod
     def _placeholder_means_not_documented(cls, v: str) -> str:
-        # live run: the model returned "" for parameters, which blocked filling 27.78B from API metadata
-        return NOT_DOCUMENTED if (v or "").strip().lower() in PLACEHOLDERS else v.strip()
+        # live runs: "" blocked filling 27.78B from API metadata; "Not specified in source text"
+        # showed up as cell text. Every "nothing known" phrasing becomes the one standard value.
+        text = (v or "").strip()
+        low = text.lower().rstrip(".")
+        if low in PLACEHOLDERS or low.startswith(("not specified", "not documented", "not stated", "not mentioned", "not provided", "unknown")):
+            return NOT_DOCUMENTED
+        return text
 
 
 class DifferencesLLM(BaseModel):

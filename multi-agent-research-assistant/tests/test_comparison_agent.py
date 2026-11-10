@@ -33,7 +33,8 @@ RESPONSES = {
     "ModelSelection": {"models": ["Model B", "Hallucinated Model", "model a"]},
     "ComparisonRowLLM": _row,
     "DifferencesLLM": {"key_differences": [
-        "A is larger than B [S1][S2].", "A is larger than B [S1][S2].", "A beats everything [S77]."]},
+        "Model A is larger than Model B [S1][S2].", "Model A is larger than Model B [S1][S2].",
+        "Everything else is worse [S77]."]},
 }
 
 
@@ -68,10 +69,18 @@ def test_undocumented_licence_filled_from_api_metadata_with_label():
     assert b.licence_category == "Open source (OSI-approved licence)"
 
 
-def test_differences_deduplicated_and_uncited_claims_dropped():
+def test_differences_deduplicated_and_unsupported_claims_dropped():
     out, _ = _run()
-    # duplicate removed; "A beats everything [S77]" has no valid citation left -> dropped
-    assert out.key_differences == ["A is larger than B [S1][S2]."]
+    # duplicate removed; "Everything else is worse" names no model in the table -> dropped;
+    # citations come from the rows: Model B -> S2, S3 and Model A -> S1 (table order: B, A)
+    assert out.key_differences == ["Model A is larger than Model B [S2][S3][S1]."]
+
+
+def test_wrong_citations_from_the_model_are_replaced_by_code():
+    # live run: a sentence about Kimi K3.1-Pro cited Qwen's sources [S4][S7]
+    responses = {**RESPONSES, "DifferencesLLM": {"key_differences": ["Model B handles audio [S1]."]}}
+    out, _ = _run(responses)
+    assert out.key_differences == ["Model B handles audio [S2][S3]."]  # S1 is Model A's source
 
 
 def test_code_attaches_citations_from_the_models_a_sentence_names():
@@ -92,8 +101,11 @@ def test_models_with_their_own_card_are_always_compared():
 def test_placeholder_values_become_not_documented_so_metadata_can_fill_them():
     from schemas.comparison import ComparisonRowLLM
 
-    row = ComparisonRowLLM(parameter_sizes="", licence="N/A", context_window="  ")
+    row = ComparisonRowLLM(parameter_sizes="", licence="N/A", context_window="  ",
+                           hardware_requirements="Not specified in source text")  # live-run phrasing
     assert row.parameter_sizes == row.licence == row.context_window == ca.NOT_DOCUMENTED
+    assert row.hardware_requirements == ca.NOT_DOCUMENTED
+    assert ComparisonRowLLM(hardware_requirements="Min VRAM ~16GB").hardware_requirements == "Min VRAM ~16GB"
 
 
 def test_price_in_licence_field_is_rejected():

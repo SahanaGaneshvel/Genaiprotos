@@ -73,6 +73,22 @@ def test_live_status_events_are_real_transitions(tools, monkeypatch):
     ]
 
 
+def test_behind_the_scenes_events_carry_real_data_and_are_recorded(tools, monkeypatch):
+    _use_llm(monkeypatch, FakeLLM(RESPONSES))
+    state = wf.run_workflow(TOPIC, "basic")
+    steps = [(e["agent"], e.get("step")) for e in state["events"] if e.get("step")]
+    for expected in [("research", "plan_done"), ("research", "search_done"), ("research", "register"),
+                     ("research", "read_done"), ("comparison", "selected"), ("comparison", "row_done"),
+                     ("evaluation", "verify"), ("evaluation", "memory"), ("report", "attribution"),
+                     ("report", "assemble")]:
+        assert expected in steps, expected
+    register = next(e for e in state["events"] if e.get("step") == "register")
+    assert register["data"]["sources"][0] == {
+        "id": "S1", "title": "Model A card", "url": "https://huggingface.co/org/a", "type": "documentation"}
+    times = [e["t"] for e in state["events"]]
+    assert times == sorted(times)  # recorded in order, with time offsets for replay
+
+
 def test_missing_model_stops_before_any_agent(tools, monkeypatch):
     _use_llm(monkeypatch, FakeLLM(RESPONSES, healthy=(False, "Model 'qwen3.5:4b' is not downloaded.")))
     state = wf.run_workflow(TOPIC)

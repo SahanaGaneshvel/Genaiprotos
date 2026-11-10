@@ -85,7 +85,9 @@ DEPTH = {
     "detailed": {"per_category": 4, "web_queries": 2, "fetch_pages": 5, "chars": 2500},
 }
 
-Progress = Callable[[str], None]
+# progress(message, step="search", **data): a readable message plus a step name and the step's
+# real data (queries, results, facts). The UI uses it to show the run "behind the scenes".
+Progress = Callable[..., None]
 
 _STOPWORDS = set(
     "research the latest compare their and of for to a an in on with suitable models model "
@@ -176,12 +178,17 @@ def _search(label: str, tool, queries: list[str], limit: int, errors: list[str],
     """Try queries strict -> loose; stop at the first non-empty result.
     A hard failure (offline, rate limit) stops this tool immediately — no hammering."""
     for query in queries:
-        progress(f"Searching {label}: {query}")
+        progress(f"Searching {label}: {query}", step="search", tool=label, query=query)
         try:
             results = tool(query, limit)
         except RetrievalError as exc:
             errors.append(f"{label}: {exc}")
+            progress(f"{label}: {exc}", step="search_done", tool=label, query=query, results=[], error=str(exc))
             return []
+        progress(
+            f"{label}: {len(results)} result(s)", step="search_done", tool=label, query=query,
+            results=[{"title": r.title[:100], "url": r.url} for r in results],
+        )
         if results:
             return results
     errors.append(f"{label}: no results for {' / '.join(queries)}")
@@ -214,9 +221,11 @@ def enrich(sources: list[Source], max_pages: int, progress: Progress) -> None:
     for src in sources:
         if src.source_type not in ("web", "documentation") or fetched >= max_pages:
             continue
-        progress(f"Fetching page {src.url}")
+        progress(f"Fetching page {src.url}", step="fetch", url=src.url)
         page = fetch_page(src.url)
         fetched += 1
+        progress("Page fetched" if page else "Page unavailable — keeping the search snippet",
+                 step="fetch_done", url=src.url, ok=page is not None, chars=len(page.text) if page else 0)
         if page:
             src.content = page.text
             src.published = src.published or page.published
@@ -278,12 +287,13 @@ def run(
 ) -> tuple[list[Source], ResearchOutput]:
     """Research Agent entry point. Returns (source registry, structured findings)."""
     llm = llm or OllamaClient()
-    progress = progress or (lambda msg: None)
+    progress = progress or (lambda *args, **kwargs: None)
     cfg = DEPTH.get(depth, DEPTH["basic"])
     errors: list[str] = []
 
     # 1. PLAN
-    progress("Planning search queries")
+    progress("Planning search queries", step="plan")
+    fallback = False
     try:
         plan = llm.chat_structured(
             SYSTEM_PROMPT,
@@ -296,18 +306,33 @@ def run(
     except OllamaError as exc:
         errors.append(f"Search planning by LLM failed ({exc}); used keyword fallback plan.")
         plan = fallback_plan(topic, cfg["web_queries"])
+        fallback = True
     plan = guard_hub_task(topic, plan)
+    progress(
+        "Search plan ready", step="plan_done", web_queries=plan.web_queries, arxiv_query=plan.arxiv_query,
+        github_query=plan.github_query, hub_task=plan.hub_task, fallback=fallback,
+    )
 
     # 2-4. RETRIEVE, ENRICH, REGISTER
     sources = register_sources(retrieve(plan, cfg, errors, progress))
+    progress(
+        f"Registered {len(sources)} unique sources", step="register",
+        sources=[{"id": s.source_id, "title": s.title[:100], "url": s.url, "type": s.source_type} for s in sources],
+    )
     enrich(sources, cfg["fetch_pages"], progress)
 
     # 5. EXTRACT (one bounded LLM call per source)
     findings: list[ResearchFinding] = []
     keywords = topic_keywords(topic, plan)
     for i, src in enumerate(sources, start=1):
-        progress(f"Reading source {i}/{len(sources)}: {src.title[:60]}")
+        progress(f"Reading source {i}/{len(sources)}: {src.title[:60]}", step="read",
+                 source_id=src.source_id, title=src.title[:100])
         finding = extract_finding(llm, topic, src, cfg["chars"], keywords)
+        progress(
+            "Source kept" if finding else "Source judged irrelevant", step="read_done", source_id=src.source_id,
+            kept=finding is not None, facts=finding.key_findings[:3] if finding else [],
+            fallback=bool(finding and finding.limitations and "extraction failed" in finding.limitations[0]),
+        )
         if finding:
             findings.append(finding)
 

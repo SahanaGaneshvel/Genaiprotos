@@ -48,6 +48,10 @@ class ResearchState(TypedDict, total=False):
     errors: Annotated[list[str], operator.add]
     execution_order: Annotated[list[str], operator.add]
 
+    # --- recorded by run_workflow after the graph finishes: every live event with its
+    #     time offset, so a saved run can be replayed step by step
+    events: list[dict]
+
 
 def initial_state(topic: str, depth: str, model_name: str) -> ResearchState:
     return ResearchState(

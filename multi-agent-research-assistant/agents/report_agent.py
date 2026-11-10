@@ -386,11 +386,14 @@ def run(
     sources: list[Source],
     depth: str = "basic",
     llm: OllamaClient | None = None,
+    progress=None,
 ) -> ReportOutput:
     llm = llm or OllamaClient()
+    progress = progress or (lambda *args, **kwargs: None)
     valid = {s.source_id for s in sources}
 
     narrative: ReportNarrative | None = None
+    progress("Writing the narrative", step="narrative")
     try:
         narrative = llm.chat_structured(
             SYSTEM_PROMPT,
@@ -426,18 +429,23 @@ def run(
     removed_claims: list[str] = []
     if narrative:
         narrative, removed_claims = verify_narrative(narrative, research, comparison, evaluation, sources)
+    progress(f"Attribution check removed {len(removed_claims)} sentence(s)", step="attribution",
+             generated=narrative is not None, removed=removed_claims)
 
     body = assemble(topic, narrative, research, comparison, evaluation, sources, llm.model, depth,
                     removed_claims=len(removed_claims))
     body, removed = strip_invalid_citations(body, valid)
     markdown = body + "\n## 10. References\n" + references_section(body, sources) + "\n"
+    check = check_consistency(markdown, sources)
+    progress("Report assembled and citations audited", step="assemble", sections=10,
+             cited=check["cited"], unknown=check["unknown"], removed_citations=sorted(set(removed)))
 
     return ReportOutput(
         markdown=markdown,
         narrative_generated=narrative is not None,
         removed_citations=sorted(set(removed)),
         removed_claims=removed_claims,
-        citation_check=check_consistency(markdown, sources),
+        citation_check=check,
     )
 
 

@@ -47,6 +47,21 @@ def _emit(event: dict) -> None:
         pass
 
 
+def _progress(agent: str) -> Callable[..., None]:
+    """Progress callback handed to an agent: progress("message", step="search", **data).
+    Becomes a live event {"agent", "message", "step", "data"} for the UI's behind-the-scenes view."""
+
+    def emit(message: str, step: str | None = None, **data) -> None:
+        event: dict = {"agent": agent, "message": message}
+        if step:
+            event["step"] = step
+        if data:
+            event["data"] = data
+        _emit(event)
+
+    return emit
+
+
 def _llm() -> OllamaClient:
     return OllamaClient()
 
@@ -88,8 +103,9 @@ def orchestrator_node(state: ResearchState) -> dict:
 
 def research_node(state: ResearchState) -> dict:
     def work():
-        progress = lambda msg: _emit({"agent": "research", "message": msg})  # noqa: E731
-        sources, output = research_agent.run(state["topic"], state.get("depth", "basic"), _llm(), progress)
+        sources, output = research_agent.run(
+            state["topic"], state.get("depth", "basic"), _llm(), _progress("research")
+        )
         errors = [f"retrieval: {e}" for e in output.retrieval_errors]
         return {"sources": sources, "research": output, "errors": errors}
 
@@ -98,9 +114,9 @@ def research_node(state: ResearchState) -> dict:
 
 def comparison_node(state: ResearchState) -> dict:
     def work():
-        _emit({"agent": "comparison", "message": "Comparing models from research findings"})
         out = comparison_agent.run(
-            state["topic"], state["research"], state["sources"], _llm(), MAX_MODELS.get(state.get("depth"), 4)
+            state["topic"], state["research"], state["sources"], _llm(), MAX_MODELS.get(state.get("depth"), 4),
+            progress=_progress("comparison"),
         )
         return {"comparison": out, "errors": [f"comparison: {w}" for w in out.warnings]}
 
@@ -111,9 +127,9 @@ def comparison_node(state: ResearchState) -> dict:
 
 def evaluation_node(state: ResearchState) -> dict:
     def work():
-        _emit({"agent": "evaluation", "message": "Evaluating benchmarks and deployment evidence"})
         out = evaluation_agent.run(
-            state["topic"], state["research"], state["sources"], _llm(), MAX_MODELS.get(state.get("depth"), 4)
+            state["topic"], state["research"], state["sources"], _llm(), MAX_MODELS.get(state.get("depth"), 4),
+            progress=_progress("evaluation"),
         )
         return {"evaluation": out}
 
@@ -126,10 +142,9 @@ def evaluation_node(state: ResearchState) -> dict:
 
 def report_node(state: ResearchState) -> dict:
     def work():
-        _emit({"agent": "report", "message": "Writing the final report"})
         out = report_agent.run(
             state["topic"], state["research"], state["comparison"], state["evaluation"],
-            state["sources"], state.get("depth", "basic"), _llm(),
+            state["sources"], state.get("depth", "basic"), _llm(), progress=_progress("report"),
         )
         return {"report": out}
 
@@ -191,17 +206,25 @@ def build_graph():
 def run_workflow(
     topic: str, depth: str = "basic", on_event: Callable[[dict], None] | None = None
 ) -> ResearchState:
-    """Run the graph, forwarding live events to `on_event`; returns the final state."""
+    """Run the graph, forwarding live events to `on_event`; returns the final state.
+
+    Every event is also recorded with its time offset (`t`, seconds) in state["events"],
+    so a saved run can be replayed step by step exactly as it happened."""
     settings = get_settings()
     graph = build_graph()
     final: ResearchState = initial_state(topic, depth, settings.ollama_model)
     start = time.perf_counter()
+    events: list[dict] = []
     for mode, chunk in graph.stream(final, stream_mode=["custom", "values"]):
-        if mode == "custom" and on_event:
-            on_event(chunk)
+        if mode == "custom":
+            event = {"t": round(time.perf_counter() - start, 2), **chunk}
+            events.append(event)
+            if on_event:
+                on_event(event)
         elif mode == "values":
             final = chunk
     final["timings"] = {**final.get("timings", {}), "total": round(time.perf_counter() - start, 2)}
+    final["events"] = events
     return final
 
 

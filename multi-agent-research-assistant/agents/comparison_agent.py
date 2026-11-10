@@ -31,7 +31,7 @@ from schemas.comparison import (
 )
 from schemas.research import ResearchOutput, Source
 from services.ollama_client import OllamaClient, OllamaConnectionError, OllamaError, OllamaModelNotFoundError
-from utils.citations import find_citations, strip_invalid_citations
+from utils.citations import strip_invalid_citations
 from utils.evidence import has_own_source, mentions, model_evidence, rank_models
 
 SYSTEM_PROMPT = """You are the COMPARISON AGENT in a team of AI research agents.
@@ -181,17 +181,18 @@ def sanitize_licence(value: str) -> str:
 
 
 def attach_citations(sentence: str, rows: list[ModelComparison]) -> str:
-    """The small model often omits citations. Code cites the sources of the table rows whose
-    model names the sentence mentions; a sentence naming no model is unsupported -> ''."""
-    if find_citations(sentence):
-        return sentence
-    ids = []
+    """Citations for a difference sentence are always decided by code: the sources of the
+    table rows whose models the sentence names. Live runs showed the model both omitting
+    citations and citing the wrong ones (Kimi described, Qwen's sources cited).
+    A sentence that names no model in the table is unsupported -> ''."""
+    ids: list[str] = []
     for row in rows:
         if mentions(row.model_name, sentence):
             ids += [s for s in row.source_ids if s not in ids]
     if not ids:
         return ""
-    return sentence.rstrip(" .") + " " + "".join(f"[{i}]" for i in ids) + "."
+    text = re.sub(r"\s*\[S\d+\]", "", sentence).rstrip(" .")
+    return text + " " + "".join(f"[{i}]" for i in ids) + "."
 
 
 def _dedupe_sentences(sentences: list[str]) -> list[str]:
@@ -210,8 +211,10 @@ def run(
     sources: list[Source],
     llm: OllamaClient | None = None,
     max_models: int = 5,
+    progress=None,
 ) -> ComparisonOutput:
     llm = llm or OllamaClient()
+    progress = progress or (lambda *args, **kwargs: None)
     if not research.findings:
         return ComparisonOutput()
     by_id = {s.source_id: s for s in sources}
@@ -220,7 +223,10 @@ def run(
     # 1. SELECT
     candidates = rank_models(research)
     with_cards = [c for c in candidates if has_own_source(c, research)]
+    progress(f"{len(candidates)} candidate names ranked by evidence", step="candidates",
+             candidates=candidates[:12], with_cards=with_cards)
     chosen = select_models(llm, topic, candidates, max_models, guaranteed=with_cards)
+    progress(f"Selected {len(chosen)} models", step="selected", models=chosen, guaranteed=with_cards)
 
     # 2-4. EVIDENCE -> ROW -> ENRICH
     rows: list[ModelComparison] = []
@@ -229,7 +235,9 @@ def run(
         evidence, ids = model_evidence(name, research, by_id)
         if not ids:
             dropped.append(name)
+            progress(f"{name}: no supporting evidence — dropped", step="row_dropped", model=name)
             continue
+        progress(f"Filling the row for {name}", step="row", model=name, evidence_lines=len(evidence), source_ids=ids)
         fields = llm.chat_structured(
             SYSTEM_PROMPT,
             ROW_PROMPT.format(topic=topic, model=name, evidence="\n".join(evidence[:25])),
@@ -240,11 +248,17 @@ def run(
         enrich_from_metadata(row, by_id)
         row.licence_category = classify_licence(row.licence)
         rows.append(row)
+        progress(
+            f"Row ready: {name}", step="row_done", model=name, parameters=row.parameter_sizes,
+            context=row.context_window, modalities=row.modalities, licence=row.licence,
+            licence_category=row.licence_category, source_ids=ids,
+        )
 
     # 5. DIFFERENCES (only meaningful with 2+ rows)
     differences: list[str] = []
     warnings: list[str] = []
     if len(rows) >= 2:
+        progress("Explaining the differences", step="differences")
         try:
             raw = llm.chat_structured(
                 SYSTEM_PROMPT, DIFF_PROMPT.format(topic=topic, table=_row_table(rows)),
@@ -259,6 +273,8 @@ def run(
             raise
         except OllamaError as exc:
             warnings.append(f"Key-differences step failed and was skipped: {str(exc)[:150]}")
+        progress(f"{len(differences)} cited differences", step="differences_done",
+                 sentences=_dedupe_sentences(differences))
 
     return ComparisonOutput(models=rows, key_differences=_dedupe_sentences(differences),
                             dropped_models=dropped, warnings=warnings)

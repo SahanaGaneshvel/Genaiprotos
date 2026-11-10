@@ -36,6 +36,8 @@ app = FastAPI(title="Multi-Agent AI Research Assistant API", version="1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    # the deployed frontend may talk to an API running on the visitor's own machine
+    allow_origin_regex=r"https://[a-z0-9-]+\.vercel\.app",
     allow_methods=["GET"],
     allow_headers=["*"],
 )

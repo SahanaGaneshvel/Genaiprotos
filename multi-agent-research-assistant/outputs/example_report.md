@@ -1,10 +1,10 @@
 # Technical Research Report
 
 **Topic:** Research the latest open-source multimodal models suitable for on-premise deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations.
-**Generated:** 2026-11-09 15:59 · **Local model:** `qwen3.5:2b` · **Sources:** 8
+**Generated:** 2026-11-10 18:47 · **Local model:** `qwen3.5:2b` · **Sources:** 8
 
 ## 1. Executive Summary
-This report evaluates open-source multimodal models suitable for on-premise deployment as of late 2026. While several models offer significant capabilities, critical limitations regarding hardware requirements and benchmark verification prevent definitive conclusions on their suitability for specific workloads.
+This report evaluates open-source multimodal models suitable for on-premise deployment as of late 2026. The analysis identifies Kimi K3.1-Pro, Qwen/Qwen3.8-27B, and InternVL2 as primary candidates, with distinct trade-offs between parameter count, context length, licensing, and hardware requirements.
 
 ## 2. Research Objective
 Research the latest open-source multimodal models suitable for on-premise deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations.
@@ -26,7 +26,7 @@ This report was produced automatically by four cooperating agents orchestrated w
 - arXiv: “multimodal transformer open source” (relaxed to fewer keywords if empty)
 - GitHub: “vision language model on premise” (relaxed to fewer keywords if empty)
 
-**Sources retrieved:** 2 arxiv, 2 documentation, 2 github, 2 web — 8 total, 7 judged relevant.
+**Sources retrieved:** 2 arxiv, 2 documentation, 2 github, 2 web — 8 total, 8 judged relevant.
 
 **Legend:** statements with [S#] are taken from the cited source; text marked *Assessment* is a qualitative judgement by the agents; *Recommendations* are advice, not measured facts.
 
@@ -34,39 +34,39 @@ This report was produced automatically by four cooperating agents orchestrated w
 - **Kimi K3.1-Pro** — Not documented in retrieved sources. [S3]
 - **Qwen/Qwen3.8-27B** — Qwen. [S4]
 - **mlx-vlm** — Not documented in retrieved sources. [S7]
-- **Qwen3-VL** — Not documented in retrieved sources. [S2]
-- Also mentioned in sources (not compared in detail): Kimi K3 Visual agents, Gemma 4, MiMo-V2.5, MoonViT-V2, SiTU-GLU, Gated DeepSeek Sparse Attention, AuK, LangForce, RDT2
+- **InternVL2** — Not documented in retrieved sources. [S1]
+- Also mentioned in sources (not compared in detail): LLaVA-1.6, Min VRAM, Qwen2-VL, Qwen3-VL, Kimi K3 Visual agents, Gemma 4, MiMo-V2.5, AuK, COSINT-Agent, MLLMs, Vision-Language-Action (VLA), World-Action-Model (WAM), Vision-Language-Navigation (VLN), Vision-Action (VA), MLLM-based Embodied Learning
 
 ## 5. Comparative Analysis
 | Model | Modalities | Parameters | Context | Deployment | Hardware | Licence | Licence type | Sources |
 |---|---|---|---|---|---|---|---|---|
-| Kimi K3.1-Pro | text, image | Our model has parameters of 2780.11B. | Our context length is 160K (1048576 tokens). | Not documented in retrieved sources | Not documented in retrieved sources | other | Unknown | [S3] |
-| Qwen/Qwen3.8-27B | text, image, video | 27.78B | Not documented in retrieved sources | Ollama, vLLM, llama.cpp, transformers | Not documented in retrieved sources | apache-2.0 | Open source (OSI-approved licence) | [S4] |
-| mlx-vlm | text, image | Not documented in retrieved sources | Not documented in retrieved sources | Not documented in retrieved sources | Not documented in retrieved sources | MIT | Open source (OSI-approved licence) | [S7] |
-| Qwen3-VL | text, image | 30B | 1M tokens | Not documented in retrieved sources | Not documented in retrieved sources | Not documented in retrieved sources | Unknown | [S2] |
+| Kimi K3.1-Pro | text, image | 2780.11B | 160K (1048576 tokens) | vLLM | Not documented in retrieved sources | other | Unknown | [S3] |
+| Qwen/Qwen3.8-27B | text, image, video | 27.78B (Hugging Face weight files [S4]) | Not documented in retrieved sources | — | Not documented in retrieved sources | apache-2.0 | Open source (OSI-approved licence) | [S4] |
+| mlx-vlm | text, image | Not specified in source text | Not specified in source text | Not specified in source text | Not specified in source text | MIT | Open source (OSI-approved licence) | [S7] |
+| InternVL2 | text, image | Not documented in retrieved sources | Not documented in retrieved sources | Ollama, vLLM, llama.cpp, transformers | Min VRAM: ~16GB for InternVL2. | Not documented in retrieved sources | Unknown | [S1] |
 
 **Key differences**
-- Qwen/Qwen3.8-27B offers the most extensive multimodal capabilities including video support, whereas Kimi K3.1-Pro and mlx-vlm are limited to text and image modalities [S3][S4][S7].
-- Qwen/Qwen3.8-27B is licensed under Apache 2.0 while mlx-vlm uses the MIT license, and Qwen3-VL lacks documented licensing information in the provided sources [S4][S7][S2].
+- Kimi K3.1-Pro offers the largest parameter count (27.8T) but lacks documented hardware requirements and video capabilities, whereas Qwen/Qwen3.8-27B supports multimodal inputs including video with an Apache-2.0 license [S4][S7].
+- InternVL2 is constrained to approximately 16GB of VRAM for inference while Kimi K3.1-Pro's hardware needs remain undocumented, and InternVL2 does not support video processing unlike Qwen/Qwen3.8-27B [S1][S4].
 
-The primary candidates analyzed are Kimi K3.1-Pro, Qwen/Qwen3.8-27B, mlx-vlm, and Qwen3-VL. Kimi K3.1-Pro stands out as a high-parameter model (2780.11B) capable of handling long contexts (160K tokens), making it ideal for document extraction and OCR tasks [S3]. However, its lack of documented hardware requirements and specific memory footprint estimates makes on-premise deployment assessment difficult [S3]. In contrast, Qwen/Qwen3.8-27B offers the most extensive multimodal capabilities, including native support for video understanding from hour-scale videos [S4], but lacks documented context lengths or hardware specs in the provided sources [S4]. The model is licensed under Apache 2.0, which is OSI-approved, and supports a wide range of modalities beyond just text and image [S4].
+Kimi K3.1-Pro stands out for its massive parameter count (2.78 trillion) and extended context window (160K tokens), making it highly effective for complex document understanding [S3]. However, its specific hardware requirements remain undocumented in the provided sources, creating a significant uncertainty regarding inference speed and VRAM sufficiency [S3]. In contrast, Qwen/Qwen3.8-27B offers robust multimodal capabilities including native support for video from hour-scale videos to STEM diagrams [S4], supported by an OSI-approved Apache-2.0 license [S4][S7]. While its parameter count (27.78 billion) is significantly lower than Kimi's, it provides a more transparent hardware profile and supports a wider range of modalities including text, image, and video [S4]. InternVL2 presents a different constraint profile; while it claims to outperform LLaVA-1.6-34B on benchmarks and requires only approximately 16GB of VRAM for inference [S1], its specific benchmark scores and detailed hardware footprint are not explicitly documented in the available sources [S1].
 
 ## 6. Benchmark Evaluation
 > No benchmarks were executed by this application. All scores below are as reported by the cited sources and were only checked to appear verbatim in the retrieved source text.
 
 _No benchmark scores could be verified in the retrieved sources._
 
-No benchmark scores were verified by this research team; all reported metrics are sourced from external publications or model cards [S1][S2][S3][S4][S7]. Consequently, there is no direct comparison of performance on standardized benchmarks between these models. The available data focuses on architectural features and licensing rather than empirical performance results.
+The provided evidence does not support any quantitative verification of benchmark scores. All reported performance metrics, such as those for InternVL2 reaching near-GPT-4V performance on complex tasks or Kimi K3.1-Pro's context length, are attributed to the model cards or external sources rather than direct testing by this research team [S1][S3]. Consequently, no specific numerical scores can be verified or compared directly between models.
 
 
 
 ## 7. On-Premise Deployment Considerations
 | Model | On-prem suitability (assessment) | Memory / inference | Quantisation | Sources |
 |---|---|---|---|---|
-| Kimi K3.1-Pro | insufficient evidence | Not documented in retrieved sources | — | [S3][S1][S2] |
-| Qwen/Qwen3.8-27B | insufficient evidence | Not documented in retrieved sources | — | [S4][S2] |
-| mlx-vlm | insufficient evidence | Not documented in retrieved sources | — | [S7][S2] |
-| Qwen3-VL | insufficient evidence | Not documented in retrieved sources | — | [S2] |
+| Kimi K3.1-Pro | insufficient evidence | Not documented in retrieved sources | — | [S3][S4][S5] |
+| Qwen/Qwen3.8-27B | insufficient evidence | Not documented in retrieved sources | — | [S4] |
+| mlx-vlm | insufficient evidence | Not documented in retrieved sources | — | [S7] |
+| InternVL2 | insufficient evidence | Not documented in retrieved sources | — | [S1] |
 
 **Estimated weight memory**
 
@@ -77,15 +77,13 @@ No benchmark scores were verified by this research team; all reported metrics ar
 
 _Estimate (computed, not measured): weight memory = parameters × bytes per parameter (FP16/BF16 = 2 bytes, 8-bit = 1 byte, 4-bit ≈ 0.5 bytes) × 1.2 overhead. Excludes the KV cache, which grows with context length, and any vision encoder loaded separately._
 
-- This absence of data prevents a definitive assessment of on-premise viability.
-- Model Capabilities: Kimi K3.1-Pro supports text and image modalities with 2780.11B parameters, utilizing MoonViT-V2 vision encoders [S3]. Qwen/Qwen3.8-27B supports text, image, and video modalities with a 27.78B parameter count, retaining historical reasoning capabilities [S4].
-- Licensing: Kimi K3.1-Pro is licensed under 'other' (unknown) [S3]. Qwen/Qwen3.8-27B uses the Apache 2.0 license, which is OSI-approved [S4]. mlx-vlm utilizes the MIT license [S7].
-- Quantization and Efficiency: While specific hardware requirements are missing, some models mention quantization techniques. Kimi K3.1-Pro supports MXFP4 weights and MXFP8 activations [S3]. mlx-vlm features 1-bit Affine Inference and Activation Quantization (CUDA) [S7].
-- Limitations: All reported sources indicate that benchmark scores could not be verified by this team, meaning performance comparisons are based solely on model card descriptions rather than empirical testing [S1][S2][S3][S4][S7].
+- Licensing: Qwen/Qwen3.8-27B is available under an OSI-approved Apache-2.0 license, facilitating easier commercial and open-source deployment [S4][S7].
+- Hardware Requirements: Kimi K3.1-Pro requires significant memory (estimated ~6.7 TB at FP16 based on parameters), which may be prohibitive for many on-premise setups [S3]. InternVL2 is constrained to approximately 16GB of VRAM, which may limit its utility on high-end hardware but offers a cost-effective alternative for resource-constrained environments [S1].
+- Limitations: All evaluated models lack explicit documentation regarding their specific inference speeds or quantization options. While Kimi K3.1-Pro is noted to use Gated DeepSeek Sparse Attention and MXFP4 weights, the actual performance impact on latency remains unverified in the source text [S3]. InternVL2's architecture superseded by newer models suggests potential obsolescence or lack of detailed technical documentation regarding its current state [S1].
 
 ## 8. Limitations and Risks
 - No benchmark scores could be verified in the retrieved sources.
-- 1 narrative sentence(s) were removed because they attributed a model to a source that does not mention it.
+- 2 narrative sentence(s) were removed because they attributed a model to a source that does not mention it.
 
 - This report is limited to the 8 sources retrieved automatically; it is not a systematic review.
 - Findings were extracted by a small local LLM and may contain extraction errors; verify critical facts in the cited sources.
@@ -97,19 +95,19 @@ _Recommendations are judgements based on the evidence above, not measured result
 - **Kimi K3.1-Pro** — licence not established from the retrieved sources; ~1668.1 GB at 4-bit (estimate): verify on the official model card before use [S3].
 - **Qwen/Qwen3.8-27B** — OSI-approved licence (apache-2.0) and ~16.7 GB of weights at 4-bit (estimate): candidate for a single-GPU on-prem pilot; measure VRAM and run your own evaluation first [S4].
 - **mlx-vlm** — OSI-approved licence (MIT); size/hardware not documented in the retrieved sources — measure memory before committing [S7].
-- **Qwen3-VL** — licence not established from the retrieved sources: verify on the official model card before use [S2].
+- **InternVL2** — licence not established from the retrieved sources: verify on the official model card before use [S1].
 
 **Agent recommendations:**
 - None reported.
 
 ## 10. References
-- **[S1]** Top 15 Multimodal Models in 2026 (Open Source & Proprietary) (2026-01-21). *web*. <https://blog.unitlab.ai/top-multimodal-models/>
-- **[S2]** Best Open-Source Multimodal AI Models for Production (2026) (date not available). *web*. <https://deepinfra.com/blog/multi-modal-open-source>
+- **[S1]** Best Open-Source Multimodal AI Models 2026: - yuzec.com (2026-06-22). *web*. <https://yuzec.com/blog/open-source-multimodal-ai-2026>
 - **[S3]** moonshotai/Kimi-K3.1-Pro — model card (2026-11-02). *documentation*. <https://huggingface.co/moonshotai/Kimi-K3.1-Pro>
 - **[S4]** Qwen/Qwen3.8-27B — model card (2026-08-05). *documentation*. <https://huggingface.co/Qwen/Qwen3.8-27B>
-- **[S7]** Neywa-Labs/mlx-vlm (2026-11-07). *github*. <https://github.com/Neywa-Labs/mlx-vlm>
+- **[S5]** AuK Technical Report: An Open-Source Foundational Model for Speech Generation and Editing (2026-09-08). *arxiv*. <https://arxiv.org/abs/2609.08936v1>
+- **[S7]** Neywa-Labs/mlx-vlm (2026-11-10). *github*. <https://github.com/Neywa-Labs/mlx-vlm>
 
 **Other retrieved sources (consulted, not cited):**
-- **[S5]** AuK Technical Report: An Open-Source Foundational Model for Speech Generation and Editing (2026-09-08). *arxiv*. <https://arxiv.org/abs/2609.08936v1>
+- **[S2]** Best Open-Source Multimodal AI Models for Production (2026) (date not available). *web*. <https://deepinfra.com/blog/multi-modal-open-source>
 - **[S6]** COSINT-Agent: A Knowledge-Driven Multimodal Agent for Chinese Open Source Intelligence (2025-03-05). *arxiv*. <https://arxiv.org/abs/2503.03215v2>
 - **[S8]** jonyzhang2023/awesome-embodied-vla-va-vln (2026-09-15). *github*. <https://github.com/jonyzhang2023/awesome-embodied-vla-va-vln>
