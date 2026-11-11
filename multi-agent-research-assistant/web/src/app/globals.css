@@ -46,6 +46,18 @@ a {
   text-underline-offset: 3px;
 }
 
+/* gentle entrance for changing text; content stays visible without JavaScript timing */
+.fade-in {
+  animation: fade-in 0.35s ease-out both;
+}
+@keyframes fade-in {
+  from { opacity: 0.15; transform: translateY(3px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none; }
+}
+
 /* the final report */
 .report {
   font-size: 0.95rem;

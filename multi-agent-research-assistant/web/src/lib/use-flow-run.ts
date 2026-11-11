@@ -26,6 +26,7 @@ export function useFlowRun() {
   const [liveNow, setLiveNow] = useState(0);
   const [health, setHealth] = useState<Health | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [openOnLoad, setOpenOnLoad] = useState<string | null>(null); // ?open=compare opens that box's details
   const abortRef = useRef<AbortController | null>(null);
   const clockRef = useRef(0);
 
@@ -36,6 +37,7 @@ export function useFlowRun() {
       .then((r) => r.json())
       .then((data: RunState) => {
         setRecorded(data);
+        setOpenOnLoad(new URLSearchParams(window.location.search).get("open"));
         const param = new URLSearchParams(window.location.search).get("replay");
         if (!param) return;
         setMode("replay");
@@ -136,7 +138,7 @@ export function useFlowRun() {
   const result = mode === "replay" ? recorded : liveState;
 
   return {
-    mode, recorded, health, error, events, finished, result,
+    mode, recorded, health, error, events, finished, result, openOnLoad,
     now: mode === "replay" ? clock : liveNow,
     end, playing, speed,
     liveAvailable: health?.ok === true,

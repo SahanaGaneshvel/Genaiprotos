@@ -164,10 +164,11 @@ cd web
 npm install
 npm run build && npx next start -p 3000      # or: npm run dev
 ```
-Open http://localhost:3000. It is a single page that shows the run **behind the scenes**: the
-queries the model writes, every source each API returns, each source being read (and the facts kept),
-citation IDs being assigned, table rows filling in, benchmark checks, removed sentences, and the
-final report. Tap any line to see what it does and whether the model, plain code or an API did it.
+Open http://localhost:3000. It is a single page: enter the question, then watch a **flow diagram**
+light up layer by layer (Question → Check → Research → Compare → Evaluate → Write → Report, with the
+four sources above Research and the local AI model below). Under it, a short "What's happening now"
+panel says in plain words what the current layer is doing. Click any box to see what that layer does
+and what it produced (the sources it found, the comparison table, the memory estimates, the report).
 
 * **Replay** (works anywhere, including the deployed site): plays back a real recorded run
   (`web/public/recorded-run.json`) with its real timings, sped up 10–100×.
@@ -227,8 +228,9 @@ multi-agent-research-assistant/
 │   ├── public/recorded-run.json   the real run the deployed site replays
 │   └── src/
 │       ├── app/page.tsx       the behind-the-scenes flow
-│       ├── components/flow/   stage, row (one per step kind) and report views
-│       └── lib/               flow.ts (events -> steps + explanations), use-flow-run.ts (replay / live)
+│       ├── components/flow/   flow diagram, "what's happening now" + details panels, report
+│       └── lib/               flow.ts (events -> steps), layers.ts (steps -> plain-language box states),
+│                              use-flow-run.ts (replay / live)
 ├── config.py                  all settings (env / .env)
 ├── agents/                    one file per agent, each with its own SYSTEM_PROMPT
 │   ├── research_agent.py
