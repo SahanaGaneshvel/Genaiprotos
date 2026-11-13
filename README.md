@@ -1,8 +1,7 @@
-# Genaiprotos
+# Multi-Agent AI Research Assistant
 
-GenAI prototypes. Built as a proof of concept for a Junior AI Engineer internship assessment.
-
-## Multi-Agent AI Research Assistant
+A proof of concept built for a Junior AI Engineer internship assessment. The project lives in
+[`multi-agent-research-assistant/`](multi-agent-research-assistant/).
 
 **[▶ Live demo](https://research-agents-blush.vercel.app/)** (replays a real run, step by step) ·
 **[→ Full documentation](multi-agent-research-assistant/README.md)**

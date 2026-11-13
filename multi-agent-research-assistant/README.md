@@ -16,7 +16,7 @@ All LLM inference runs **locally through Ollama**: no paid APIs, no API keys req
 | **Original brief** | [`docs/PROJECT_BRIEF.md`](docs/PROJECT_BRIEF.md) |
 | **Test results** (139 passed, fully offline) | [`docs/test_results.txt`](docs/test_results.txt) |
 | **Behind-the-scenes web page** | [`web/`](web/) (replays the real run as a live flow diagram) |
-| **Source code** | [github.com/SahanaGaneshvel/Genaiprotos](https://github.com/SahanaGaneshvel/Genaiprotos) |
+| **Source code** | [github.com/SahanaGaneshvel/research-agent](https://github.com/SahanaGaneshvel/research-agent) |
 
 ### At a glance
 
