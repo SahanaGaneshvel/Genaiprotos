@@ -4,6 +4,7 @@ GenAI prototypes. Built as a proof of concept for a Junior AI Engineer internshi
 
 ## Multi-Agent AI Research Assistant
 
+**[▶ Live demo](https://research-agents-blush.vercel.app/)** (replays a real run, step by step) ·
 **[→ Full documentation](multi-agent-research-assistant/README.md)**
 
 An AI research team of four agents that investigates a technical topic and writes a structured,
@@ -24,6 +25,7 @@ Question → Orchestrator → Research → Comparison → Evaluation → Report 
 
 | | |
 |---|---|
+| Live demo | [research-agents-blush.vercel.app](https://research-agents-blush.vercel.app/) |
 | Example report (real run) | [`outputs/example_report.md`](multi-agent-research-assistant/outputs/example_report.md) |
 | Original brief | [`docs/PROJECT_BRIEF.md`](multi-agent-research-assistant/docs/PROJECT_BRIEF.md) |
 | Architecture | [README, section 2](multi-agent-research-assistant/README.md#2-architecture) |

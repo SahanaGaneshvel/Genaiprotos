@@ -5,6 +5,8 @@ diagram (Question → Check → Research → Compare → Evaluate → Write → 
 sources above Research and the local AI model below) lights up step by step, a "What's happening now"
 panel explains the current step in plain words, and clicking any box shows what that step produced.
 
+**Deployed:** [research-agents-blush.vercel.app](https://research-agents-blush.vercel.app/) (Replay mode).
+
 It has two modes, which render identically:
 
 | Mode | Where it works | What it shows |

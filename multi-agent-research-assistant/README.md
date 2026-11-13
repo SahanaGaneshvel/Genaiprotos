@@ -10,6 +10,7 @@ All LLM inference runs **locally through Ollama**: no paid APIs, no API keys req
 
 | | |
 |---|---|
+| **Live demo** (replays the real run as a flow diagram, no install needed) | [research-agents-blush.vercel.app](https://research-agents-blush.vercel.app/) |
 | **Example report** (real run, unedited) | [`outputs/example_report.md`](outputs/example_report.md) |
 | **Full record of that run** (sources, findings, table, timings, every event) | [`outputs/example_run.json`](outputs/example_run.json) |
 | **Original brief** | [`docs/PROJECT_BRIEF.md`](docs/PROJECT_BRIEF.md) |
@@ -31,11 +32,12 @@ All LLM inference runs **locally through Ollama**: no paid APIs, no API keys req
 
 ### Reviewing in 5 minutes
 
-1. Read the **example report**: [`outputs/example_report.md`](outputs/example_report.md).
-2. Look at the **architecture** and the **code vs. LLM** table: [section 2](#2-architecture).
-3. See how **hallucinations are contained**: [section 3](#3-how-hallucinations-are-contained).
-4. See what **live testing** exposed and fixed, and the **known flaws** left in on purpose: [section 9](#9-example-run).
-5. Read the **limitations**: [section 10](#10-limitations).
+1. Watch the **[live demo](https://research-agents-blush.vercel.app/)** replay a real 18-minute run (under a minute at the default 30× speed).
+2. Read the **example report**: [`outputs/example_report.md`](outputs/example_report.md).
+3. Look at the **architecture** and the **code vs. LLM** table: [section 2](#2-architecture).
+4. See how **hallucinations are contained**: [section 3](#3-how-hallucinations-are-contained).
+5. See what **live testing** exposed and fixed, and the **known flaws** left in on purpose: [section 9](#9-example-run).
+6. Read the **limitations**: [section 10](#10-limitations).
 
 ### Contents
 
@@ -208,7 +210,7 @@ four sources above Research and the local AI model below). Under it, a short "Wh
 panel says in plain words what the current layer is doing. Click any box to see what that layer does
 and what it produced (the sources it found, the comparison table, the memory estimates, the report).
 
-* **Replay** (works anywhere, including the deployed site): plays back a real recorded run
+* **Replay** (works anywhere, including the [deployed site](https://research-agents-blush.vercel.app/)): plays back a real recorded run
   (`web/public/recorded-run.json`) with its real timings, sped up 10–100×.
 * **Live** (only offered when the page runs on localhost and the API is up): streams a new run.
 
