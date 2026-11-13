@@ -46,7 +46,7 @@ function up(model: Box, b: Box) {
   return `M ${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}`;
 }
 
-const INK = "#1d1c1a", LINE = "#d9d4c8", MUTED = "#8a877f", ACCENT = "#b4532a", CARD = "#fffdf9";
+const INK = "#1d1c1a", LINE = "#d9d4c8", MUTED = "#706d66", ACCENT = "#b4532a", CARD = "#fffdf9";
 
 function stroke(s: NodeState) {
   return s.status === "working" ? ACCENT : s.status === "done" ? INK : s.status === "failed" ? ACCENT : LINE;
@@ -62,8 +62,13 @@ function SvgNode({ b, s, selected, onSelect, reduce }: {
       tabIndex={0}
       aria-label={`${b.title}: ${s.line}. Show details`}
       onClick={() => onSelect(b.id)}
-      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onSelect(b.id)}
-      className="cursor-pointer outline-none"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault(); // Space would otherwise also scroll the page
+          onSelect(b.id);
+        }
+      }}
+      className="flow-node cursor-pointer"
     >
       {working && !reduce && (
         <motion.rect
@@ -74,6 +79,7 @@ function SvgNode({ b, s, selected, onSelect, reduce }: {
         />
       )}
       <rect
+        className="node-box"
         x={b.x} y={b.y} width={b.w} height={b.h} rx={10}
         fill={CARD} stroke={selected ? INK : stroke(s)} strokeWidth={selected ? 2 : working ? 1.6 : 1.2}
         strokeDasharray={s.status === "skipped" ? "4 4" : undefined}
@@ -124,7 +130,7 @@ function DesktopDiagram({ layers, selected, onSelect }: Props) {
   const reduce = !!useReducedMotion();
   const n = layers.nodes;
   return (
-    <svg viewBox="0 0 1170 400" className="hidden h-auto w-full md:block" role="img" aria-label="How a research run flows">
+    <svg viewBox="0 0 1170 400" className="hidden h-auto w-full lg:block" role="group" aria-label="How a research run flows">
       {/* sources feed into Research */}
       {(["web", "cards", "papers", "code"] as NodeId[]).map((id) => (
         <Flow key={id} d={down(box[id], box.research)} active={n[id].status === "working"} done={n[id].status === "done"} reduce={reduce} />
@@ -160,7 +166,7 @@ function MobileDiagram({ layers, selected, onSelect }: Props) {
     { id: "report", title: "Report" },
   ];
   return (
-    <ol className="md:hidden">
+    <ol className="lg:hidden">
       {steps.map((s, i) => {
         const st = n[s.id];
         return (

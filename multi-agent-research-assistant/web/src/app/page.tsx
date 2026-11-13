@@ -109,10 +109,10 @@ export default function Page() {
             <span className="tabular-nums">
               {duration(run.now)} <span className="text-muted">of {duration(run.end)}</span>
             </span>
-            <span className="flex gap-2">
+            <span className="flex gap-1">
               {SPEEDS.map((s) => (
-                <button key={s} type="button" onClick={() => run.setSpeed(s)}
-                  className={run.speed === s ? "text-ink underline underline-offset-4" : "text-muted hover:text-ink"}>
+                <button key={s} type="button" onClick={() => run.setSpeed(s)} aria-label={`Play at ${s} times speed`}
+                  className={`px-1.5 py-1 ${run.speed === s ? "text-ink underline underline-offset-4" : "text-muted hover:text-ink"}`}>
                   {s}×
                 </button>
               ))}

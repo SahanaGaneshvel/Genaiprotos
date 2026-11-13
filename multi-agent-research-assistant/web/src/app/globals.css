@@ -6,7 +6,7 @@
   --card: #fffdf9;
   --ink: #1d1c1a;
   --ink-2: #4a4843;
-  --muted: #8a877f;
+  --muted: #706d66; /* 4.7:1 on paper, passes WCAG AA for small text */
   --line: #e6e2d9;
   --accent: #b4532a;
 }
@@ -44,6 +44,15 @@ body {
 
 a {
   text-underline-offset: 3px;
+}
+
+/* diagram boxes: visible focus for keyboard users (CSS overrides the SVG stroke attribute) */
+.flow-node {
+  outline: none;
+}
+.flow-node:focus-visible .node-box {
+  stroke: var(--ink);
+  stroke-width: 2.4px;
 }
 
 /* gentle entrance for changing text; content stays visible without JavaScript timing */

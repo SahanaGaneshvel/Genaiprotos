@@ -1,4 +1,4 @@
-# Test results: 2026-11-10 19:30
+# Test results: 2026-11-13 10:59
 # Python 3.12.9, pytest 9.2.0; all network and LLM calls mocked
 
 tests/test_api.py::test_health_reports_model_and_status PASSED
@@ -140,4 +140,4 @@ tests/test_workflow.py::test_no_sources_produces_honest_insufficient_report PASS
 tests/test_workflow.py::test_sources_but_no_relevant_findings_also_gives_insufficient_report PASSED
 tests/test_workflow.py::test_one_failing_agent_does_not_stop_the_pipeline PASSED
 tests/test_workflow.py::test_reducer_merges_instead_of_overwriting PASSED
-============================= 139 passed in 6.80s =============================
+============================= 139 passed in 5.26s =============================

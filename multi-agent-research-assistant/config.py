@@ -35,7 +35,6 @@ class Settings:
     num_ctx: int
     timeout: int
     github_token: str | None
-    max_results_per_source: int
     cache_ttl_hours: int
     cache_dir: Path
     output_dir: Path
@@ -49,7 +48,6 @@ def get_settings() -> Settings:
         num_ctx=_int("OLLAMA_NUM_CTX", 8192),
         timeout=_int("OLLAMA_TIMEOUT", 600),
         github_token=os.getenv("GITHUB_TOKEN") or None,
-        max_results_per_source=_int("MAX_RESULTS_PER_SOURCE", 4),
         cache_ttl_hours=_int("CACHE_TTL_HOURS", 24),
         cache_dir=PROJECT_ROOT / ".cache",
         output_dir=PROJECT_ROOT / "outputs",

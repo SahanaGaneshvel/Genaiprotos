@@ -8,6 +8,44 @@ All LLM inference runs **locally through Ollama**: no paid APIs, no API keys req
 > deployment. Compare their capabilities, benchmarks, hardware requirements, licensing and limitations."*
 > → see the generated example in [`outputs/example_report.md`](outputs/example_report.md).
 
+| | |
+|---|---|
+| **Example report** (real run, unedited) | [`outputs/example_report.md`](outputs/example_report.md) |
+| **Full record of that run** (sources, findings, table, timings, every event) | [`outputs/example_run.json`](outputs/example_run.json) |
+| **Original brief** | [`docs/PROJECT_BRIEF.md`](docs/PROJECT_BRIEF.md) |
+| **Test results** (139 passed, fully offline) | [`docs/test_results.txt`](docs/test_results.txt) |
+| **Behind-the-scenes web page** | [`web/`](web/) (replays the real run as a live flow diagram) |
+| **Source code** | [github.com/SahanaGaneshvel/Genaiprotos](https://github.com/SahanaGaneshvel/Genaiprotos) |
+
+### At a glance
+
+* **4 agents** (Research, Comparison, Evaluation, Report) in a **LangGraph** workflow with shared, typed state.
+* **4 kinds of sources**: web search, Hugging Face model cards, arXiv papers, GitHub repositories.
+* **Local only**: Ollama with `qwen3.5:4b` by default (`qwen3.5:2b` on 8 GB laptops). No paid API, no API key.
+* **Built not to make things up**: the model cites sources only by ID (`[S3]`), code owns every URL, and
+  benchmark numbers are kept only if they appear in the cited source ([section 3](#3-how-hallucinations-are-contained)).
+* **Two interfaces**: a Streamlit app, and a Next.js page that shows each step as it happens.
+* **Tested**: 139 offline tests (the model and network are mocked), plus 9 full live runs; every problem
+  they exposed led to a fix and a regression test ([section 9](#what-live-testing-changed-9-full-runs)).
+* **Runs on a laptop CPU**: the example run took 18 minutes on a 4-core i5 with 8 GB RAM and no GPU.
+
+### Reviewing in 5 minutes
+
+1. Read the **example report**: [`outputs/example_report.md`](outputs/example_report.md).
+2. Look at the **architecture** and the **code vs. LLM** table: [section 2](#2-architecture).
+3. See how **hallucinations are contained**: [section 3](#3-how-hallucinations-are-contained).
+4. See what **live testing** exposed and fixed, and the **known flaws** left in on purpose: [section 9](#9-example-run).
+5. Read the **limitations**: [section 10](#10-limitations).
+
+### Contents
+
+1. [What it does](#1-what-it-does) · 2. [Architecture](#2-architecture) ·
+3. [How hallucinations are contained](#3-how-hallucinations-are-contained) ·
+4. [Setup](#4-setup-windows-macos-linux) · 5. [Running](#5-running) · 6. [Tests](#6-tests) ·
+7. [Project structure](#7-project-structure) · 8. [Error handling](#8-error-handling) ·
+9. [Example run](#9-example-run) · 10. [Limitations](#10-limitations) ·
+11. [Possible improvements](#11-possible-improvements)
+
 ---
 
 ## 1. What it does
@@ -349,7 +387,8 @@ Observed during live end-to-end runs with `qwen3.5:2b` on a CPU-only laptop:
 * **Licence classification is rule-based** and conservative; unusual names (e.g. Hugging Face's
   `other`) become "Unknown" rather than guessed.
 * **Memory estimates are arithmetic**, not measurements: weights only, no KV cache or vision encoder.
-* **CPU speed.** A Basic run takes ~9–13 minutes on a 4-core laptop CPU with the 2B model.
+* **CPU speed.** A Basic run takes ~10–18 minutes on a 4-core laptop CPU with the 2B model
+  (the example run: 1,073 s), most of it spent reading sources.
 * **Dates** are publication dates for arXiv, creation dates for Hugging Face, last-push dates for
   GitHub and page metadata for websites (often missing).
 
